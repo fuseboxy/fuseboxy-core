@@ -2,15 +2,11 @@
 class TestFuseboxyCore extends UnitTestCase {
 
 
-
-
 	function __construct() {
 		$GLOBALS['FUSEBOX_UNIT_TEST'] = true;
 		include dirname(dirname(__FILE__)).'/app/framework/1.0/fuseboxy.php';
 		include dirname(dirname(__FILE__)).'/app/framework/1.0/F.php';
 	}
-
-
 
 
 	function test__framework__autoLoad() {
@@ -76,8 +72,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		$fusebox = null;
 		unset($fusebox);
 	}
-
-
 
 
 	function test__framework__formUrl2arguments() {
@@ -156,8 +150,6 @@ class TestFuseboxyCore extends UnitTestCase {
 	}
 
 
-
-
 	function test__framework__loadDefaultConfig() {
 		global $fusebox;
 		framework__setFuseboxAPI();
@@ -171,8 +163,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		$fusebox = null;
 		unset($fusebox);
 	}
-
-
 
 
 	function test__framework__loadCustomConfig() {
@@ -203,8 +193,6 @@ class TestFuseboxyCore extends UnitTestCase {
 	}
 
 
-
-
 	function test__framework__loadHelper() {
 		global $fusebox;
 		global $FUSEBOX_HELPER_PATH;
@@ -222,8 +210,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		$fusebox = $FUSEBOX_HELPER_PATH = null;
 		unset($fusebox, $FUSEBOX_HELPER_PATH);
 	}
-
-
 
 
 	function test__framework__setControllerAction() {
@@ -258,8 +244,6 @@ class TestFuseboxyCore extends UnitTestCase {
 	}
 
 
-
-
 	function test__framework__setMyself() {
 		global $fusebox;
 		framework__setFuseboxAPI();
@@ -280,8 +264,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		$fusebox = null;
 		unset($fusebox);
 	}
-
-
 
 
 	function test__framework__urlRewrite() {
@@ -437,8 +419,6 @@ class TestFuseboxyCore extends UnitTestCase {
 	}
 
 
-
-
 	function test__framework__validateConfig() {
 		global $fusebox;
 		framework__setFuseboxAPI();
@@ -452,8 +432,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		$fusebox = null;
 		unset($fusebox);
 	}
-
-
 
 
 	function test__F__ajaxRequest() {
@@ -476,8 +454,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		$fusebox = null;
 		unset($fusebox);
 	}
-
-
 
 
 	function test__F__command() {
@@ -536,8 +512,6 @@ class TestFuseboxyCore extends UnitTestCase {
 	}
 
 
-
-
 	function test__F__config() {
 		global $fusebox;
 		framework__setFuseboxAPI();
@@ -562,8 +536,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		$fusebox = null;
 		unset($fusebox);
 	}
-
-
 
 
 	function test__F__error() {
@@ -595,8 +567,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		$fusebox = null;
 		unset($fusebox);
 	}
-
-
 
 
 	function test__F__is() {
@@ -659,8 +629,6 @@ class TestFuseboxyCore extends UnitTestCase {
 	}
 
 
-
-
 	function test__F__invoke() {
 		global $fusebox;
 		framework__setFuseboxAPI();
@@ -708,13 +676,9 @@ class TestFuseboxyCore extends UnitTestCase {
 	}
 
 
-
-
 	function test__F__isCLI() {
 		// no way to test yet
 	}
-
-
 
 
 	function test__F__isInvoke() {
@@ -743,8 +707,6 @@ class TestFuseboxyCore extends UnitTestCase {
 	}
 
 
-
-
 	function test__F__pageNotFound() {
 		global $fusebox;
 		framework__setFuseboxAPI();
@@ -771,8 +733,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		$fusebox = null;
 		unset($fusebox);
 	}
-
-
 
 
 	function test__F__parseCommand() {
@@ -804,8 +764,6 @@ class TestFuseboxyCore extends UnitTestCase {
 	}
 
 
-
-
 	function test__F__redirect() {
 		global $fusebox;
 		framework__setFuseboxAPI();
@@ -835,8 +793,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		$fusebox = null;
 		unset($fusebox);
 	}
-
-
 
 
 	function test__F__url() {
@@ -883,8 +839,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		$fusebox = null;
 		unset($fusebox);
 	}
-
-
 
 
 } // TestFuseboxyCore
