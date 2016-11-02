@@ -18,9 +18,9 @@ if ( F::ajaxRequest() ) {
 } else {
 	// define flash type
 	if ( $fusebox->error == 'page not found' ) {
-		$arguments['flash'] = array('type' => 'warning', 'message' => "<i class='fa fa-exclamation-circle'></i> <strong>".F::fuseaction()."</strong> - {$fusebox->error}");
+		$arguments['flash'] = array('type' => 'warning', 'message' => "<i class='fa fa-exclamation-circle'></i> <strong>".F::command()."</strong> - {$fusebox->error}");
 	} else {
-		$arguments['flash'] = array('type' => 'danger', 'message' => "<i class='fa fa-exclamation-circle'></i> <strong>".F::fuseaction()."</strong> - {$fusebox->error}");
+		$arguments['flash'] = array('type' => 'danger', 'message' => "<i class='fa fa-exclamation-circle'></i> <strong>".F::command()."</strong> - {$fusebox->error}");
 	}
 	// layout
 	include F::config('appPath').'view/global/layout.php';
