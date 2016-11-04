@@ -35,35 +35,35 @@ class TestFuseboxyCore extends UnitTestCase {
 		}
 		// check valid file
 		try {
-			$fusebox->config['autoLoad'] = array(dirname(__FILE__).'/utility/empty.php');
+			$fusebox->config['autoLoad'] = array(dirname(__FILE__).'/utility-core/empty.php');
 			framework__autoLoad();
 		} catch (Exception $e) {
 			$this->assertTrue(false);
 		}
 		// check valid directory
 		try {
-			$fusebox->config['autoLoad'] = array(dirname(__FILE__).'/utility/empty/');
+			$fusebox->config['autoLoad'] = array(dirname(__FILE__).'/utility-core/empty/');
 			framework__autoLoad();
 		} catch (Exception $e) {
 			$this->assertTrue(false);
 		}
 		// check valid wildcard
 		try {
-			$fusebox->config['autoLoad'] = array(dirname(__FILE__).'/utility/non-empty/*');
+			$fusebox->config['autoLoad'] = array(dirname(__FILE__).'/utility-core/non-empty/*');
 			framework__autoLoad();
 		} catch (Exception $e) {
 			$this->assertTrue(false);
 		}
 		// check valid wildcard (but no result)
 		try {
-			$fusebox->config['autoLoad'] = array(dirname(__FILE__).'/utility/non-empty/*.asp');
+			$fusebox->config['autoLoad'] = array(dirname(__FILE__).'/utility-core/non-empty/*.asp');
 			framework__autoLoad();
 		} catch (Exception $e) {
 			$this->assertTrue(false);
 		}
 		// check valid wildcard (but empty directory)
 		try {
-			$fusebox->config['autoLoad'] = array(dirname(__FILE__).'/utility/empty/*');
+			$fusebox->config['autoLoad'] = array(dirname(__FILE__).'/utility-core/empty/*');
 			framework__autoLoad();
 		} catch (Exception $e) {
 			$this->assertTrue(false);
@@ -181,7 +181,7 @@ class TestFuseboxyCore extends UnitTestCase {
 		// check empty config
 		try {
 			$caseResult = false;
-			$FUSEBOX_CONFIG_PATH = dirname(__FILE__).'/utility/empty.php';
+			$FUSEBOX_CONFIG_PATH = dirname(__FILE__).'/utility-core/empty.php';
 			framework__loadCustomConfig();
 		} catch (Exception $e) {
 			$caseResult = ( strpos($e->getMessage(), 'FUSEBOX-CONFIG-NOT-DEFINED') !== false );
@@ -635,7 +635,7 @@ class TestFuseboxyCore extends UnitTestCase {
 		$fusebox->config['defaultCommand'] = 'unit.test';
 		$fusebox->config['commandVariable'] = 'unitTestCommand';
 		$fusebox->config['commandDelimiter'] = '.';
-		$fusebox->config['appPath'] = dirname(__FILE__).'/utility/';
+		$fusebox->config['appPath'] = dirname(__FILE__).'/utility-core/';
 		framework__setControllerAction();
 		// check valid command
 		ob_start();
@@ -687,7 +687,7 @@ class TestFuseboxyCore extends UnitTestCase {
 		$fusebox->config['defaultCommand'] = 'unit.test';
 		$fusebox->config['commandVariable'] = 'unitTestCommand';
 		$fusebox->config['commandDelimiter'] = '.';
-		$fusebox->config['appPath'] = dirname(__FILE__).'/utility/';
+		$fusebox->config['appPath'] = dirname(__FILE__).'/utility-core/';
 		framework__setControllerAction();
 		// check simple invoke
 		ob_start();
