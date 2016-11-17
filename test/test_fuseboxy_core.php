@@ -17,21 +17,21 @@ class TestFuseboxyCore extends UnitTestCase {
 			$fusebox->config['autoLoad'] = array(dirname(__FILE__).'/no/such/file.php');
 			framework__autoLoad();
 		} catch (Exception $e) {
-			$this->assertTrue( strpos($e->getMessage(), 'FUSEBOX-INVALID-CONFIG') !== false );
+			$this->assertPattern('/FUSEBOX-INVALID-CONFIG/', $e->getMessage());
 		}
 		// check invalid directory
 		try {
 			$fusebox->config['autoLoad'] = array(dirname(__FILE__).'/no/such/directory/');
 			framework__autoLoad();
 		} catch (Exception $e) {
-			$this->assertTrue( strpos($e->getMessage(), 'FUSEBOX-INVALID-CONFIG') !== false );
+			$this->assertPattern('/FUSEBOX-INVALID-CONFIG/', $e->getMessage());
 		}
 		// check invalid wildcard
 		try {
 			$fusebox->config['autoLoad'] = array(dirname(__FILE__).'/no/such/directory/*.*');
 			framework__autoLoad();
 		} catch (Exception $e) {
-			$this->assertTrue( strpos($e->getMessage(), 'FUSEBOX-INVALID-CONFIG') !== false );
+			$this->assertPattern('/FUSEBOX-INVALID-CONFIG/', $e->getMessage());
 		}
 		// check valid file
 		try {
@@ -140,7 +140,7 @@ class TestFuseboxyCore extends UnitTestCase {
 			$fusebox->config['formUrl2arguments'] = 'abc';
 			framework__formUrl2arguments();
 		} catch (Exception $e) {
-			$caseResult = ( strpos($e->getMessage(), 'FUSEBOX-INVALID-CONFIG') !== false );
+			$caseResult = preg_match('/FUSEBOX-INVALID-CONFIG/', $e->getMessage());
 		}
 		$this->assertTrue($caseResult);
 		$arguments = null;
@@ -175,7 +175,7 @@ class TestFuseboxyCore extends UnitTestCase {
 			$FUSEBOX_CONFIG_PATH = dirname(__FILE__).'/no/such/path.php';
 			framework__loadCustomConfig();
 		} catch (Exception $e) {
-			$caseResult = ( strpos($e->getMessage(), 'FUSEBOX-CONFIG-NOT-FOUND') !== false );
+			$caseResult = preg_match('/FUSEBOX-CONFIG-NOT-FOUND/', $e->getMessage());
 		}
 		$this->assertTrue($caseResult);
 		// check empty config
@@ -184,7 +184,7 @@ class TestFuseboxyCore extends UnitTestCase {
 			$FUSEBOX_CONFIG_PATH = dirname(__FILE__).'/utility-core/empty.php';
 			framework__loadCustomConfig();
 		} catch (Exception $e) {
-			$caseResult = ( strpos($e->getMessage(), 'FUSEBOX-CONFIG-NOT-DEFINED') !== false );
+			$caseResult = preg_match('/FUSEBOX-CONFIG-NOT-DEFINED/', $e->getMessage());
 		}
 		$this->assertTrue($caseResult);
 		// clean-up
@@ -203,7 +203,7 @@ class TestFuseboxyCore extends UnitTestCase {
 			$FUSEBOX_HELPER_PATH = dirname(__FILE__).'/no/such/file.php';
 			framework__loadHelper();
 		} catch (Exception $e) {
-			$caseResult = ( strpos($e->getMessage(), 'FUSEBOX-HELPER-NOT-FOUND') !== false );
+			$caseResult = preg_match('/FUSEBOX-HELPER-NOT-FOUND/', $e->getMessage());
 		}
 		$this->assertTrue($caseResult);
 		// clean-up
@@ -549,17 +549,17 @@ class TestFuseboxyCore extends UnitTestCase {
 			$caseResult = false;
 			F::error('check-has-error', true);
 		} catch ( Exception $e ) {
-			$caseResult = ( strpos($e->getMessage(), 'FUSEBOX-ERROR') !== false );
+			$caseResult = preg_match('/FUSEBOX-ERROR/', $e->getMessage());
 		}
 		$this->assertTrue($caseResult);
-		$this->assertTrue( strpos($e->getMessage(), 'check-has-error') !== false );
+		$this->assertPattern('/check-has-error/', $e->getMessage());
 		unset($e);
 		// check no error
 		try {
 			$caseResult = false;
 			F::error('check-no-error', false);
 		} catch ( Exception $e ) {
-			$caseResult = ( strpos($e->getMessage(), 'FUSEBOX-ERROR') !== false );
+			$caseResult = preg_match('/FUSEBOX-ERROR/', $e->getMessage());
 		}
 		$this->assertFalse($caseResult);
 		$this->assertTrue( empty($e) );
@@ -651,7 +651,7 @@ class TestFuseboxyCore extends UnitTestCase {
 			$caseResult = false;
 			F::invoke('foo.bar');
 		} catch ( Exception $e ) {
-			$caseResult = ( strpos($e->getMessage(), 'FUSEBOX-PAGE-NOT-FOUND') !== false );
+			$caseResult = preg_match('/FUSEBOX-PAGE-NOT-FOUND/', $e->getMessage());
 		}
 		$this->assertTrue($caseResult);
 		unset($e);
@@ -660,7 +660,7 @@ class TestFuseboxyCore extends UnitTestCase {
 			$caseResult = false;
 			F::invoke('unitTest.fooBar');
 		} catch ( Exception $e ) {
-			$caseResult = ( strpos($e->getMessage(), 'FUSEBOX-PAGE-NOT-FOUND') !== false );
+			$caseResult = preg_match('/FUSEBOX-PAGE-NOT-FOUND/', $e->getMessage());
 		}
 		$this->assertTrue($caseResult);
 		unset($e);
@@ -668,8 +668,8 @@ class TestFuseboxyCore extends UnitTestCase {
 		ob_start();
 		F::invoke('unitTest.nestedInvoke');
 		$output = trim( ob_get_clean() );
-		$this->assertTrue( strpos($output, 'This is simple invoke') !== false );
-		$this->assertTrue( strpos($output, 'This is nested invoke') !== false );
+		$this->assertPattern('/This is simple invoke/', $output);
+		$this->assertPattern('/This is nested invoke/', $output);
 		// clean-up
 		$fusebox = null;
 		unset($fusebox);
@@ -693,13 +693,13 @@ class TestFuseboxyCore extends UnitTestCase {
 		ob_start();
 		F::invoke('unitTest.simpleInvoke');
 		$output = trim( ob_get_clean() );
-		$this->assertTrue( strpos($output, 'invokeQueueLength=1') !== false );
+		$this->assertPattern('/invokeQueueLength=1/', $output);
 		$this->assertTrue( substr_count($output, 'invokeQueueLength') == 1 );
 		// check nested invoke
 		ob_start();
 		F::invoke('unitTest.nestedInvoke');
 		$output = trim( ob_get_clean() );
-		$this->assertTrue( strpos($output, 'invokeQueueLength=2') !== false );
+		$this->assertPattern('/invokeQueueLength=2/', $output);
 		$this->assertTrue( substr_count($output, 'invokeQueueLength') == 2 );
 		// clean-up
 		$fusebox = null;
@@ -718,7 +718,7 @@ class TestFuseboxyCore extends UnitTestCase {
 			$caseResult = false;
 			F::pageNotFound();
 		} catch ( Exception $e ) {
-			$caseResult = ( strpos($e->getMessage(), 'FUSEBOX-PAGE-NOT-FOUND') !== false );
+			$caseResult = preg_match('/FUSEBOX-PAGE-NOT-FOUND/', $e->getMessage());
 		}
 		$this->assertTrue($caseResult);
 		// check condition not match
@@ -726,7 +726,7 @@ class TestFuseboxyCore extends UnitTestCase {
 			$caseResult = false;
 			F::pageNotFound(false);
 		} catch ( Exception $e ) {
-			$caseResult = ( strpos($e->getMessage(), 'FUSEBOX-PAGE-NOT-FOUND') !== false );
+			$caseResult = preg_match('/FUSEBOX-PAGE-NOT-FOUND/', $e->getMessage());
 		}
 		$this->assertFalse($caseResult);
 		// clean-up
