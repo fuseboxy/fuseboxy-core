@@ -17,7 +17,7 @@ class Framework {
 
 
 	// initiate fusebox-api variable
-	public static function setFuseboxAPI() {
+	public static function createAPIObject() {
 		global $fusebox;
 		$fusebox = new StdClass();
 	}
@@ -293,26 +293,31 @@ class Framework {
 	}
 
 
-} // class
+	// run specific controller and action
+	public static function run() {
+		global $fusebox;
+		// main process...
+		self::createAPIObject();
+		self::loadDefaultConfig();
+		self::loadCustomConfig();
+		self::validateConfig();
+		self::loadHelper();
+		self::setMyself();
+		self::autoLoad();
+		self::urlRewrite();
+		self::formUrl2arguments();
+		self::setControllerAction();
+		// load controller and... RUN!!!
+		$__controllerPath = "{$fusebox->config['appPath']}/controller/{$fusebox->controller}_controller.php";
+		F::pageNotFound( !file_exists($__controllerPath) );
+		include $__controllerPath;
+	}
 
 
+} // class-Framework
 
 
 // do not auto-run when unit-test
 if ( empty($GLOBALS['FUSEBOX_UNIT_TEST']) ) {
-	// main process...
-	Framework::setFuseboxAPI();
-	Framework::loadDefaultConfig();
-	Framework::loadCustomConfig();
-	Framework::validateConfig();
-	Framework::loadHelper();
-	Framework::setMyself();
-	Framework::autoLoad();
-	Framework::urlRewrite();
-	Framework::formUrl2arguments();
-	Framework::setControllerAction();
-	// load controller and... RUN!!!
-	$__controllerPath = "{$fusebox->config['appPath']}/controller/{$fusebox->controller}_controller.php";
-	F::pageNotFound( !file_exists($__controllerPath) );
-	include $__controllerPath;
+	Framework::run();
 }

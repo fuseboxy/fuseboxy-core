@@ -15,7 +15,7 @@ class TestFuseboxyCore extends UnitTestCase {
 
 	function test__Framework__autoLoad() {
 		global $fusebox;
-		Framework::setFuseboxAPI();
+		Framework::createAPIObject();
 		// check invalid file
 		try {
 			$fusebox->config['autoLoad'] = array(dirname(__FILE__).'/no/such/file.php');
@@ -81,7 +81,7 @@ class TestFuseboxyCore extends UnitTestCase {
 	function test__Framework__formUrl2arguments() {
 		global $fusebox;
 		global $arguments;
-		Framework::setFuseboxAPI();
+		Framework::createAPIObject();
 		// check disable
 		$fusebox->config['formUrl2arguments'] = false;
 		Framework::formUrl2arguments();
@@ -156,7 +156,7 @@ class TestFuseboxyCore extends UnitTestCase {
 
 	function test__Framework__loadDefaultConfig() {
 		global $fusebox;
-		Framework::setFuseboxAPI();
+		Framework::createAPIObject();
 		// check variables
 		Framework::loadDefaultConfig();
 		$this->assertTrue( !empty($fusebox->config['defaultCommand']) ) ;
@@ -172,7 +172,7 @@ class TestFuseboxyCore extends UnitTestCase {
 	function test__Framework__loadCustomConfig() {
 		global $fusebox;
 		global $FUSEBOX_CONFIG_PATH;
-		Framework::setFuseboxAPI();
+		Framework::createAPIObject();
 		// check invalid path
 		try {
 			$caseResult = false;
@@ -200,7 +200,7 @@ class TestFuseboxyCore extends UnitTestCase {
 	function test__Framework__loadHelper() {
 		global $fusebox;
 		global $FUSEBOX_HELPER_PATH;
-		Framework::setFuseboxAPI();
+		Framework::createAPIObject();
 		// check invalid path
 		try {
 			$caseResult = false;
@@ -218,7 +218,7 @@ class TestFuseboxyCore extends UnitTestCase {
 
 	function test__Framework__setControllerAction() {
 		global $fusebox;
-		Framework::setFuseboxAPI();
+		Framework::createAPIObject();
 		$fusebox->config['defaultCommand'] = 'unitTest';
 		$fusebox->config['commandVariable'] = 'unitTestCommand';
 		$fusebox->config['commandDelimiter'] = '.';
@@ -250,7 +250,7 @@ class TestFuseboxyCore extends UnitTestCase {
 
 	function test__Framework__setMyself() {
 		global $fusebox;
-		Framework::setFuseboxAPI();
+		Framework::createAPIObject();
 		$fusebox->config['commandVariable'] = 'unitTestCommand';
 		// check url-rewrite disabled
 		$fusebox->config['urlRewrite'] = false;
@@ -272,7 +272,7 @@ class TestFuseboxyCore extends UnitTestCase {
 
 	function test__Framework__urlRewrite() {
 		global $fusebox;
-		Framework::setFuseboxAPI();
+		Framework::createAPIObject();
 		$fusebox->config['defaultCommand'] = 'unit.test';
 		$fusebox->config['commandVariable'] = 'unitTestCommand';
 		$fusebox->config['commandDelimiter'] = '.';
@@ -425,7 +425,7 @@ class TestFuseboxyCore extends UnitTestCase {
 
 	function test__Framework__validateConfig() {
 		global $fusebox;
-		Framework::setFuseboxAPI();
+		Framework::createAPIObject();
 		// check missing config
 		Framework::loadDefaultConfig();
 		$this->assertTrue( !empty($fusebox->config['defaultCommand']) );
@@ -440,7 +440,7 @@ class TestFuseboxyCore extends UnitTestCase {
 
 	function test__F__ajaxRequest() {
 		global $fusebox;
-		Framework::setFuseboxAPI();
+		Framework::createAPIObject();
 		Framework::loadDefaultConfig();
 		// check correct value
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'xmlhttprequest';
@@ -462,7 +462,7 @@ class TestFuseboxyCore extends UnitTestCase {
 
 	function test__F__command() {
 		global $fusebox;
-		Framework::setFuseboxAPI();
+		Framework::createAPIObject();
 		$fusebox->config['defaultCommand'] = 'unit.test';
 		$fusebox->config['commandVariable'] = 'unitTestCommand';
 		$fusebox->config['commandDelimiter'] = '.';
@@ -518,7 +518,7 @@ class TestFuseboxyCore extends UnitTestCase {
 
 	function test__F__config() {
 		global $fusebox;
-		Framework::setFuseboxAPI();
+		Framework::createAPIObject();
 		$fusebox->config['defaultCommand'] = 'unit.test';
 		$fusebox->config['commandVariable'] = 'unitTestCommand';
 		$fusebox->config['commandDelimiter'] = '.';
@@ -544,7 +544,7 @@ class TestFuseboxyCore extends UnitTestCase {
 
 	function test__F__error() {
 		global $fusebox;
-		Framework::setFuseboxAPI();
+		Framework::createAPIObject();
 		Framework::loadDefaultConfig();
 		Framework::setControllerAction();
 		$this->config['errorController'] = null;
@@ -575,7 +575,7 @@ class TestFuseboxyCore extends UnitTestCase {
 
 	function test__F__is() {
 		global $fusebox;
-		Framework::setFuseboxAPI();
+		Framework::createAPIObject();
 		$fusebox->config['defaultCommand'] = 'unit.test';
 		$fusebox->config['commandVariable'] = 'unitTestCommand';
 		$fusebox->config['commandDelimiter'] = '.';
@@ -635,7 +635,7 @@ class TestFuseboxyCore extends UnitTestCase {
 
 	function test__F__invoke() {
 		global $fusebox;
-		Framework::setFuseboxAPI();
+		Framework::createAPIObject();
 		$fusebox->config['defaultCommand'] = 'unit.test';
 		$fusebox->config['commandVariable'] = 'unitTestCommand';
 		$fusebox->config['commandDelimiter'] = '.';
@@ -687,7 +687,7 @@ class TestFuseboxyCore extends UnitTestCase {
 
 	function test__F__isInvoke() {
 		global $fusebox;
-		Framework::setFuseboxAPI();
+		Framework::createAPIObject();
 		$fusebox->config['defaultCommand'] = 'unit.test';
 		$fusebox->config['commandVariable'] = 'unitTestCommand';
 		$fusebox->config['commandDelimiter'] = '.';
@@ -713,7 +713,7 @@ class TestFuseboxyCore extends UnitTestCase {
 
 	function test__F__pageNotFound() {
 		global $fusebox;
-		Framework::setFuseboxAPI();
+		Framework::createAPIObject();
 		Framework::loadDefaultConfig();
 		Framework::setControllerAction();
 		$this->config['errorController'] = null;
@@ -741,7 +741,7 @@ class TestFuseboxyCore extends UnitTestCase {
 
 	function test__F__parseCommand() {
 		global $fusebox;
-		Framework::setFuseboxAPI();
+		Framework::createAPIObject();
 		$fusebox->config['commandDelimiter'] = '.';
 		// check standard
 		$tmp = F::parseCommand('foo.bar');
@@ -770,7 +770,7 @@ class TestFuseboxyCore extends UnitTestCase {
 
 	function test__F__redirect() {
 		global $fusebox;
-		Framework::setFuseboxAPI();
+		Framework::createAPIObject();
 		$fusebox->config['defaultCommand'] = 'unit.test';
 		$fusebox->config['commandVariable'] = 'unitTestCommand';
 		$fusebox->config['commandDelimiter'] = '.';
@@ -801,7 +801,7 @@ class TestFuseboxyCore extends UnitTestCase {
 
 	function test__F__url() {
 		global $fusebox;
-		Framework::setFuseboxAPI();
+		Framework::createAPIObject();
 		$fusebox->config['defaultCommand'] = 'unit.test';
 		$fusebox->config['commandVariable'] = 'unitTestCommand';
 		$fusebox->config['commandDelimiter'] = '.';
