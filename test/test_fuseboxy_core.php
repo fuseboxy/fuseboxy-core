@@ -18,60 +18,83 @@ class TestFuseboxyCore extends UnitTestCase {
 		Framework::createAPIObject();
 		// check invalid file
 		try {
+			$hasError = false;
 			$fusebox->config['autoLoad'] = array(dirname(__FILE__).'/no/such/file.php');
 			Framework::autoLoad();
 		} catch (Exception $e) {
+			$hasError = true;
 			$this->assertPattern('/FUSEBOX-INVALID-CONFIG/', $e->getMessage());
 		}
+		$this->assertTrue($hasError);
 		// check invalid directory
 		try {
+			$hasError = false;
 			$fusebox->config['autoLoad'] = array(dirname(__FILE__).'/no/such/directory/');
 			Framework::autoLoad();
 		} catch (Exception $e) {
+			$hasError = true;
 			$this->assertPattern('/FUSEBOX-INVALID-CONFIG/', $e->getMessage());
 		}
+		$this->assertTrue($hasError);
 		// check invalid wildcard
 		try {
+			$hasError = false;
 			$fusebox->config['autoLoad'] = array(dirname(__FILE__).'/no/such/directory/*.*');
 			Framework::autoLoad();
 		} catch (Exception $e) {
+			$hasError = true;
 			$this->assertPattern('/FUSEBOX-INVALID-CONFIG/', $e->getMessage());
 		}
+		// when wildcard is invalid
+		// ===> framework simply do not look through it
+		// ===> but would not be able to see if the wildcarded-directory really exists
+		// ===> so there is simply no errorr...
+		$this->assertFalse($hasError);
 		// check valid file
 		try {
+			$hasError = false;
 			$fusebox->config['autoLoad'] = array(dirname(__FILE__).'/utility-core/empty.php');
 			Framework::autoLoad();
 		} catch (Exception $e) {
-			$this->assertTrue(false);
+			$hasError = true;
 		}
+		$this->assertFalse($hasError);
 		// check valid directory
 		try {
+			$hasError = false;
 			$fusebox->config['autoLoad'] = array(dirname(__FILE__).'/utility-core/empty/');
 			Framework::autoLoad();
 		} catch (Exception $e) {
-			$this->assertTrue(false);
+			$hasError = true;
 		}
+		$this->assertFalse($hasError);
 		// check valid wildcard
 		try {
+			$hasError = false;
 			$fusebox->config['autoLoad'] = array(dirname(__FILE__).'/utility-core/non-empty/*');
 			Framework::autoLoad();
 		} catch (Exception $e) {
-			$this->assertTrue(false);
+			$hasError = true;
 		}
+		$this->assertFalse($hasError);
 		// check valid wildcard (but no result)
 		try {
+			$hasError = false;
 			$fusebox->config['autoLoad'] = array(dirname(__FILE__).'/utility-core/non-empty/*.asp');
 			Framework::autoLoad();
 		} catch (Exception $e) {
-			$this->assertTrue(false);
+			$hasError = true;
 		}
+		$this->assertFalse($hasError);
 		// check valid wildcard (but empty directory)
 		try {
+			$hasError = false;
 			$fusebox->config['autoLoad'] = array(dirname(__FILE__).'/utility-core/empty/*');
 			Framework::autoLoad();
 		} catch (Exception $e) {
-			$this->assertTrue(false);
+			$hasError = true;
 		}
+		$this->assertFalse($hasError);
 		// clean-up
 		$fusebox = null;
 		unset($fusebox);
