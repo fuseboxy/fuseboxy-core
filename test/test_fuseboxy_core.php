@@ -776,23 +776,44 @@ class TestFuseboxyCore extends UnitTestCase {
 		$fusebox->config['commandDelimiter'] = '.';
 		Framework::setMyself();
 		// check redirect to internal command
-		$actual = F::redirect('foo.bar');
-		$expect = 'Location: '.F::url('foo.bar');
-		$this->assertTrue( str_replace(' ', '', strtolower(trim($actual))) === str_replace(' ', '', strtolower(trim($expect))) );
+		try {
+			$hasRedirect = false;
+			F::redirect('foo.bar');
+		} catch (Exception $e) {
+			$hasRedirect = true;
+			$this->assertPattern("/FUSEBOX-REDIRECT/", $e->getMessage());
+			$this->assertPattern('/'.preg_quote(F::url('foo.bar'), '/').'/i', $e->getMessage());
+		}
+		$this->assertTrue($hasRedirect);
 		// check redirect to external url
-		$actual = F::redirect('http://www.google.com');
-		$expect = 'Location: http://www.google.com';
-		$this->assertTrue( str_replace(' ', '', strtolower(trim($actual))) === str_replace(' ', '', strtolower(trim($expect))) );
+		try {
+			$hasRedirect = false;
+			F::redirect('http://www.google.com');
+		} catch (Exception $e) {
+			$hasRedirect = true;
+			$this->assertPattern("/FUSEBOX-REDIRECT/", $e->getMessage());
+			$this->assertPattern('/'.preg_quote('http://www.google.com', '/').'/i', $e->getMessage());
+		}
+		$this->assertTrue($hasRedirect);
 		// check delay redirect
-		$actual = F::redirect('foo.bar', true, 999);
-		$expect = 'Refresh: 999; url='.F::url('foo.bar');
-		$this->assertTrue( str_replace(' ', '', strtolower(trim($actual))) === str_replace(' ', '', strtolower(trim($expect))) );
-		$actual = F::redirect('https://www.google.com', true, 999);
-		$expect = 'Refresh: 999; url=https://www.google.com';
-		$this->assertTrue( str_replace(' ', '', strtolower(trim($actual))) === str_replace(' ', '', strtolower(trim($expect))) );
+		try {
+			$hasRedirect = false;
+			F::redirect('https://www.google.com', true, 999);
+		} catch (Exception $e) {
+			$hasRedirect = true;
+			$this->assertPattern("/FUSEBOX-REDIRECT/", $e->getMessage());
+			$this->assertPattern('/'.preg_quote('https://www.google.com', '/').'/i', $e->getMessage());
+			$this->assertPattern('/Refresh: 999/i', $e->getMessage());
+		}
+		$this->assertTrue($hasRedirect);
 		// check no redirect
-		$actual = F::redirect('foo.bar', false);
-		$this->assertTrue( empty($actual) );
+		try {
+			$hasRedirect = false;
+			F::redirect('foo.bar', false);
+		} catch (Exception $e) {
+			$hasRedirect = true;
+		}
+		$this->assertFalse($hasRedirect);
 		// clean-up
 		$fusebox = null;
 		unset($fusebox);
