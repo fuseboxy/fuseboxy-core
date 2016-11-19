@@ -60,8 +60,13 @@ class TestFuseboxyCore extends UnitTestCase {
 		}
 		$this->assertFalse($hasError);
 		// check valid directory
+		// ===> need to create empty directory
+		// ===> because git cannot track empty folder
 		try {
 			$hasError = false;
+			if ( !is_dir(dirname(__FILE__).'/utility-core/empty/') ) {
+				mkdir(dirname(__FILE__).'/utility-core/empty/');
+			}
 			$fusebox->config['autoLoad'] = array(dirname(__FILE__).'/utility-core/empty/');
 			Framework::autoLoad();
 		} catch (Exception $e) {
