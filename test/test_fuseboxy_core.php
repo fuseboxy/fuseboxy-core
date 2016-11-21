@@ -670,10 +670,12 @@ class TestFuseboxyCore extends UnitTestCase {
 		$fusebox->config['appPath'] = dirname(__FILE__).'/utility-core/';
 		Framework::setControllerAction();
 		// check valid command
+		$this->assertTrue( F::is('unit.test') );
 		ob_start();
 		F::invoke('unitTest');
 		$output = trim( ob_get_clean() );
 		$this->assertTrue( $output === 'This is unit test controller' );
+		$this->assertTrue( F::is('unit.test') );
 		ob_start();
 		F::invoke('unitTest.anotherPage');
 		$output = trim( ob_get_clean() );
