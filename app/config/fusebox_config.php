@@ -59,7 +59,7 @@ return array(
 	 *  Create an associative array which combines $_GET and $_POST (OPTIONAL)
 	 *  ===> allow evaluating $_GET and $_POST variables by a single token without including $_COOKIE in the mix
 	 **/
-	'formUrl2arguments' => array($_GET, $_POST),
+	'formUrl2arguments' => true,
 
 
 	/**
