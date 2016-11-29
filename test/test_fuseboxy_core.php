@@ -280,18 +280,40 @@ class TestFuseboxyCore extends UnitTestCase {
 		global $fusebox;
 		Framework::createAPIObject();
 		$fusebox->config['commandVariable'] = 'unitTestCommand';
-		// check url-rewrite disabled
+		// check url-rewrite disabled (at sub-directory)
+		$_SERVER['SCRIPT_NAME'] = '/unit_test/index.php';
 		$fusebox->config['urlRewrite'] = false;
 		Framework::setMyself();
 		$this->assertTrue( isset($fusebox->self) );
 		$this->assertTrue( isset($fusebox->myself) );
+		$this->assertTrue( $fusebox->self == '/unit_test/index.php' );
 		$this->assertTrue( $fusebox->myself == "{$fusebox->self}?unitTestCommand=" );
-		// check url-rewrite enabled
+		unset($fusebox->self, $fusebox->myself);
+		// check url-rewrite enabled (at sub-directory)
 		$fusebox->config['urlRewrite'] = true;
 		Framework::setMyself();
 		$this->assertTrue( isset($fusebox->self) );
 		$this->assertTrue( isset($fusebox->myself) );
+		$this->assertTrue( $fusebox->self == '/unit_test/' );
 		$this->assertTrue( $fusebox->myself == $fusebox->self );
+		unset($fusebox->self, $fusebox->myself);
+		// check url-rewrite disabled (at root directory)
+		$_SERVER['SCRIPT_NAME'] = '/index.php';
+		$fusebox->config['urlRewrite'] = false;
+		Framework::setMyself();
+		$this->assertTrue( isset($fusebox->self) );
+		$this->assertTrue( isset($fusebox->myself) );
+		$this->assertTrue( $fusebox->self == '/index.php' );
+		$this->assertTrue( $fusebox->myself == "{$fusebox->self}?unitTestCommand=" );
+		unset($fusebox->self, $fusebox->myself);
+		// check url-rewrite enabled (at root directory)
+		$fusebox->config['urlRewrite'] = true;
+		Framework::setMyself();
+		$this->assertTrue( isset($fusebox->self) );
+		$this->assertTrue( isset($fusebox->myself) );
+		$this->assertTrue( $fusebox->self == '/' );
+		$this->assertTrue( $fusebox->myself == $fusebox->self );
+		unset($fusebox->self, $fusebox->myself);
 		// clean-up
 		$fusebox = null;
 		unset($fusebox);
@@ -867,6 +889,14 @@ class TestFuseboxyCore extends UnitTestCase {
 		// no rewrite : check url with parameter
 		$this->assertTrue( F::url('foo&abc=123') === "{$fusebox->self}?unitTestCommand=foo&abc=123");
 		$this->assertTrue( F::url('foo.bar&aaa=1&bbb=2&ccc=3') === "{$fusebox->self}?unitTestCommand=foo.bar&aaa=1&bbb=2&ccc=3");
+		// no rewrite : sub-directory
+		$_SERVER['SCRIPT_NAME'] = '/unit_test/index.php';
+		Framework::setMyself();
+		$this->assertTrue( F::url('foo.bar') == '/unit_test/index.php?unitTestCommand=foo.bar' );
+		// no rewrite : root directory
+		$_SERVER['SCRIPT_NAME'] = '/index.php';
+		Framework::setMyself();
+		$this->assertTrue( F::url('foo.bar') == '/index.php?unitTestCommand=foo.bar' );
 		// url-rewrite : enabled
 		$fusebox->config['urlRewrite'] = true;
 		Framework::setMyself();
@@ -880,6 +910,14 @@ class TestFuseboxyCore extends UnitTestCase {
 		$this->assertTrue( F::url('foo&abc=123') === "{$fusebox->self}foo/abc=123" );
 		$this->assertTrue( F::url('foo.bar&aaa=1&bbb=2&ccc=3') === "{$fusebox->self}foo/bar/aaa=1/bbb=2/ccc=3" );
 		$this->assertTrue( F::url('xxx.yyy.zzz&aaa=1&bbb=2&ccc=3') === "{$fusebox->self}xxx/yyy.zzz/aaa=1/bbb=2/ccc=3" );
+		// no rewrite : sub-directory
+		$_SERVER['SCRIPT_NAME'] = '/unit_test/index.php';
+		Framework::setMyself();
+		$this->assertTrue( F::url('foo.bar') == '/unit_test/foo/bar/' or F::url('foo.bar') == '/unit_test/foo/bar' );
+		// no rewrite : root directory
+		$_SERVER['SCRIPT_NAME'] = '/index.php';
+		Framework::setMyself();
+		$this->assertTrue( F::url('foo.bar') == '/foo/bar/' or F::url('foo.bar') == '/foo/bar' );
 		// url-rewrite : check command delimiter
 		$fusebox->config['commandDelimiter'] = '-';
 		$this->assertFalse( F::url('foo.bar') === "{$fusebox->self}foo/bar" );

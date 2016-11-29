@@ -103,7 +103,9 @@ class Framework {
 	public static function setMyself() {
 		global $fusebox;
 		if ( !empty($fusebox->config['urlRewrite']) ) {
-			$fusebox->self = dirname($_SERVER['SCRIPT_NAME']).'/';
+			$fusebox->self = dirname($_SERVER['SCRIPT_NAME']);
+			$fusebox->self = str_replace('\\', '/', $fusebox->self);
+			if ( substr($fusebox->self, -1) != '/' ) $fusebox->self .= '/';
 			$fusebox->myself = $fusebox->self;
 		} else {
 			$fusebox->self = $_SERVER['SCRIPT_NAME'];
