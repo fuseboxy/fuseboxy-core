@@ -5,10 +5,10 @@ class TestFuseboxyCore extends UnitTestCase {
 	function __construct() {
 		$GLOBALS['FUSEBOX_UNIT_TEST'] = true;
 		if ( !class_exists('Framework') ) {
-			include dirname(dirname(__FILE__)).'/app/framework/1.0/fuseboxy.php';
+			include dirname(dirname(__FILE__)).'/app/framework/1.0.1/fuseboxy.php';
 		}
 		if ( !class_exists('F') ) {
-			include dirname(dirname(__FILE__)).'/app/framework/1.0/F.php';
+			include dirname(dirname(__FILE__)).'/app/framework/1.0.1/F.php';
 		}
 	}
 
