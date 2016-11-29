@@ -328,123 +328,131 @@ class TestFuseboxyCore extends UnitTestCase {
 		$fusebox->config['commandDelimiter'] = '.';
 		$fusebox->config['urlRewrite'] = true;
 		// check nothing to rewrite
-		$_SERVER['PATH_INFO'] = '/';
+		$_SERVER['REQUEST_URI'] = '/';
 		Framework::urlRewrite();
 		$this->assertTrue( empty($_GET['unitTestCommand']) );
 		$this->assertTrue( empty($_SERVER['QUERY_STRING']) );
-		$_SERVER['PATH_INFO'] = $_SERVER['QUERY_STRING'] = null;
+		$_SERVER['REQUEST_URI'] = $_SERVER['QUERY_STRING'] = null;
 		unset($_GET['unitTestCommand']);
 		// check rewrite with command and no parameter
-		$_SERVER['PATH_INFO'] = '/foo/bar';
+		$_SERVER['REQUEST_URI'] = '/foo/bar';
 		Framework::urlRewrite();
 		$this->assertTrue( $_SERVER['QUERY_STRING'] == 'unitTestCommand=foo.bar' );
 		$this->assertTrue( $_GET['unitTestCommand'] == 'foo.bar' );
-		$_SERVER['PATH_INFO'] = $_SERVER['QUERY_STRING'] = null;
+		$_SERVER['REQUEST_URI'] = $_SERVER['QUERY_STRING'] = null;
 		unset($_GET['unitTestCommand']);
 		// check rewrite with custom command-delimiter
 		$fusebox->config['commandDelimiter'] = '_';
-		$_SERVER['PATH_INFO'] = '/aaa/bbb/';
+		$_SERVER['REQUEST_URI'] = '/aaa/bbb/';
 		Framework::urlRewrite();
 		$this->assertTrue( $_SERVER['QUERY_STRING'] == 'unitTestCommand=aaa_bbb' );
 		$this->assertTrue( $_GET['unitTestCommand'] == 'aaa_bbb' );
-		$_SERVER['PATH_INFO'] = $_SERVER['QUERY_STRING'] = null;
+		$_SERVER['REQUEST_URI'] = $_SERVER['QUERY_STRING'] = null;
 		unset($_GET['unitTestCommand']);
 		$fusebox->config['commandDelimiter'] = '.';
 		// check rewrite with command and parameter
-		$_SERVER['PATH_INFO'] = '/fooBar/xyz/a=1/b=2/c=3/';
+		$_SERVER['REQUEST_URI'] = '/fooBar/xyz/a=1/b=2/c=3/';
 		Framework::urlRewrite();
 		$this->assertTrue( $_SERVER['QUERY_STRING'] == 'unitTestCommand=fooBar.xyz&a=1&b=2&c=3' );
 		$this->assertTrue( $_GET['unitTestCommand'] == 'fooBar.xyz' );
 		$this->assertTrue( $_GET['a'] == 1 and $_GET['b'] == 2 and $_GET['c'] == 3 );
-		$_SERVER['PATH_INFO'] = $_SERVER['QUERY_STRING'] = null;
+		$_SERVER['REQUEST_URI'] = $_SERVER['QUERY_STRING'] = null;
 		unset($_GET['unitTestCommand'], $_GET['a'], $_GET['b'], $_GET['c']);
 		// check rewrite with parameter but no command
-		$_SERVER['PATH_INFO'] = '/aaa=100/bbb=200/ccc=300/';
+		$_SERVER['REQUEST_URI'] = '/aaa=100/bbb=200/ccc=300/';
 		Framework::urlRewrite();
 		$this->assertTrue( empty($_GET['unitTestCommand']) );
 		$this->assertTrue( $_SERVER['QUERY_STRING'] == 'aaa=100&bbb=200&ccc=300' );
 		$this->assertTrue( $_GET['aaa'] == 100 and $_GET['bbb'] == 200 and $_GET['ccc'] == 300 );
-		$_SERVER['PATH_INFO'] = $_SERVER['QUERY_STRING'] = null;
+		$_SERVER['REQUEST_URI'] = $_SERVER['QUERY_STRING'] = null;
 		unset($_GET['unitTestCommand'], $_GET['aaa'], $_GET['bbb'], $_GET['ccc']);
 		// check rewrite with controller only and parameter
-		$_SERVER['PATH_INFO'] = '/unitTest/abc=123/xyz=999';
+		$_SERVER['REQUEST_URI'] = '/unitTest/abc=123/xyz=999';
 		Framework::urlRewrite();
 		$this->assertTrue( $_SERVER['QUERY_STRING'] == 'unitTestCommand=unitTest&abc=123&xyz=999' );
 		$this->assertTrue( $_GET['unitTestCommand'] == 'unitTest' );
 		$this->assertTrue( $_GET['abc'] == 123 and $_GET['xyz'] == 999 );
-		$_SERVER['PATH_INFO'] = $_SERVER['QUERY_STRING'] = null;
+		$_SERVER['REQUEST_URI'] = $_SERVER['QUERY_STRING'] = null;
 		unset($_GET['unitTestCommand'], $_GET['abc'], $_GET['xyz']);
 		// check rewrite with associative-array parameter
-		$_SERVER['PATH_INFO'] = '/unit/test/foo[a]=1/foo[b]=2/foo[c]=3';
+		$_SERVER['REQUEST_URI'] = '/unit/test/foo[a]=1/foo[b]=2/foo[c]=3';
 		Framework::urlRewrite();
 		$this->assertTrue( $_SERVER['QUERY_STRING'] == 'unitTestCommand=unit.test&foo[a]=1&foo[b]=2&foo[c]=3' );
 		$this->assertTrue( is_array($_GET['foo']) and $_GET['foo']['a'] == 1 and $_GET['foo']['b'] == 2 and $_GET['foo']['c'] == 3 );
-		$_SERVER['PATH_INFO'] = $_SERVER['QUERY_STRING'] = null;
+		$_SERVER['REQUEST_URI'] = $_SERVER['QUERY_STRING'] = null;
 		unset($_GET['unitTestCommand'], $_GET['foo']);
 		// check rewrite with indexed-array parameter
 		// check rewrite with associative-array parameter
-		$_SERVER['PATH_INFO'] = '/unit/test/foo[0]=a/foo[1]=b/foo[2]=c';
+		$_SERVER['REQUEST_URI'] = '/unit/test/foo[0]=a/foo[1]=b/foo[2]=c';
 		Framework::urlRewrite();
 		$this->assertTrue( $_SERVER['QUERY_STRING'] == 'unitTestCommand=unit.test&foo[0]=a&foo[1]=b&foo[2]=c' );
 		$this->assertTrue( is_array($_GET['foo']) and $_GET['foo'][0] == 'a' and $_GET['foo'][1] == 'b' and $_GET['foo'][2] == 'c' );
-		$_SERVER['PATH_INFO'] = $_SERVER['QUERY_STRING'] = null;
+		$_SERVER['REQUEST_URI'] = $_SERVER['QUERY_STRING'] = null;
 		unset($_GET['unitTestCommand'], $_GET['foo']);
 		// check rewrite with append-array parameter
-		$_SERVER['PATH_INFO'] = '/unit/test/foobar[]=abc/foobar[]=xyz/foobar[]=123';
+		$_SERVER['REQUEST_URI'] = '/unit/test/foobar[]=abc/foobar[]=xyz/foobar[]=123';
 		Framework::urlRewrite();
 		$this->assertTrue( $_SERVER['QUERY_STRING'] == 'unitTestCommand=unit.test&foobar[]=abc&foobar[]=xyz&foobar[]=123' );
 		$this->assertTrue( is_array($_GET['foobar']) and $_GET['foobar'][0] == 'abc' and $_GET['foobar'][1] == 'xyz' and $_GET['foobar'][2] == 123 );
-		$_SERVER['PATH_INFO'] = $_SERVER['QUERY_STRING'] = null;
+		$_SERVER['REQUEST_URI'] = $_SERVER['QUERY_STRING'] = null;
 		unset($_GET['unitTestCommand'], $_GET['foobar']);
 		// check rewrite with multi-level array parameter
-		$_SERVER['PATH_INFO'] = '/unit/test/foobar[abc][123][xyz]=999';
+		$_SERVER['REQUEST_URI'] = '/unit/test/foobar[abc][123][xyz]=999';
 		Framework::urlRewrite();
 		$this->assertTrue( $_SERVER['QUERY_STRING'] == 'unitTestCommand=unit.test&foobar[abc][123][xyz]=999' );
 		$this->assertTrue( isset($_GET['foobar']['abc'][123]['xyz']) and $_GET['foobar']['abc'][123]['xyz'] == 999 );
-		$_SERVER['PATH_INFO'] = $_SERVER['QUERY_STRING'] = null;
+		$_SERVER['REQUEST_URI'] = $_SERVER['QUERY_STRING'] = null;
 		unset($_GET['unitTestCommand'], $_GET['foobar']);
 		// check rewrite with beauty-url mix with query-string
-		$_SERVER['PATH_INFO'] = '/unit/test/a=1/b=2/c=3/';
-		$_SERVER['QUERY_STRING'] = 'x=9&y=9&z=9';
+		$_SERVER['REQUEST_URI'] = '/unit/test/a=1/b=2/c=3/?x=9&y=9&z=9';
 		Framework::urlRewrite();
 		$this->assertTrue( $_SERVER['QUERY_STRING'] == 'unitTestCommand=unit.test&a=1&b=2&c=3&x=9&y=9&z=9' );
 		$this->assertTrue( $_GET['unitTestCommand'] == 'unit.test' );
 		$this->assertTrue( $_GET['a'] == 1 and $_GET['b'] == 2 and $_GET['c'] == 3 );
 		$this->assertTrue( $_GET['z'] == 9 and $_GET['y'] == 9 and $_GET['z'] == 9 );
-		$_SERVER['PATH_INFO'] = $_SERVER['QUERY_STRING'] = null;
+		$_SERVER['REQUEST_URI'] = $_SERVER['QUERY_STRING'] = null;
+		unset($_GET['unitTestCommand'], $_GET['a'], $_GET['b'], $_GET['c'], $_GET['x'], $_GET['y'], $_GET['z']);
+		// check rewrite with beauty-url mix with query-string
+		$_SERVER['REQUEST_URI'] = '/unit/test/x=9/y=9/z=9/&a=1&b=2&c=3';
+		Framework::urlRewrite();
+		$this->assertTrue( $_SERVER['QUERY_STRING'] == 'unitTestCommand=unit.test&x=9&y=9&z=9&a=1&b=2&c=3' );
+		$this->assertTrue( $_GET['unitTestCommand'] == 'unit.test' );
+		$this->assertTrue( $_GET['a'] == 1 and $_GET['b'] == 2 and $_GET['c'] == 3 );
+		$this->assertTrue( $_GET['z'] == 9 and $_GET['y'] == 9 and $_GET['z'] == 9 );
+		$_SERVER['REQUEST_URI'] = $_SERVER['QUERY_STRING'] = null;
 		unset($_GET['unitTestCommand'], $_GET['a'], $_GET['b'], $_GET['c'], $_GET['x'], $_GET['y'], $_GET['z']);
 		// check rewrite with route
 		$fusebox->config['route'] = array(
 			'/article/(\d+)' => 'unitTestCommand=article.view&id=$1&abc=$2&xyz=foobar'
 		);
-		$_SERVER['PATH_INFO'] = '/article/999';
+		$_SERVER['REQUEST_URI'] = '/article/999';
 		Framework::urlRewrite();
 		$this->assertTrue( $_SERVER['QUERY_STRING'] == 'unitTestCommand=article.view&id=999&abc=&xyz=foobar' );
 		$this->assertTrue( $_GET['unitTestCommand'] == 'article.view' );
 		$this->assertTrue( $_GET['id'] == 999 );
 		$this->assertTrue( $_GET['abc'] == '' );
 		$this->assertTrue( $_GET['xyz'] == 'foobar' );
-		$_SERVER['PATH_INFO'] = $_SERVER['QUERY_STRING'] = null;
+		$_SERVER['REQUEST_URI'] = $_SERVER['QUERY_STRING'] = null;
 		unset($_GET['unitTestCommand'], $_GET['id'], $_GET['abc'], $_GET['xyz']);
 		$fusebox->config['route'] = null;
 		// check route start without forward-slash
 		$fusebox->config['route'] = array(
 			'news/read/(\d+)' => 'unitTestCommand=news.read&id=$1'
 		);
-		$_SERVER['PATH_INFO'] = '/news/read/100';
+		$_SERVER['REQUEST_URI'] = '/news/read/100';
 		Framework::urlRewrite();
 		$this->assertTrue( $_SERVER['QUERY_STRING'] == 'unitTestCommand=news.read&id=100' );
-		$_SERVER['PATH_INFO'] = $_SERVER['QUERY_STRING'] = null;
+		$_SERVER['REQUEST_URI'] = $_SERVER['QUERY_STRING'] = null;
 		unset($_GET['unitTestCommand'], $_GET['id']);
 		$fusebox->config['route'] = null;
 		// check route with forward-slash escaped
 		$fusebox->config['route'] = array(
 			'\/article\/view\/(\d+)' => 'unitTestCommand=article.view&id=$1'
 		);
-		$_SERVER['PATH_INFO'] = '/article/view/12345';
+		$_SERVER['REQUEST_URI'] = '/article/view/12345';
 		Framework::urlRewrite();
 		$this->assertTrue( $_SERVER['QUERY_STRING'] == 'unitTestCommand=article.view&id=12345' );
-		$_SERVER['PATH_INFO'] = $_SERVER['QUERY_STRING'] = null;
+		$_SERVER['REQUEST_URI'] = $_SERVER['QUERY_STRING'] = null;
 		unset($_GET['unitTestCommand'], $_GET['id']);
 		$fusebox->config['route'] = null;
 		// check multiple routes (should match the first one)
@@ -452,20 +460,20 @@ class TestFuseboxyCore extends UnitTestCase {
 			'([\s\S]+)' => 'unitTestCommand=cms.view&path=$1',
 			'/post/(\d+)' => 'unitTestCommand=article.view&id=$1',
 		);
-		$_SERVER['PATH_INFO'] = '/post/111';
+		$_SERVER['REQUEST_URI'] = '/post/111';
 		Framework::urlRewrite();
 		$this->assertTrue( $_SERVER['QUERY_STRING'] == 'unitTestCommand=cms.view&path=post/111' );
 		$this->assertFalse( $_SERVER['QUERY_STRING'] == 'unitTestCommand=article.view&id=111' );
-		$_SERVER['PATH_INFO'] = $_SERVER['QUERY_STRING'] = null;
+		$_SERVER['REQUEST_URI'] = $_SERVER['QUERY_STRING'] = null;
 		unset($_GET['unitTestCommand'], $_GET['id']);
 		$fusebox->config['route'] = null;
 		// check rewrite disabled
 		$fusebox->config['urlRewrite'] = false;
-		$_SERVER['PATH_INFO'] = '/foo/bar';
+		$_SERVER['REQUEST_URI'] = '/foo/bar';
 		Framework::urlRewrite();
 		$this->assertTrue( empty($_GET['unitTestCommand']) );
 		$this->assertTrue( empty($_SERVER['QUERY_STRING']) );
-		$_SERVER['PATH_INFO'] = $_SERVER['QUERY_STRING'] = null;
+		$_SERVER['REQUEST_URI'] = $_SERVER['QUERY_STRING'] = null;
 		unset($_GET['unitTestCommand']);
 		// clean-up
 		$fusebox = null;
