@@ -10,4 +10,4 @@ header("X-UA-Compatible: IE=Edge");
 session_name('FUSEBOXY');
 session_start();
 // load framework and page
-require_once 'app/framework/1.0/fuseboxy.php';
+require_once 'app/framework/1.0.1/fuseboxy.php';
