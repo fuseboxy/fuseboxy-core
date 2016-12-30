@@ -252,6 +252,49 @@ class TestFuseboxyCore extends UnitTestCase {
 	}
 
 
+	function test__Framework__runNothing() {
+		global $fusebox;
+		// run nothing
+		$originalConfigPath = Framework::$configPath;
+		Framework::$configPath = dirname(__FILE__).'/utility-core/config/empty_config.php';
+		$hasError = false;
+		try {
+			ob_start();
+			Framework::run();
+			$output = ob_get_clean();
+		} catch (Exception $e) {
+			$hasError = true;
+			$output = $e->getMessage();
+		}
+		$this->assertFalse($hasError);
+		$this->assertNoPattern('/PHP ERROR/i', $output);
+		$this->assertTrue($output == '');
+		// clean-up
+		$fusebox = null;
+		Framework::$configPath = $originalConfigPath;
+	}
+
+
+	function test__Framework__runSuccess() {
+		global $fusebox;
+		// run successfully
+		$hasError = false;
+		try {
+			ob_start();
+			Framework::run();
+			$output = ob_get_clean();
+		} catch (Exception $e) {
+			$hasError = true;
+			$output = $e->getMessage();
+		}
+		$this->assertFalse($hasError);
+		$this->assertNoPattern('/PHP ERROR/i', $output);
+		$this->assertTrue($output != '');
+		// clean-up
+		$fusebox = null;
+	}
+
+
 	function test__Framework__setControllerAction() {
 		global $fusebox;
 		Framework::createAPIObject();

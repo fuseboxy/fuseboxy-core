@@ -55,12 +55,15 @@ class Framework {
 	// ===> when {$fusebox} api is ready
 	public static function loadHelper() {
 		global $fusebox;
-		if ( file_exists(Framework::$helperPath) ) {
-			include Framework::$helperPath;
-		} else {
+		// check helper path
+		if ( !file_exists(Framework::$helperPath) ) {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
 			throw new Exception("[FUSEBOX-HELPER-NOT-FOUND] Helper class file not found (".Framework::$helperPath.")");
+		// load helper
+		} elseif ( !class_exists('F') ) {
+			include Framework::$helperPath;
 		}
+		// validate after load
 		if ( !class_exists('F') ) {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
 			throw new Exception("[FUSEBOX-HELPER-NOT-DEFINED] Helper class (F) not defined");
