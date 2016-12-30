@@ -58,7 +58,7 @@ class F {
 			$fusebox->error = $msg;
 			if ( !empty($fusebox->config['errorController']) ) {
 				include $fusebox->config['errorController'];
-				die();
+				die(); // ensure operation aborted
 			} else {
 				throw new Exception(self::command()." - ".$fusebox->error, Framework::FUSEBOX_ERROR);
 			}
@@ -139,7 +139,7 @@ class F {
 			$fusebox->error = 'Page not found';
 			if ( !empty($fusebox->config['errorController']) ) {
 				include $fusebox->config['errorController'];
-				die();
+				die(); // ensure operation aborted
 			} else {
 				throw new Exception(self::command()." - ".$fusebox->error, Framework::FUSEBOX_PAGE_NOT_FOUND);
 			}
