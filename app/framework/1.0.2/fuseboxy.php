@@ -30,20 +30,10 @@ class Framework {
 	}
 
 
-	// define config default value
-	public static function loadDefaultConfig() {
+	// load config and assign default value
+	public static function loadConfig() {
 		global $fusebox;
-		$fusebox->config = array(
-			'commandVariable' => 'fuseaction',
-			'commandDelimiter' => '.',
-			'appPath' => str_replace('\\', '/', dirname(dirname(__FILE__))).'/',
-		);
-	}
-
-
-	// load user-defined config
-	public static function loadCustomConfig() {
-		global $fusebox;
+		// validate config file
 		if ( file_exists(Framework::$configPath) ) {
 			$fusebox->config = include Framework::$configPath;
 		} else {
@@ -54,6 +44,10 @@ class Framework {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
 			throw new Exception("[FUSEBOX-CONFIG-NOT-DEFINED] Config file must return an Array");
 		}
+		// define config default value (when necessary)
+		$fusebox->config['commandVariable'] = isset($fusebox->config['commandVariable']) ? $fusebox->config['commandVariable'] : 'fuseaction';
+		$fusebox->config['commandDelimiter'] = isset($fusebox->config['commandDelimiter']) ? $fusebox->config['commandDelimiter'] : '.';
+		$fusebox->config['appPath'] = isset($fusebox->config['appPath']) ? $fusebox->config['appPath'] : (str_replace('\\', '/', dirname(dirname(__FILE__))).'/');
 	}
 
 
@@ -319,8 +313,7 @@ class Framework {
 		global $arguments;
 		// main process...
 		self::createAPIObject();
-		self::loadDefaultConfig();
-		self::loadCustomConfig();
+		self::loadConfig();
 		self::validateConfig();
 		self::loadHelper();
 		self::setMyself();
