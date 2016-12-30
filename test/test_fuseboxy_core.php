@@ -199,48 +199,60 @@ class TestFuseboxyCore extends UnitTestCase {
 
 	function test__Framework__loadCustomConfig() {
 		global $fusebox;
-		global $FUSEBOX_CONFIG_PATH;
 		Framework::createAPIObject();
+		$originalConfigPath = Framework::$configPath;
+		// check valid path (default)
+		$hasError = false;
+		try {
+			Framework::loadCustomConfig();
+		} catch (Exception $e) {
+			$hasError = true;
+		}
+		$this->assertFalse($hasError);
 		// check invalid path
+		$hasError = false;
 		try {
-			$caseResult = false;
-			$FUSEBOX_CONFIG_PATH = dirname(__FILE__).'/no/such/path.php';
+			Framework::$configPath = dirname(__FILE__).'/no/such/path.php';
 			Framework::loadCustomConfig();
 		} catch (Exception $e) {
-			$caseResult = preg_match('/FUSEBOX-CONFIG-NOT-FOUND/', $e->getMessage());
+			$hasError = true;
 		}
-		$this->assertTrue($caseResult);
+		$this->assertTrue($hasError);
+		$this->assertPattern('/FUSEBOX-CONFIG-NOT-FOUND/', $e->getMessage());
 		// check empty config
+		$hasError = false;
 		try {
-			$caseResult = false;
-			$FUSEBOX_CONFIG_PATH = dirname(__FILE__).'/utility-core/empty.php';
+			Framework::$configPath = dirname(__FILE__).'/utility-core/empty.php';
 			Framework::loadCustomConfig();
 		} catch (Exception $e) {
-			$caseResult = preg_match('/FUSEBOX-CONFIG-NOT-DEFINED/', $e->getMessage());
+			$hasError = true;
 		}
-		$this->assertTrue($caseResult);
+		$this->assertTrue($hasError);
+		$this->assertPattern('/FUSEBOX-CONFIG-NOT-DEFINED/', $e->getMessage());
 		// clean-up
-		$fusebox = $FUSEBOX_CONFIG_PATH = null;
-		unset($fusebox, $FUSEBOX_CONFIG_PATH);
+		$fusebox = null;
+		unset($fusebox);
+		Framework::$configPath = $originalConfigPath;
 	}
 
 
 	function test__Framework__loadHelper() {
 		global $fusebox;
-		global $FUSEBOX_HELPER_PATH;
 		Framework::createAPIObject();
+		$originalHelperPath = Framework::$helperPath;
 		// check invalid path
 		try {
 			$caseResult = false;
-			$FUSEBOX_HELPER_PATH = dirname(__FILE__).'/no/such/file.php';
+			Framework::$helperPath = dirname(__FILE__).'/no/such/file.php';
 			Framework::loadHelper();
 		} catch (Exception $e) {
 			$caseResult = preg_match('/FUSEBOX-HELPER-NOT-FOUND/', $e->getMessage());
 		}
 		$this->assertTrue($caseResult);
 		// clean-up
-		$fusebox = $FUSEBOX_HELPER_PATH = null;
-		unset($fusebox, $FUSEBOX_HELPER_PATH);
+		$fusebox = null;
+		unset($fusebox);
+		Framework::$helperPath = $originalHelperPath;
 	}
 
 

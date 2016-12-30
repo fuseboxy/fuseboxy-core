@@ -6,20 +6,21 @@
 	<properties name="version" value="1.0.2" />
 	<io>
 		<in>
-			<string name="FUSEBOX_CONFIG_PATH" scope="$GLOBALS" optional="yes" default="../../../config/fusebox_config.php" />
-			<string name="FUSEBOX_HELPER_PATH" scope="$GLOBALS" optional="yes" default="./F.php" />
+			<string name="$mode" scope="Framework" optional="yes" comments="for unit-test of helper" />
+			<string name="$configPath" scope="Framework" optional="yes" default="../../../config/fusebox_config.php" />
+			<string name="$helperPath" scope="Framework" optional="yes" default="./F.php" />
 		</in>
-		<out>
-			<string name="$mode" scope="Framework" optional="yes" comments="for unit-test of helper component" />
-		</out>
+		<out />
 	</io>
 </fusedoc>
 */
 class Framework {
 
 
-	// config
+	// settings
 	public static $mode;
+	public static $configPath = __DIR__.'/../../config/fusebox_config.php';
+	public static $helperPath = __DIR__.'/F.php';
 
 
 	// initiate fusebox-api variable
@@ -44,12 +45,11 @@ class Framework {
 	// load user-defined config
 	public static function loadCustomConfig() {
 		global $fusebox;
-		$configPath = isset($GLOBALS['FUSEBOX_CONFIG_PATH']) ? $GLOBALS['FUSEBOX_CONFIG_PATH'] : dirname(dirname(dirname(__FILE__))).'/config/fusebox_config.php';
-		if ( file_exists($configPath) ) {
-			$fusebox->config = include $configPath;
+		if ( file_exists(Framework::$configPath) ) {
+			$fusebox->config = include Framework::$configPath;
 		} else {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception("[FUSEBOX-CONFIG-NOT-FOUND] Config file not found ({$configPath})");
+			throw new Exception("[FUSEBOX-CONFIG-NOT-FOUND] Config file not found (".Framework::$configPath.")");
 		}
 		if ( !is_array($fusebox->config) ) {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
@@ -62,12 +62,11 @@ class Framework {
 	// ===> when {$fusebox} api is ready
 	public static function loadHelper() {
 		global $fusebox;
-		$helperPath = isset($GLOBALS['FUSEBOX_HELPER_PATH']) ? $GLOBALS['FUSEBOX_HELPER_PATH'] : dirname(__FILE__).'/F.php';
-		if ( file_exists($helperPath) ) {
-			include $helperPath;
+		if ( file_exists(Framework::$helperPath) ) {
+			include Framework::$helperPath;
 		} else {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception("[FUSEBOX-HELPER-NOT-FOUND] Helper class file not found ({$helperPath})");
+			throw new Exception("[FUSEBOX-HELPER-NOT-FOUND] Helper class file not found (".Framework::$helperPath.")");
 		}
 		if ( !class_exists('F') ) {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
