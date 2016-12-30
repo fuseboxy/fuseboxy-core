@@ -12,7 +12,7 @@ return array(
 	 *  ===> command is in [controller].[action] format
 	 *  ===> if no [action] was specified, fusebox will automatically resolve it to 'index'
 	 **/
-	'defaultCommand' => 'site',
+	'defaultCommand' => false,
 
 
 	/**

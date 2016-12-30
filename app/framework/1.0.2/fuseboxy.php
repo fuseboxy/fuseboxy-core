@@ -79,7 +79,7 @@ class Framework {
 	public static function validateConfig() {
 		global $fusebox;
 		// check required config
-		foreach ( array('defaultCommand','commandVariable','commandDelimiter','appPath') as $key ) {
+		foreach ( array('commandVariable','commandDelimiter','appPath') as $key ) {
 			if ( empty($fusebox->config[$key]) ) {
 				if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
 				throw new Exception("[FUSEBOX-MISSING-CONFIG] Fusebox config variable {{$key}} is required");
@@ -322,10 +322,14 @@ class Framework {
 		self::urlRewrite();
 		self::formUrl2arguments();
 		self::setControllerAction();
-		// load controller and... RUN!!!
-		$__controllerPath = "{$fusebox->config['appPath']}/controller/{$fusebox->controller}_controller.php";
-		F::pageNotFound( !file_exists($__controllerPath) );
-		include $__controllerPath;
+		// do not run when no controller specified
+		// ===> e.g. when default-command is empty
+		// ===> otherwise, load controller and run!
+		if ( !empty($fusebox->controller) ) {
+			$__controllerPath = "{$fusebox->config['appPath']}/controller/{$fusebox->controller}_controller.php";
+			F::pageNotFound( !file_exists($__controllerPath) );
+			include $__controllerPath;
+		}
 	}
 
 
