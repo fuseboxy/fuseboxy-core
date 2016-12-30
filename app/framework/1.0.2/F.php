@@ -3,10 +3,10 @@
 	<description>
 		Helper component for Fuseboxy framework
 	</description>
-	<properties name="version" value="1.0" />
+	<properties name="version" value="1.0.2" />
 	<io>
 		<in>
-			<boolean name="FUSEBOX_UNIT_TEST" scope="$GLOBALS" optional="yes" />
+			<string name="$mode" scope="Framework" optional="yes" comments="UNIT_TEST" />
 		</in>
 	</io>
 </fusedoc>
@@ -52,9 +52,7 @@ class F {
 	public static function error($msg='error', $condition=true) {
 		global $fusebox;
 		if ( $condition ) {
-			if ( empty($GLOBALS['FUSEBOX_UNIT_TEST']) ) {
-				header("HTTP/1.0 403 Forbidden");
-			}
+			if ( !headers_sent() ) header("HTTP/1.0 403 Forbidden");
 			$fusebox->error = $msg;
 			if ( isset($fusebox->config['errorController']) ) {
 				include $fusebox->config['errorController'];
@@ -135,9 +133,7 @@ class F {
 	public static function pageNotFound($condition=true) {
 		global $fusebox;
 		if ( $condition ) {
-			if ( empty($GLOBALS['FUSEBOX_UNIT_TEST']) ) {
-				header("HTTP/1.0 404 Not Found");
-			}
+			if ( !headers_sent() ) header("HTTP/1.0 404 Not Found");
 			$fusebox->error = 'Page not found';
 			if ( isset($fusebox->config['errorController']) ) {
 				include $fusebox->config['errorController'];
@@ -166,17 +162,16 @@ class F {
 		// check internal or external link
 		$isExternalUrl = ( substr(strtolower(trim($url)), 0, 7) == 'http://' or substr(strtolower(trim($url)), 0, 8) == 'https://' );
 		if ( !$isExternalUrl ) $url = self::url($url);
-		// check if any delay (in second)
-		$headerString = empty($delay) ? "Location: {$url}" : "Refresh: {$delay}; url={$url}";
 		// only redirect when condition is true
 		if ( $condition ) {
-			// perform redirect (when necessary)
-			if ( empty($GLOBALS['FUSEBOX_UNIT_TEST']) ) {
-				header($headerString);
-				die();
 			// throw header-string as exception in order to abort operation without stopping unit-test
+			if ( Framework::$mode == 'UNIT_TEST' ) {
+				throw new Exception("[FUSEBOX-REDIRECT] Refresh:{$delay};url={$url}");
+			// perform redirect (when necessary)
+			} elseif ( !headers_sent() ) {
+				header("Refresh:{$delay};url={$url}");
 			} else {
-				throw new Exception("[FUSEBOX-REDIRECT] {$headerString}");
+				echo "<script>window.setTimeout(function(){document.location.href='{$url}';},{$delay}*0);</script>";
 			}
 		}
 	}

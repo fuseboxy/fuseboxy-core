@@ -3,13 +3,13 @@ class TestFuseboxyCore extends UnitTestCase {
 
 
 	function __construct() {
-		$GLOBALS['FUSEBOX_UNIT_TEST'] = true;
 		if ( !class_exists('Framework') ) {
-			include dirname(dirname(__FILE__)).'/app/framework/1.0.1/fuseboxy.php';
+			include dirname(dirname(__FILE__)).'/app/framework/1.0.2/fuseboxy.php';
 		}
 		if ( !class_exists('F') ) {
-			include dirname(dirname(__FILE__)).'/app/framework/1.0.1/F.php';
+			include dirname(dirname(__FILE__)).'/app/framework/1.0.2/F.php';
 		}
+		Framework::$mode = 'UNIT_TEST';
 	}
 
 
@@ -863,7 +863,7 @@ class TestFuseboxyCore extends UnitTestCase {
 			$hasRedirect = true;
 			$this->assertPattern("/FUSEBOX-REDIRECT/", $e->getMessage());
 			$this->assertPattern('/'.preg_quote('https://www.google.com', '/').'/i', $e->getMessage());
-			$this->assertPattern('/Refresh: 999/i', $e->getMessage());
+			$this->assertPattern('/Refresh:999/i', $e->getMessage());
 		}
 		$this->assertTrue($hasRedirect);
 		// check no redirect
