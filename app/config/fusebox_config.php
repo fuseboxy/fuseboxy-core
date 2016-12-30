@@ -8,7 +8,7 @@ return array(
 
 
 	/**
-	 *  Default page (REQUIRED)
+	 *  Default page (OPTIONAL)
 	 *  ===> command is in [controller].[action] format
 	 *  ===> if no [action] was specified, fusebox will automatically resolve it to 'index'
 	 *  ===> if set to [false], fusebox will load nothing by default
@@ -77,7 +77,7 @@ return array(
 	 * ===> for scaffold file upload
 	 * ===> set it to 777 mode
 	 **/
-	'uploadDir' => dirname(dirname(__DIR__)).'/data/upload/',
+	'uploadDir' => dirname(dirname(__DIR__)).'/upload/',
 
 
 	/**
