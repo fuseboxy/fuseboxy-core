@@ -224,7 +224,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		Framework::createAPIObject();
 		// check variables
 		Framework::loadDefaultConfig();
-		$this->assertTrue( !empty($fusebox->config['defaultCommand']) ) ;
 		$this->assertTrue( !empty($fusebox->config['commandVariable']) ) ;
 		$this->assertTrue( !empty($fusebox->config['commandDelimiter']) ) ;
 		$this->assertTrue( !empty($fusebox->config['appPath']) ) ;

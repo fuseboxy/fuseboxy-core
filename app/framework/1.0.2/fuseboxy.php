@@ -34,7 +34,6 @@ class Framework {
 	public static function loadDefaultConfig() {
 		global $fusebox;
 		$fusebox->config = array(
-			'defaultCommand' => 'site',
 			'commandVariable' => 'fuseaction',
 			'commandDelimiter' => '.',
 			'appPath' => str_replace('\\', '/', dirname(dirname(__FILE__))).'/',
@@ -301,8 +300,10 @@ class Framework {
 			$command = $_GET[$fusebox->config['commandVariable']];
 		} elseif ( !empty($_POST[$fusebox->config['commandVariable']]) ) {
 			$command = $_POST[$fusebox->config['commandVariable']];
-		} else {
+		} elseif ( !empty($fusebox->config['defaultCommand']) ) {
 			$command = $fusebox->config['defaultCommand'];
+		} else {
+			$command = false;
 		}
 		// parse controller & action
 		$parsed = F::parseCommand($command);
