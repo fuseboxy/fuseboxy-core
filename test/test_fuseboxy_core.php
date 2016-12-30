@@ -102,7 +102,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		$this->assertFalse($hasError);
 		// clean-up
 		$fusebox = null;
-		unset($fusebox);
 	}
 
 
@@ -216,7 +215,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		$this->assertPattern('/FUSEBOX-CONFIG-NOT-DEFINED/', $e->getMessage());
 		// clean-up
 		$fusebox = null;
-		unset($fusebox);
 		Framework::$configPath = $originalConfigPath;
 	}
 
@@ -232,7 +230,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		$this->assertTrue( !empty($fusebox->config['appPath']) ) ;
 		// clean-up
 		$fusebox = null;
-		unset($fusebox);
 	}
 
 
@@ -251,7 +248,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		$this->assertTrue($caseResult);
 		// clean-up
 		$fusebox = null;
-		unset($fusebox);
 		Framework::$helperPath = $originalHelperPath;
 	}
 
@@ -284,7 +280,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		unset($_GET['unitTestCommand']);
 		// clean-up
 		$fusebox = null;
-		unset($fusebox);
 	}
 
 
@@ -328,7 +323,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		unset($fusebox->self, $fusebox->myself);
 		// clean-up
 		$fusebox = null;
-		unset($fusebox);
 	}
 
 
@@ -489,7 +483,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		unset($_GET['unitTestCommand']);
 		// clean-up
 		$fusebox = null;
-		unset($fusebox);
 	}
 
 
@@ -527,7 +520,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		$this->assertFalse($hasError);
 		// clean-up
 		$fusebox = null;
-		unset($fusebox);
 	}
 
 
@@ -549,7 +541,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		$this->assertFalse(F::ajaxRequest());
 		// clean-up
 		$fusebox = null;
-		unset($fusebox);
 	}
 
 
@@ -611,7 +602,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		unset($_GET['unitTestCommand']);
 		// clean-up
 		$fusebox = null;
-		unset($fusebox);
 	}
 
 
@@ -637,7 +627,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		$this->assertTrue( F::config('foobar') == null );
 		// clean-up
 		$fusebox = null;
-		unset($fusebox);
 	}
 
 
@@ -668,7 +657,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		$this->assertTrue( empty($e) );
 		// clean-up
 		$fusebox = null;
-		unset($fusebox);
 	}
 
 
@@ -728,7 +716,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		unset($_GET['unitTestCommand']);
 		// clean-up
 		$fusebox = null;
-		unset($fusebox);
 	}
 
 
@@ -777,7 +764,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		$this->assertPattern('/This is nested invoke/', $output);
 		// clean-up
 		$fusebox = null;
-		unset($fusebox);
 	}
 
 
@@ -808,7 +794,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		$this->assertTrue( substr_count($output, 'invokeQueueLength') == 2 );
 		// clean-up
 		$fusebox = null;
-		unset($fusebox);
 	}
 
 
@@ -836,7 +821,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		$this->assertFalse($caseResult);
 		// clean-up
 		$fusebox = null;
-		unset($fusebox);
 	}
 
 
@@ -865,7 +849,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		$this->assertTrue( $tmp['controller'] === 'foo' and $tmp['action'] === 'bar' );
 		// clean-up
 		$fusebox = null;
-		unset($fusebox);
 	}
 
 
@@ -917,7 +900,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		$this->assertFalse($hasRedirect);
 		// clean-up
 		$fusebox = null;
-		unset($fusebox);
 	}
 
 
@@ -979,7 +961,6 @@ class TestFuseboxyCore extends UnitTestCase {
 		$fusebox->config['route'] = null;
 		// clean-up
 		$fusebox = null;
-		unset($fusebox);
 	}
 
 
