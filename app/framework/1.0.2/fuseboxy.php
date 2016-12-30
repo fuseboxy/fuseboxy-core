@@ -17,6 +17,21 @@
 class Framework {
 
 
+	// constant : mode
+	const FUSEBOX_UNIT_TEST          = 101;
+	// constant : error
+	const FUSEBOX_CONFIG_NOT_FOUND   = 501;
+	const FUSEBOX_CONFIG_NOT_DEFINED = 502;
+	const FUSEBOX_HELPER_NOT_FOUND   = 503;
+	const FUSEBOX_HELPER_NOT_DEFINED = 504;
+	const FUSEBOX_MISSING_CONFIG     = 505;
+	const FUSEBOX_INVALID_CONFIG     = 506;
+	const FUSEBOX_ERROR              = 507;
+	const FUSEBOX_PAGE_NOT_FOUND     = 508;
+	// constant : others
+	const FUSEBOX_REDIRECT           = 901;
+
+
 	// settings
 	public static $mode;
 	public static $configPath = __DIR__.'/../../config/fusebox_config.php';
@@ -38,11 +53,11 @@ class Framework {
 			$fusebox->config = include Framework::$configPath;
 		} else {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception("[FUSEBOX-CONFIG-NOT-FOUND] Config file not found (".Framework::$configPath.")");
+			throw new Exception("Config file not found (".Framework::$configPath.")", self::FUSEBOX_CONFIG_NOT_FOUND);
 		}
 		if ( !is_array($fusebox->config) ) {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception("[FUSEBOX-CONFIG-NOT-DEFINED] Config file must return an Array");
+			throw new Exception("Config file must return an Array", self::FUSEBOX_CONFIG_NOT_DEFINED);
 		}
 		// define config default value (when necessary)
 		$fusebox->config['commandVariable'] = isset($fusebox->config['commandVariable']) ? $fusebox->config['commandVariable'] : 'fuseaction';
@@ -58,7 +73,7 @@ class Framework {
 		// check helper path
 		if ( !file_exists(Framework::$helperPath) ) {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception("[FUSEBOX-HELPER-NOT-FOUND] Helper class file not found (".Framework::$helperPath.")");
+			throw new Exception("Helper class file not found (".Framework::$helperPath.")", self::FUSEBOX_HELPER_NOT_FOUND);
 		// load helper
 		} elseif ( !class_exists('F') ) {
 			include Framework::$helperPath;
@@ -66,7 +81,7 @@ class Framework {
 		// validate after load
 		if ( !class_exists('F') ) {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception("[FUSEBOX-HELPER-NOT-DEFINED] Helper class (F) not defined");
+			throw new Exception("Helper class (F) not defined", self::FUSEBOX_HELPER_NOT_DEFINED);
 		}
 	}
 
@@ -78,29 +93,29 @@ class Framework {
 		foreach ( array('commandVariable','commandDelimiter','appPath') as $key ) {
 			if ( empty($fusebox->config[$key]) ) {
 				if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-				throw new Exception("[FUSEBOX-MISSING-CONFIG] Fusebox config variable {{$key}} is required");
+				throw new Exception("Fusebox config variable {{$key}} is required", self::FUSEBOX_MISSING_CONFIG);
 			}
 		}
 		// check command-variable
 		if ( in_array(strtolower($fusebox->config['commandVariable']), array('controller','action')) ) {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception("[FUSEBOX-INVALID-CONFIG] Config {commandVariable} can not be 'controller' or 'action'");
+			throw new Exception("Config {commandVariable} can not be 'controller' or 'action'", self::FUSEBOX_INVALID_CONFIG);
 
 		}
 		// check command-delimiter
 		if ( !in_array($fusebox->config['commandDelimiter'], array('.', '-', '_')) ) {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception('[FUSEBOX-INVALID-CONFIG] Config {commandDelimiter} can only be dot (.), dash (-), or underscore (_)');
+			throw new Exception('Config {commandDelimiter} can only be dot (.), dash (-), or underscore (_)', self::FUSEBOX_INVALID_CONFIG);
 		}
 		// check app-path
 		if ( !is_dir($fusebox->config['appPath']) ) {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception("[FUSEBOX-INVALID-CONFIG] Directory specified in config {appPath} does not exist ({$fusebox->config['appPath']})");
+			throw new Exception("Directory specified in config {appPath} does not exist ({$fusebox->config['appPath']})", self::FUSEBOX_INVALID_CONFIG);
 		}
 		// check error-controller
 		if ( !empty($fusebox->config['errorController']) and !is_file($fusebox->config['errorController']) ) {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception("[FUSEBOX-INVALID-CONFIG] Error controller does not exist ({$fusebox->config['errorController']})");
+			throw new Exception("Error controller does not exist ({$fusebox->config['errorController']})", self::FUSEBOX_INVALID_CONFIG);
 		}
 	}
 
@@ -137,7 +152,7 @@ class Framework {
 				// throw error when auto-load path not found
 				if ( !$isWildcard and !$isExistingDir and !$isExistingFile ) {
 					if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-					throw new Exception("[FUSEBOX-INVALID-CONFIG] Auto-load path not found ({$path})");
+					throw new Exception("Auto-load path not found ({$path})", self::FUSEBOX_INVALID_CONFIG);
 				}
 				// include all file specified
 				foreach ( glob($path) as $file ) {
@@ -281,7 +296,7 @@ class Framework {
 			// validation
 			} else {
 				if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-				throw new Exception("[FUSEBOX-INVALID-CONFIG] Config {formUrl2arguments} must be Boolean or Array");
+				throw new Exception("Config {formUrl2arguments} must be Boolean or Array", self::FUSEBOX_INVALID_CONFIG);
 			}
 		}
 	}

@@ -60,7 +60,7 @@ class F {
 				include $fusebox->config['errorController'];
 				die();
 			} else {
-				throw new Exception("[FUSEBOX-ERROR] ".self::command()." - ".$fusebox->error);
+				throw new Exception(self::command()." - ".$fusebox->error, Framework::FUSEBOX_ERROR);
 			}
 		}
 	}
@@ -141,7 +141,7 @@ class F {
 				include $fusebox->config['errorController'];
 				die();
 			} else {
-				throw new Exception("[FUSEBOX-PAGE-NOT-FOUND] ".self::command()." - ".$fusebox->error);
+				throw new Exception(self::command()." - ".$fusebox->error, Framework::FUSEBOX_PAGE_NOT_FOUND);
 			}
 		}
 	}
@@ -176,8 +176,8 @@ class F {
 		// only redirect when condition is true
 		if ( $condition ) {
 			// throw header-string as exception in order to abort operation without stopping unit-test
-			if ( Framework::$mode == 'UNIT_TEST' ) {
-				throw new Exception("[FUSEBOX-REDIRECT] Refresh:{$delay};url={$url}");
+			if ( Framework::$mode == Framework::FUSEBOX_UNIT_TEST ) {
+				throw new Exception("Refresh:{$delay};url={$url}", Framework::FUSEBOX_REDIRECT);
 			// perform redirect (when necessary)
 			} elseif ( !headers_sent() ) {
 				header("Refresh:{$delay};url={$url}");

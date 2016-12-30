@@ -9,7 +9,7 @@ class TestFuseboxyCore extends UnitTestCase {
 		if ( !class_exists('F') ) {
 			include dirname(dirname(__FILE__)).'/app/framework/1.0.2/F.php';
 		}
-		Framework::$mode = 'UNIT_TEST';
+		Framework::$mode = Framework::FUSEBOX_UNIT_TEST;
 	}
 
 
@@ -23,7 +23,7 @@ class TestFuseboxyCore extends UnitTestCase {
 			Framework::autoLoad();
 		} catch (Exception $e) {
 			$hasError = true;
-			$this->assertPattern('/FUSEBOX-INVALID-CONFIG/', $e->getMessage());
+			$this->assertTrue( $e->getCode() == Framework::FUSEBOX_INVALID_CONFIG );
 		}
 		$this->assertTrue($hasError);
 		// check invalid directory
@@ -33,7 +33,7 @@ class TestFuseboxyCore extends UnitTestCase {
 			Framework::autoLoad();
 		} catch (Exception $e) {
 			$hasError = true;
-			$this->assertPattern('/FUSEBOX-INVALID-CONFIG/', $e->getMessage());
+			$this->assertTrue( $e->getCode() == Framework::FUSEBOX_INVALID_CONFIG );
 		}
 		$this->assertTrue($hasError);
 		// check invalid wildcard
@@ -43,7 +43,7 @@ class TestFuseboxyCore extends UnitTestCase {
 			Framework::autoLoad();
 		} catch (Exception $e) {
 			$hasError = true;
-			$this->assertPattern('/FUSEBOX-INVALID-CONFIG/', $e->getMessage());
+			$this->assertTrue( $e->getCode() == Framework::FUSEBOX_INVALID_CONFIG );
 		}
 		// when wildcard is invalid
 		// ===> framework simply do not look through it
@@ -166,18 +166,18 @@ class TestFuseboxyCore extends UnitTestCase {
 		$arguments = null;
 		unset($_GET['foo']);
 		// check invalid config
+		$hasError = false;
 		try {
-			$caseResult = false;
 			$fusebox->config['formUrl2arguments'] = 'abc';
 			Framework::formUrl2arguments();
 		} catch (Exception $e) {
-			$caseResult = preg_match('/FUSEBOX-INVALID-CONFIG/', $e->getMessage());
+			$hasError = true;
+			$this->assertTrue( $e->getCode() == Framework::FUSEBOX_INVALID_CONFIG );
 		}
-		$this->assertTrue($caseResult);
+		$this->assertTrue($hasError);
 		$arguments = null;
 		// clean-up
-		$fusebox = $arguments = null;
-		unset($fusebox, $arguments);
+		$fusebox = null;
 	}
 
 
@@ -202,7 +202,7 @@ class TestFuseboxyCore extends UnitTestCase {
 			$hasError = true;
 		}
 		$this->assertTrue($hasError);
-		$this->assertPattern('/FUSEBOX-CONFIG-NOT-FOUND/', $e->getMessage());
+		$this->assertTrue( $e->getCode() == Framework::FUSEBOX_CONFIG_NOT_FOUND );
 		// malformed config (failure)
 		$hasError = false;
 		try {
@@ -212,7 +212,7 @@ class TestFuseboxyCore extends UnitTestCase {
 			$hasError = true;
 		}
 		$this->assertTrue($hasError);
-		$this->assertPattern('/FUSEBOX-CONFIG-NOT-DEFINED/', $e->getMessage());
+		$this->assertTrue( $e->getCode() == Framework::FUSEBOX_CONFIG_NOT_DEFINED );
 		// empty config (success)
 		// ===> apply default value
 		$hasError = false;
@@ -238,14 +238,15 @@ class TestFuseboxyCore extends UnitTestCase {
 		Framework::createAPIObject();
 		$originalHelperPath = Framework::$helperPath;
 		// check invalid path
+		$hasError = false;
 		try {
-			$caseResult = false;
 			Framework::$helperPath = dirname(__FILE__).'/no/such/file.php';
 			Framework::loadHelper();
 		} catch (Exception $e) {
-			$caseResult = preg_match('/FUSEBOX-HELPER-NOT-FOUND/', $e->getMessage());
+			$hasError = true;
+			$this->assertTrue( $e->getCode() == Framework::FUSEBOX_HELPER_NOT_FOUND );
 		}
-		$this->assertTrue($caseResult);
+		$this->assertTrue($hasError);
 		// clean-up
 		$fusebox = null;
 		Framework::$helperPath = $originalHelperPath;
@@ -551,7 +552,7 @@ class TestFuseboxyCore extends UnitTestCase {
 			Framework::validateConfig();
 		} catch (Exception $e) {
 			$hasError = true;
-			$this->assertPattern('/FUSEBOX-MISSING-CONFIG/', $e->getMessage());
+			$this->assertTrue( $e->getCode() == Framework::FUSEBOX_MISSING_CONFIG );
 			$this->assertPattern('/commandVariable/i', $e->getMessage());
 		}
 		$this->assertTrue($hasError);
@@ -564,7 +565,7 @@ class TestFuseboxyCore extends UnitTestCase {
 			Framework::validateConfig();
 		} catch (Exception $e) {
 			$hasError = true;
-			$this->assertPattern('/FUSEBOX-MISSING-CONFIG/', $e->getMessage());
+			$this->assertTrue( $e->getCode() == Framework::FUSEBOX_MISSING_CONFIG );
 			$this->assertPattern('/commandDelimiter/i', $e->getMessage());
 		}
 		$this->assertTrue($hasError);
@@ -577,7 +578,7 @@ class TestFuseboxyCore extends UnitTestCase {
 			Framework::validateConfig();
 		} catch (Exception $e) {
 			$hasError = true;
-			$this->assertPattern('/FUSEBOX-MISSING-CONFIG/', $e->getMessage());
+			$this->assertTrue( $e->getCode() == Framework::FUSEBOX_MISSING_CONFIG );
 			$this->assertPattern('/appPath/i', $e->getMessage());
 		}
 		$this->assertTrue($hasError);
@@ -589,7 +590,7 @@ class TestFuseboxyCore extends UnitTestCase {
 			Framework::validateConfig();
 		} catch (Exception $e) {
 			$hasError = true;
-			$this->assertPattern('/FUSEBOX-INVALID-CONFIG/', $e->getMessage());
+			$this->assertTrue( $e->getCode() == Framework::FUSEBOX_INVALID_CONFIG );
 			$this->assertPattern('/error controller does not exist/i', $e->getMessage());
 		}
 		$this->assertTrue($hasError);
@@ -727,10 +728,9 @@ class TestFuseboxyCore extends UnitTestCase {
 			F::error('check-has-error', true);
 		} catch ( Exception $e ) {
 			$hasError = true;
-			$this->assertPattern('/FUSEBOX-ERROR/', $e->getMessage());
+			$this->assertTrue( $e->getCode() == Framework::FUSEBOX_ERROR );
 		}
 		$this->assertTrue($hasError);
-		unset($e);
 		// check no error
 		$hasError = false;
 		try {
@@ -823,23 +823,23 @@ class TestFuseboxyCore extends UnitTestCase {
 		$output = trim( ob_get_clean() );
 		$this->assertTrue( $output === 'This is another page' );
 		// check invalid controller
+		$hasError = false;
 		try {
-			$caseResult = false;
 			F::invoke('foo.bar');
 		} catch ( Exception $e ) {
-			$caseResult = preg_match('/FUSEBOX-PAGE-NOT-FOUND/', $e->getMessage());
+			$hasError = true;
+			$this->assertTrue( $e->getCode() == Framework::FUSEBOX_PAGE_NOT_FOUND );
 		}
-		$this->assertTrue($caseResult);
-		unset($e);
+		$this->assertTrue($hasError);
 		// check invalid action (valid controller)
+		$hasError = false;
 		try {
-			$caseResult = false;
 			F::invoke('unitTest.fooBar');
 		} catch ( Exception $e ) {
-			$caseResult = preg_match('/FUSEBOX-PAGE-NOT-FOUND/', $e->getMessage());
+			$hasError = true;
+			$this->assertTrue( $e->getCode() == Framework::FUSEBOX_PAGE_NOT_FOUND );
 		}
-		$this->assertTrue($caseResult);
-		unset($e);
+		$this->assertTrue($hasError);
 		// check nested invoke
 		ob_start();
 		F::invoke('unitTest.nestedInvoke');
@@ -893,7 +893,7 @@ class TestFuseboxyCore extends UnitTestCase {
 			F::pageNotFound();
 		} catch ( Exception $e ) {
 			$hasError = true;
-			$this->assertPattern('/FUSEBOX-PAGE-NOT-FOUND/', $e->getMessage());
+			$this->assertTrue( $e->getCode() == Framework::FUSEBOX_PAGE_NOT_FOUND );
 		}
 		$this->assertTrue($hasError);
 		// check condition not match
@@ -950,7 +950,7 @@ class TestFuseboxyCore extends UnitTestCase {
 			F::redirect('foo.bar');
 		} catch (Exception $e) {
 			$hasRedirect = true;
-			$this->assertPattern("/FUSEBOX-REDIRECT/", $e->getMessage());
+			$this->assertTrue( $e->getCode() == Framework::FUSEBOX_REDIRECT );
 			$this->assertPattern('/'.preg_quote(F::url('foo.bar'), '/').'/i', $e->getMessage());
 		}
 		$this->assertTrue($hasRedirect);
@@ -960,7 +960,7 @@ class TestFuseboxyCore extends UnitTestCase {
 			F::redirect('http://www.google.com');
 		} catch (Exception $e) {
 			$hasRedirect = true;
-			$this->assertPattern("/FUSEBOX-REDIRECT/", $e->getMessage());
+			$this->assertTrue( $e->getCode() == Framework::FUSEBOX_REDIRECT );
 			$this->assertPattern('/'.preg_quote('http://www.google.com', '/').'/i', $e->getMessage());
 		}
 		$this->assertTrue($hasRedirect);
@@ -970,7 +970,7 @@ class TestFuseboxyCore extends UnitTestCase {
 			F::redirect('https://www.google.com', true, 999);
 		} catch (Exception $e) {
 			$hasRedirect = true;
-			$this->assertPattern("/FUSEBOX-REDIRECT/", $e->getMessage());
+			$this->assertTrue( $e->getCode() == Framework::FUSEBOX_REDIRECT );
 			$this->assertPattern('/'.preg_quote('https://www.google.com', '/').'/i', $e->getMessage());
 			$this->assertPattern('/Refresh:999/i', $e->getMessage());
 		}
