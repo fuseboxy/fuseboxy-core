@@ -35,7 +35,7 @@ return array(
 	/**
 	 *  Directory to load controller, model, view, etc. (REQUIRED)
 	 **/
-	'appPath' => dirname(dirname(__FILE__)).'/',
+	'appPath' => dirname(__DIR__).'/',
 
 
 	/**
@@ -52,7 +52,7 @@ return array(
 	 *  ===> wildcard is allowed
 	 **/
 	'autoLoad' => array(
-		dirname(dirname(__FILE__)).'/model/*',
+		dirname(__DIR__).'/model/*',
 	),
 
 
@@ -69,7 +69,7 @@ return array(
 	 * ===> controller will receive {$fusebox->error} as argument
 	 * ===> error will be thrown as exception when this is not defined
 	 **/
-	'errorController' => dirname(dirname(__FILE__)).'/controller/error_controller.php',
+	'errorController' => dirname(__DIR__).'/controller/error_controller.php',
 
 
 	/**
@@ -77,7 +77,7 @@ return array(
 	 * ===> for scaffold file upload
 	 * ===> set it to 777 mode
 	 **/
-	'uploadDir' => dirname(dirname(dirname(__FILE__))).'/data/upload/',
+	'uploadDir' => dirname(dirname(__DIR__)).'/data/upload/',
 
 
 	/**
@@ -85,7 +85,7 @@ return array(
 	 * ===> for cache or log
 	 * ===> set it to 777 mode
 	 **/
-	'tmpDir' => dirname(dirname(dirname(__FILE__))).'/tmp/',
+	'tmpDir' => dirname(dirname(__DIR__)).'/tmp/',
 
 
 	/**
