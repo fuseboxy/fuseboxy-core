@@ -56,7 +56,7 @@ class F {
 		if ( $condition ) {
 			if ( !headers_sent() ) header("HTTP/1.0 403 Forbidden");
 			$fusebox->error = $msg;
-			if ( isset($fusebox->config['errorController']) ) {
+			if ( !empty($fusebox->config['errorController']) ) {
 				include $fusebox->config['errorController'];
 				die();
 			} else {
@@ -137,7 +137,7 @@ class F {
 		if ( $condition ) {
 			if ( !headers_sent() ) header("HTTP/1.0 404 Not Found");
 			$fusebox->error = 'Page not found';
-			if ( isset($fusebox->config['errorController']) ) {
+			if ( !empty($fusebox->config['errorController']) ) {
 				include $fusebox->config['errorController'];
 				die();
 			} else {

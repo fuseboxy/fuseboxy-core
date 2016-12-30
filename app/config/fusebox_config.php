@@ -65,8 +65,8 @@ return array(
 	/**
 	 * Controller to handle error (OPTIONAL)
 	 * ===> use by F::error() and F::pageNotFound()
-	 * ===> if not defined, only text message will be displayed
 	 * ===> controller will receive {$fusebox->error} as argument
+	 * ===> error will be thrown as exception when this is not defined
 	 **/
 	'errorController' => dirname(dirname(__FILE__)).'/controller/error_controller.php',
 
