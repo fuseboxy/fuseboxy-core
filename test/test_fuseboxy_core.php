@@ -533,10 +533,16 @@ class TestFuseboxyCore extends UnitTestCase {
 	function test__F__command() {
 		global $fusebox;
 		Framework::createAPIObject();
-		$fusebox->config['defaultCommand'] = 'unit.test';
 		$fusebox->config['commandVariable'] = 'unitTestCommand';
 		$fusebox->config['commandDelimiter'] = '.';
-		// check default command
+		// check empty default command
+		$fusebox->config['defaultCommand'] = false;
+		Framework::setControllerAction();
+		$this->assertFalse( F::command() );
+		$this->assertFalse( F::command('controller') );
+		$this->assertFalse( F::command('action') );
+		// check non-empty default command
+		$fusebox->config['defaultCommand'] = 'unit.test';
 		Framework::setControllerAction();
 		$this->assertTrue( F::command() === 'unit.test' );
 		// check standard (by url)

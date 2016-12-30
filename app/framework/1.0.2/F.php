@@ -150,11 +150,20 @@ class F {
 	// extract controller & action from command
 	public static function parseCommand($command) {
 		global $fusebox;
-		$arr = explode($fusebox->config['commandDelimiter'], $command, 2);
-		return array(
-			'controller' => $arr[0],
-			'action' => !empty($arr[1]) ? $arr[1] : 'index'
-		);
+		// split command by delimiter (when not empty)
+		if ( !empty($command) ) {
+			$arr = explode($fusebox->config['commandDelimiter'], $command, 2);
+			return array(
+				'controller' => $arr[0],
+				'action' => !empty($arr[1]) ? $arr[1] : 'index'
+			);
+		// both are false when command is empty
+		} else {
+			return array(
+				'controller' => false,
+				'action' => false,
+			);
+		}
 	}
 
 
