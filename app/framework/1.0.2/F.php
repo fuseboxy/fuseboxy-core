@@ -23,7 +23,9 @@ class F {
 	// controller + action
 	public static function command($key='') {
 		global $fusebox;
-		if ( $key == null ) {
+		if ( empty($fusebox->config['defaultCommand']) ) {
+			return false;
+		} elseif ( $key == null ) {
 			return $fusebox->controller.$fusebox->config['commandDelimiter'].$fusebox->action;
 		} elseif ( strtolower($key) == 'controller' ) {
 			return $fusebox->controller;
