@@ -8,4 +8,6 @@
 	</io>
 </fusedoc>
 */
-die($fusebox->error);
+if ( !empty($fusebox->error) ) {
+	die($fusebox->error);
+}
