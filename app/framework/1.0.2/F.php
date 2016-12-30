@@ -181,8 +181,9 @@ class F {
 			// perform redirect (when necessary)
 			} elseif ( !headers_sent() ) {
 				header("Refresh:{$delay};url={$url}");
+				die();
 			} else {
-				echo "<script>window.setTimeout(function(){document.location.href='{$url}';},{$delay}*0);</script>";
+				die("<script>window.setTimeout(function(){document.location.href='{$url}';},{$delay}*0);</script>");
 			}
 		}
 	}
