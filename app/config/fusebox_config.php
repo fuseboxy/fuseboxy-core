@@ -112,18 +112,4 @@ return array(
 	),
 
 
-	/**
-	 * SMTP config (OPTIONAL)
-	 * ===> for Util::sendMail
-	 **/
-	'smtp' => file_exists(dirname(__FILE__).'/smtp_config.php') ? include 'smtp_config.php' : false,
-
-
-	/**
-	 * reCAPTCHA config (OPTIONAL)
-	 * ===> for Auth and WebForm
-	 **/
-	'reCAPTCHA' => file_exists(dirname(__FILE__).'/recaptcha_config.php') ? include 'recaptcha_config.php' : false,
-
-
 );
