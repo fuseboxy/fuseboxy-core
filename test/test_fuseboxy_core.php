@@ -182,21 +182,6 @@ class TestFuseboxyCore extends UnitTestCase {
 	}
 
 
-	function test__Framework__loadDefaultConfig() {
-		global $fusebox;
-		Framework::createAPIObject();
-		// check variables
-		Framework::loadDefaultConfig();
-		$this->assertTrue( !empty($fusebox->config['defaultCommand']) ) ;
-		$this->assertTrue( !empty($fusebox->config['commandVariable']) ) ;
-		$this->assertTrue( !empty($fusebox->config['commandDelimiter']) ) ;
-		$this->assertTrue( !empty($fusebox->config['appPath']) ) ;
-		// clean-up
-		$fusebox = null;
-		unset($fusebox);
-	}
-
-
 	function test__Framework__loadCustomConfig() {
 		global $fusebox;
 		Framework::createAPIObject();
@@ -233,6 +218,21 @@ class TestFuseboxyCore extends UnitTestCase {
 		$fusebox = null;
 		unset($fusebox);
 		Framework::$configPath = $originalConfigPath;
+	}
+
+
+	function test__Framework__loadDefaultConfig() {
+		global $fusebox;
+		Framework::createAPIObject();
+		// check variables
+		Framework::loadDefaultConfig();
+		$this->assertTrue( !empty($fusebox->config['defaultCommand']) ) ;
+		$this->assertTrue( !empty($fusebox->config['commandVariable']) ) ;
+		$this->assertTrue( !empty($fusebox->config['commandDelimiter']) ) ;
+		$this->assertTrue( !empty($fusebox->config['appPath']) ) ;
+		// clean-up
+		$fusebox = null;
+		unset($fusebox);
 	}
 
 
@@ -496,12 +496,35 @@ class TestFuseboxyCore extends UnitTestCase {
 	function test__Framework__validateConfig() {
 		global $fusebox;
 		Framework::createAPIObject();
-		// check missing config
+		// default config should cover all essential configs
 		Framework::loadDefaultConfig();
-		$this->assertTrue( !empty($fusebox->config['defaultCommand']) );
-		$this->assertTrue( !empty($fusebox->config['commandVariable']) );
-		$this->assertTrue( !empty($fusebox->config['commandDelimiter']) );
-		$this->assertTrue( !empty($fusebox->config['appPath']) );
+		$hasError = false;
+		try {
+			Framework::validateConfig();
+		} catch (Exception $e) {
+			$hasError = true;
+		}
+		$this->assertFalse($hasError);
+		// invalid error-controller
+		$fusebox->config['errorController'] = '/path/not/exist/error_controller.php';
+		$hasError = false;
+		try {
+			Framework::validateConfig();
+		} catch (Exception $e) {
+			$hasError = true;
+			$this->assertPattern('/FUSEBOX-INVALID-CONFIG/', $e->getMessage());
+			$this->assertPattern('/error controller does not exist/i', $e->getMessage());
+		}
+		$this->assertTrue($hasError);
+		// valid error-controller
+		$fusebox->config['errorController'] = dirname(__FILE__).'/utility-core/empty.php';
+		$hasError = false;
+		try {
+			Framework::validateConfig();
+		} catch (Exception $e) {
+			$hasError = true;
+		}
+		$this->assertFalse($hasError);
 		// clean-up
 		$fusebox = null;
 		unset($fusebox);
