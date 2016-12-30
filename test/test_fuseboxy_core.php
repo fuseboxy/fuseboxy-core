@@ -605,7 +605,7 @@ class TestFuseboxyCore extends UnitTestCase {
 		$this->assertTrue( F::config('foo') == 'bar' );
 		$this->assertFalse( F::config('FOO') == 'bar' );
 		// check invalid config
-		$this->assertTrue( F::config('foobar') === false );
+		$this->assertTrue( F::config('foobar') == null );
 		// clean-up
 		$fusebox = null;
 		unset($fusebox);

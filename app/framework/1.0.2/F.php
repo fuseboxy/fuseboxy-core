@@ -43,7 +43,7 @@ class F {
 		} elseif ( isset($fusebox->config[$key]) ) {
 			return $fusebox->config[$key];
 		} else {
-			return false;
+			return null;
 		}
 	}
 
