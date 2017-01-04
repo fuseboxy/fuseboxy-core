@@ -9,5 +9,5 @@
 </fusedoc>
 */
 if ( !empty($fusebox->error) ) {
-	die($fusebox->error);
+	echo $fusebox->error;
 }
