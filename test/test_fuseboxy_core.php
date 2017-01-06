@@ -975,6 +975,16 @@ class TestFuseboxyCore extends UnitTestCase {
 			$this->assertPattern('/Refresh:999/i', $e->getMessage());
 		}
 		$this->assertTrue($hasRedirect);
+		// check no delay redirect
+		try {
+			$hasRedirect = false;
+			F::redirect('foo.bar');
+		} catch (Exception $e) {
+			$hasRedirect = true;
+			$this->assertTrue( $e->getCode() == Framework::FUSEBOX_REDIRECT );
+			$this->assertPattern('/Location:/i', $e->getMessage());
+			$this->assertNoPattern('/Refresh:/i', $e->getMessage());
+		}
 		// check no redirect
 		try {
 			$hasRedirect = false;
