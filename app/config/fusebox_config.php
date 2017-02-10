@@ -104,7 +104,7 @@ return array(
 	 * ===> using regex and back-reference to turn path-like-query-string into query-string (forward-slash will be escaped)
 	 * ===> mapped parameters will go to {$_GET} scope; un-mapped string will not be parsed
 	 * ===> first match expression will be used; so please take the sequence into consideration
-	 * ===> array-key is pattern which match {$_SERVER['PATH_INFO']} (with or without leading slash)
+	 * ===> array-key is pattern which match {$_SERVER['REQUEST_URI']} (with or without leading slash)
 	 * ===> array-value is transformed query-string (without leading question mark)
 	 **/
 	'route' => array(
