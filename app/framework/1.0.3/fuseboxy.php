@@ -256,7 +256,7 @@ class Framework {
 				if ( !empty($paramKey) ) {
 					// simple parameter
 					if ( strpos($paramKey, '[') === false ) {
-						$_GET[$paramKey] = $paramVal;
+						$_GET[$paramKey] = urldecode($paramVal);
 					// array parameter
 					} else {
 						$arrayDepth = substr_count($paramKey, '[');
@@ -270,7 +270,7 @@ class Framework {
 								$pointer[count($pointer)] = isset($pointer[count($pointer)]) ? $pointer[count($pointer)] : array();
 								$pointer = &$pointer[count($pointer)-1];
 							}
-							if ( $i+1 == count($arrayKeys) ) $pointer = $paramVal;
+							if ( $i+1 == count($arrayKeys) ) $pointer = urldecode($paramVal);
 						}
 						unset($pointer);
 					}
