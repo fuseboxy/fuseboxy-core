@@ -252,12 +252,12 @@ class Framework {
 			$qsArray = explode('&', $qs);
 			foreach ( $qsArray as $param ) {
 				$param = explode('=', $param, 2);
-				$paramKey = isset($param[0]) ? $param[0] : '';
-				$paramVal = isset($param[1]) ? $param[1] : '';
+				$paramKey = isset($param[0]) ? urldecode($param[0]) : '';
+				$paramVal = isset($param[1]) ? urldecode($param[1]) : '';
 				if ( !empty($paramKey) ) {
 					// simple parameter
 					if ( strpos($paramKey, '[') === false ) {
-						$_GET[$paramKey] = urldecode($paramVal);
+						$_GET[$paramKey] = $paramVal;
 					// array parameter
 					} else {
 						$arrayDepth = substr_count($paramKey, '[');
@@ -271,7 +271,7 @@ class Framework {
 								$pointer[count($pointer)] = isset($pointer[count($pointer)]) ? $pointer[count($pointer)] : array();
 								$pointer = &$pointer[count($pointer)-1];
 							}
-							if ( $i+1 == count($arrayKeys) ) $pointer = urldecode($paramVal);
+							if ( $i+1 == count($arrayKeys) ) $pointer = $paramVal;
 						}
 						unset($pointer);
 					}
