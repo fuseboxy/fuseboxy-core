@@ -223,9 +223,12 @@ class Framework {
 					$hasRouteMatch = true;
 				}
 			}
-			// (6) if match none of the route, then turn path into query-string
+			// (6) unify query-string delim (replace first question-mark only)
+			$qs = preg_replace('/\?/', '&', $qs, 1);                             // e.g.  /foo/bar/999?a=1&b=2&c=3&  ------------------>  /foo/bar/999&a=1&b=2&c=3&
+			// (7) if match none of the route, then turn path into query-string
 			if ( !$hasRouteMatch ) {
-				$arr = explode('/', trim($qs, '/'));
+				$qs = str_replace('/', '&', trim($qs, '/'));
+				$arr = explode('&', $qs);
 				if ( count($arr) == 1 and $arr[0] == '' ) $arr = array();
 				$qs = '';
 				// turn path-like-query-string into query-string
@@ -241,13 +244,11 @@ class Framework {
 				// join remaining elements into query-string
 				$qs .= ( '&' . implode('&', $arr) );
 			}
-			// (6) unify query-string delim (replace first question-mark only)
-			$qs = preg_replace('/\?/', '&', $qs, 1);                             // e.g.  fuseaction=foo.bar&xyz=999?a=1&b=2&c=3&  ---->  fuseaction=foo.bar&xyz=999&a=1&b=2&c=3&
-			// (7) remove unnecessary query-string delimiter
+			// (8) remove unnecessary query-string delimiter
 			$qs = trim($qs, '&');                                                // e.g.  fuseaction=foo.bar&xyz=999?a=1&b=2&c=3&  ---->  fuseaction=foo.bar&xyz=999&a=1&b=2&c=3
-			// (8) dupe query-string delimiter again
+			// (9) dupe query-string delimiter again
 			$qs = preg_replace('/&+/' , '&', $qs);
-			// (9) put parameters of query-string into GET scope
+			// (10) put parameters of query-string into GET scope
 			$qsArray = explode('&', $qs);
 			foreach ( $qsArray as $param ) {
 				$param = explode('=', $param, 2);
@@ -276,7 +277,7 @@ class Framework {
 					}
 				}
 			}
-			// (10) update REQUEST and SERVER scopes as well
+			// (11) update REQUEST and SERVER scopes as well
 			$_REQUEST += $_GET;
 			$_SERVER['QUERY_STRING'] = $qs;
 		} // if-url-rewrite
