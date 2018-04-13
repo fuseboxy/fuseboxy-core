@@ -1,4 +1,4 @@
 <fieldset>
 	<legend><?php echo "{$fusebox->controller}.{$fusebox->action}"; ?></legend>
-	<?php echo $content; ?>
+	<?php echo $layout['content']; ?>
 </fieldset>

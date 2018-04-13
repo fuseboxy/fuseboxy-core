@@ -6,13 +6,13 @@ switch ( $fusebox->action ) :
 		$xfa['greeting'] = 'site.greeting';
 		ob_start();
 		include F::config('appPath').'view/site/index.php';
-		$content = ob_get_clean();
+		$layout['content'] = ob_get_clean();
 		include F::config('appPath').'view/site/layout.php';
 		break;
 
 
 	case 'greeting':
-		$content = '<h1>Hello World!</h1>';
+		$layout['content'] = '<h1>Hello World!</h1>';
 		include F::config('appPath').'view/site/layout.php';
 		break;
 
