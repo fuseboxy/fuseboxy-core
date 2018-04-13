@@ -1,3 +1,13 @@
 {
-	"name": "henrygotmojo/fuseboxy"
+	"name": "henrygotmojo/fuseboxy",
+	"description": "Super Slim and Easy MVC framework for PHP",
+	"keywords": [ "php", "framework", "fusebox", "mvc", "slim" ],
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Henry Shum",
+			"email": "henrygotmojo@gmail.com",
+			"role": "Developer"
+		}
+	]
 }
