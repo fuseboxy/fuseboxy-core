@@ -2,9 +2,5 @@
 	"name": "henrygotmojo/fuseboxy",
 	"description": "Super slim and easy MVC framework for PHP",
 	"license": "MIT",
-	"require": {
-		"php": "5.6.* || 7.*"
-	},
-    "minimum-stability": "dev",
-    "prefer-stable": true
+	"require": {}
 }
