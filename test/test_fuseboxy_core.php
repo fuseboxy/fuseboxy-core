@@ -1058,7 +1058,7 @@ class TestFuseboxyCore extends UnitTestCase {
 		$this->assertTrue( F::url('article.view&id=99') === "{$fusebox->self}article/99");
 		$this->assertFalse( F::url('article.view&id=99&nocache='.time()) === "{$fusebox->self}article/99");
 		// url-rewrite : check rewrite (has route matched & more variables)
-		$fusebox->config['route'] = array('/news/(\s+)/(\d+)/(\d+)' => 'unitTestCommand=news.list&category=$1&year=$2&month=$3');
+		$fusebox->config['route'] = array('/news/(\S+)/(\d{4})/(\d{2})' => 'unitTestCommand=news.list&category=$1&year=$2&month=$3');
 		$this->assertTrue( F::url('news.list&category=local&year=1997&month=07') == "{$fusebox->self}news/local/1997/07" );
 		$this->assertTrue( F::url('news.list&month=09&category=global&year=2001') == "{$fusebox->self}news/global/2001/09" );
 		// url-rewrite : check rewrite (has multiple routes matched ===> use first one)
@@ -1068,9 +1068,9 @@ class TestFuseboxyCore extends UnitTestCase {
 		);
 		$this->assertTrue( F::url('foo.bar&id=123') == "{$fusebox->self}foo/123");
 		// url-rewrite : check rewrite (auto-escape & auto-prepend slash)
-		$fusebox->config['route'] = array('\/forum\/(\s+)' => 'unitTestCommand=forum&tag=$1');
+		$fusebox->config['route'] = array('\/forum\/(\S+)' => 'unitTestCommand=forum&tag=$1');
 		$this->assertTrue( F::url('forum&tag=beauty') === "{$fusebox->self}forum/beauty");
-		$fusebox->config['route'] = array('forum/(\s+)' => 'unitTestCommand=forum&tag=$1');
+		$fusebox->config['route'] = array('forum/(\S+)' => 'unitTestCommand=forum&tag=$1');
 		$this->assertTrue( F::url('forum&tag=finance') === "{$fusebox->self}forum/finance");
 		$fusebox->config['route'] = null;
 		// clean-up
