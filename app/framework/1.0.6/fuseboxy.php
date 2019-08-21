@@ -112,6 +112,11 @@ class Framework {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
 			throw new Exception("Directory specified in config {appPath} does not exist ({$fusebox->config['appPath']})", self::FUSEBOX_INVALID_CONFIG);
 		}
+        // check error-controller
+        if ( !empty($fusebox->config['errorController']) and !is_file($fusebox->config['errorController']) ) {
+            if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
+            throw new Exception("Error controller does not exist ({$fusebox->config['errorController']})", self::FUSEBOX_INVALID_CONFIG);
+        }
 	}
 
 

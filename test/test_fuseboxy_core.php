@@ -4,10 +4,10 @@ class TestFuseboxyCore extends UnitTestCase {
 
 	function __construct() {
 		if ( !class_exists('Framework') ) {
-			include dirname(dirname(__FILE__)).'/app/framework/1.0.4/fuseboxy.php';
+			include dirname(dirname(__FILE__)).'/app/framework/1.0.6/fuseboxy.php';
 		}
 		if ( !class_exists('F') ) {
-			include dirname(dirname(__FILE__)).'/app/framework/1.0.4/F.php';
+			include dirname(dirname(__FILE__)).'/app/framework/1.0.6/F.php';
 		}
 		Framework::$mode = Framework::FUSEBOX_UNIT_TEST;
 	}

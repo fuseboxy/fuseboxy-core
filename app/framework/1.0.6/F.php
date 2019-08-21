@@ -56,12 +56,15 @@ class F {
 		if ( $condition ) {
 			if ( !headers_sent() ) header("HTTP/1.0 403 Forbidden");
 			$fusebox->error = $msg;
-			if ( !empty($fusebox->config['errorController']) ) {
+			if ( Framework::$mode == Framework::FUSEBOX_UNIT_TEST ) {
+				throw new Exception(self::command()." - ".$fusebox->error, Framework::FUSEBOX_ERROR);
+			} elseif ( !empty($fusebox->config['errorController']) ) {
 				include $fusebox->config['errorController'];
+				die();
 			} else {
 				echo $fusebox->error;
+				die();
 			}
-			die(); // ensure operation aborted
 		}
 	}
 
@@ -137,12 +140,15 @@ class F {
 		if ( $condition ) {
 			if ( !headers_sent() ) header("HTTP/1.0 404 Not Found");
 			$fusebox->error = 'Page not found';
-			if ( !empty($fusebox->config['errorController']) ) {
+			if ( Framework::$mode == Framework::FUSEBOX_UNIT_TEST ) {
+				throw new Exception(self::command()." - ".$fusebox->error, Framework::FUSEBOX_PAGE_NOT_FOUND);
+			} elseif ( !empty($fusebox->config['errorController']) ) {
 				include $fusebox->config['errorController'];
+				die();
 			} else {
 				echo $fusebox->error;
+				die();
 			}
-			die(); // ensure operation aborted
 		}
 	}
 
