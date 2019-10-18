@@ -1,6 +1,6 @@
 {
-	"name": "henrygotmojo/fuseboxy",
-	"description": "Super slim and easy MVC framework for PHP",
+	"name": "henrygotmojo/fuseboxy-core",
+	"description": "Super Slim and Easy MVC Framework for PHP",
 	"license": "MIT",
 	"require": {}
 }
