@@ -3,7 +3,6 @@
 	<description>
 		Helper component for Fuseboxy framework
 	</description>
-	<properties name="version" value="1.0.4" />
 	<io>
 		<in>
 			<string name="$mode" scope="Framework" optional="yes" comments="UNIT_TEST" />

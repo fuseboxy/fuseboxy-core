@@ -3,7 +3,6 @@
 	<description>
 		Core component of Fuseboxy framework
 	</description>
-	<properties name="version" value="1.0.4" />
 	<io>
 		<in>
 			<string name="$mode" scope="Framework" optional="yes" comments="for unit-test of helper" />
@@ -135,7 +134,7 @@ class Framework {
 	}
 
 
-	// auto-load files or directories (non-recursive)
+	// auto-load files or directories (recursive)
 	public static function autoLoad() {
 		global $fusebox;
 		if ( !empty($fusebox->config['autoLoad']) ) {
@@ -155,11 +154,21 @@ class Framework {
 					throw new Exception("Auto-load path not found ({$path})", self::FUSEBOX_INVALID_CONFIG);
 				}
 				// include all file specified
-				foreach ( glob($path) as $file ) {
-					if ( is_file($file) ) require_once $file;
+				foreach ( self::rglob($path) as $file ) {
+					if ( is_file($file) and in_array(pathinfo($file, PATHINFO_EXTENSION), array('php','phar')) ) {
+						require_once $file;
+					}
 				}
 			}
 		}
+	}
+	// recursive-glob
+	private static function rglob($pattern, $flags=0) {
+		$files = glob($pattern, $flags);
+		foreach (glob(dirname($pattern).'/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir) {
+			$files = array_merge($files, self::rglob($dir.'/'.basename($pattern), $flags));
+		}
+		return $files;
 	}
 
 
