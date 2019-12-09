@@ -64,27 +64,27 @@ return array(
 
 
 	/**
-	 * Controller to handle error (OPTIONAL)
-	 * ===> use by F::error() and F::pageNotFound()
-	 * ===> controller will receive {$fusebox->error} as argument
-	 * ===> error will be thrown as exception when this is not defined
+	 *  Controller to handle error (OPTIONAL)
+	 *  ===> use by F::error() and F::pageNotFound()
+	 *  ===> controller will receive {$fusebox->error} as argument
+	 *  ===> error will be thrown as exception when this is not defined
 	 **/
 	'errorController' => false,
 
 
 	/**
-	 * Upload directory (OPTIONAL)
-	 * ===> for scaffold file upload
-	 * ===> set it to 777 mode
+	 *  Upload directory (OPTIONAL)
+	 *  ===> for scaffold file upload
+	 *  ===> set it to 777 mode
 	 **/
 	'uploadDir' => dirname(dirname(__DIR__)).'/upload/',
 	'uploadBaseUrl' => str_replace('//', '/', str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']).'/' ) ).'upload/',
 
 
 	/**
-	 * Temp directory (OPTIONAL)
-	 * ===> for cache or log
-	 * ===> set it to 777 mode
+	 *  Temp directory (OPTIONAL)
+	 *  ===> for cache or log
+	 *  ===> set it to 777 mode
 	 **/
 	'tmpDir' => dirname(dirname(__DIR__)).'/tmp/',
 
@@ -100,17 +100,53 @@ return array(
 
 
 	/**
-	 * Route setting (OPTIONAL)
-	 * ===> only applicable when {urlRewrite=true}
-	 * ===> using regex and back-reference to turn path-like-query-string into query-string (forward-slash will be escaped)
-	 * ===> mapped parameters will go to {$_GET} scope; un-mapped string will not be parsed
-	 * ===> first match expression will be used; so please take the sequence into consideration
-	 * ===> array-key is pattern which match {$_SERVER['REQUEST_URI']} (with or without leading slash)
-	 * ===> array-value is transformed query-string (without leading question mark)
+	 *  Route setting (OPTIONAL)
+	 *  ===> only applicable when {urlRewrite=true}
+	 *  ===> using regex and back-reference to turn path-like-query-string into query-string (forward-slash will be escaped)
+	 *  ===> mapped parameters will go to {$_GET} scope; un-mapped string will not be parsed
+	 *  ===> first match expression will be used; so please take the sequence into consideration
+	 *  ===> array-key is pattern which match {$_SERVER['REQUEST_URI']} (with or without leading slash)
+	 *  ===> array-value is transformed query-string (without leading question mark)
 	 **/
-	'route' => array(
-//		'/article/(\d)' => 'fuseaction=article.view&id=$1',
-//		'([\s\S]+)' => 'fuseaction=cms.view&path=$1',
+	'route' => array(/*
+		'/article/(\d)' => 'fuseaction=article.view&id=$1',
+		'([\s\S]+)' => 'fuseaction=cms.view&path=$1',
+	*/),
+
+
+	/**
+	 *  SMTP setting (OPTIONAL)
+	 *  ===> for Util::sendMail()
+	 **/
+	'smtp' => array(
+		'debug'    => 0,   // debugging: 1 = errors and messages, 2 = messages only
+		'auth'     => '',  // authentication enabled
+		'secure'   => '',  // secure transfer enabled
+		'host'     => '',
+		'port'     => '',
+		'username' => '',
+		'password' => '',
+	),
+
+
+	/**
+	 *  reCAPTCHA setting (OPTIONAL)
+	 *  ===> for Captcha component
+	 **/
+	'captcha' => array(
+		'siteKey'   => '',
+		'secretKey' => '',
+	),
+
+
+	/**
+	 *  Encrypt setting (OPTIONAL)
+	 *  ===> for Util::crypt()
+	 **/
+	'encrypt' => array(
+		'key'     => '',
+		'mode'    => '',
+		'cipher'  => '',
 	),
 
 
