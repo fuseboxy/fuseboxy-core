@@ -68,6 +68,22 @@ class F {
 	}
 
 
+	// turn form variables to url variables
+	// ===> make it browser-back friendly
+	// ===> convert array to pipe-delimited list
+	public static function form2url($delim='|') {
+		if ( !empty($_POST) ) {
+			$qs = $_SERVER['QUERY_STRING'];
+			foreach ( $_POST as $key => $val ) {
+				$val = is_array($val) ? implode($delim, $val) : $val;
+				$qs .= "&{$key}={$val}";
+			}
+			header("Location: {$_SERVER['PHP_SELF']}?{$qs}");
+			die();
+		}
+	}
+
+
 	// case-sensitive check on command (with wildcard), for example...
 	// - specific controller + action ===> F::is('site.index')
 	// - specific controller ===> F::is('site.*')
@@ -283,4 +299,4 @@ class F {
 	}
 
 
-}
+} // class
