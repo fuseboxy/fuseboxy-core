@@ -119,12 +119,6 @@ class F {
 	}
 
 
-	// check wether this is invoked from command-line-interface
-	public static function isCLI() {
-		return ( php_sapi_name() === 'cli' );
-	}
-
-
 	// check whether this is an internal invoke
 	// ===> first request, which is not internal, was invoked by framework core (fuseboxy.php)
 	public static function isInvoke() {
