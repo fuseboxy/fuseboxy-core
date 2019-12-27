@@ -33,7 +33,7 @@ class Framework {
 
 	// settings
 	public static $mode;
-	public static $configPath = __DIR__.'/../../config/fusebox_config.php';
+	public static $configPath = __DIR__.'/../config/fusebox_config.php';
 	public static $helperPath = __DIR__.'/F.php';
 
 
@@ -322,9 +322,7 @@ class Framework {
 	public static function setControllerAction() {
 		global $fusebox;
 		// if no command was defined, use {defaultCommand} in config
-		if ( F::isCLI() ) {
-			$command = !empty($argv[1]) ? $argv[1] : $fusebox->config['defaultCommand'];
-		} elseif ( !empty($_GET[$fusebox->config['commandVariable']]) ) {
+		if ( !empty($_GET[$fusebox->config['commandVariable']]) ) {
 			$command = $_GET[$fusebox->config['commandVariable']];
 		} elseif ( !empty($_POST[$fusebox->config['commandVariable']]) ) {
 			$command = $_POST[$fusebox->config['commandVariable']];
