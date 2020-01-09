@@ -69,7 +69,7 @@ return array(
 	 *  ===> controller will receive {$fusebox->error} as argument
 	 *  ===> error will be thrown as exception when this is not defined
 	 **/
-	'errorController' => false,
+	'errorController' => dirname(__DIR__).'/controller/error_controller.php',
 
 
 	/**
