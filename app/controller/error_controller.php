@@ -2,7 +2,7 @@
 <fusedoc>
 	<io>
 		<in>
-			<string name="$fusebox->error" />
+			<string name="error" scope="$fusebox" />
 		</in>
 		<out>
 			<structure name="flash" scope="$arguments">
