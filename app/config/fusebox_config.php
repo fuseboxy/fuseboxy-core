@@ -82,14 +82,6 @@ return array(
 
 
 	/**
-	 *  Temp directory (OPTIONAL)
-	 *  ===> for cache or log
-	 *  ===> set it to 777 mode
-	 **/
-	'tmpDir' => dirname(dirname(__DIR__)).'/tmp/',
-
-
-	/**
 	 *  Use beauty-url (OPTIONAL)
 	 *  ===> apply F::url() to all links
 	 *  ===> there will be no script name
