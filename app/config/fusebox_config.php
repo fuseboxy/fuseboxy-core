@@ -108,10 +108,9 @@ return array(
 	 *  ===> array-key is pattern which match {$_SERVER['REQUEST_URI']} (with or without leading slash)
 	 *  ===> array-value is transformed query-string (without leading question mark)
 	 **/
-	'route' => array(/*
-		'/article/(\d)' => 'fuseaction=article.view&id=$1',
-		'([\s\S]+)' => 'fuseaction=cms.view&path=$1',
-	*/),
+	'route' => array(
+		//'/article/(\d)' => 'fuseaction=article.view&id=$1',
+	),
 
 
 	/**
