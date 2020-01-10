@@ -186,7 +186,7 @@ class F {
 	// ===> command might include query-string
 	public static function redirect($url, $condition=true, $delay=0) {
 		// check internal or external link
-		$isExternalUrl = ( substr(strtolower(trim($url)), 0, 7) == 'http://' or substr(strtolower(trim($url)), 0, 8) == 'https://' );
+		$isExternalUrl = ( $url[0] == '/' or substr(strtolower(trim($url)), 0, 7) == 'http://' or substr(strtolower(trim($url)), 0, 8) == 'https://' );
 		if ( !$isExternalUrl ) $url = self::url($url);
 		// only redirect when condition is true
 		if ( $condition ) {
