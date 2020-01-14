@@ -2,5 +2,8 @@
 	"name": "henrygotmojo/fuseboxy",
 	"description": "Simple is Beautiful - Easy MVC framework for PHP",
 	"license": "MIT",
-	"require": {}
+	"type": "fuseboxy-module",
+    "require": {
+        "henrygotmojo/fuseboxy-installer": "*"
+    }
 }
