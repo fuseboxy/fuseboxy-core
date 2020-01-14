@@ -5,5 +5,7 @@
 	"type": "fuseboxy-core",
     "require": {
         "henrygotmojo/fuseboxy-installer": "dev-master"
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": false
 }
