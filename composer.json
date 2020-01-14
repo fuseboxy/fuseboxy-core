@@ -4,6 +4,6 @@
 	"license": "MIT",
 	"type": "fuseboxy-module",
     "require": {
-        "henrygotmojo/fuseboxy-installer": "*"
+        "henrygotmojo/fuseboxy-installer": "dev"
     }
 }
