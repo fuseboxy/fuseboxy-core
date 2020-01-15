@@ -27,14 +27,14 @@ if ( empty($fusebox->error) ) {
 } else {
 	$arguments['flash'] = array(
 		'type' => ( $fusebox->error == 'page not found' ) ? 'warning' : 'danger',
-		'icon' => 'fa fa-exclamation-circle mr-1';
+		'icon' => 'fa fa-exclamation-circle mr-1',
 		'message' => $fusebox->error,
 	);
 	// useful variables
 	$controllerLayout = F::config('appPath')."view/{$fusebox->controller}/layout.php";
 	$globalLayout = F::config('appPath').'view/global/layout.php';
 	// show message with login form
-	if ( F::is('account.*,auth.*') and is_file($currentLayout) ) include $currentLayout;
+	if ( F::is('account.*,auth.*') and is_file($controllerLayout) ) include $controllerLayout;
 	// show message with global layout
 	elseif ( is_file($globalLayout) ) include $globalLayout;
 	// show message with nothing
