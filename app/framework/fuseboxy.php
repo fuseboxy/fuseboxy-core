@@ -138,8 +138,13 @@ class Framework {
 	// auto-load files or directories (recursive)
 	public static function autoLoad() {
 		global $fusebox, $fuseboxy;
-		if ( !empty($fusebox->config['autoLoad']) ) {
-			foreach ( $fusebox->config['autoLoad'] as $originalPath ) {
+		$autoLoad = !empty($fusebox->config['autoLoad']) ? $fusebox->config['autoLoad'] : array();
+		foreach ( $fusebox->config['autoLoad'] as $originalPath ) {
+			// call as function
+			if ( is_callable($originalPath) ) {
+				call_user_func($originalPath);
+			// load as file
+			} else {
 				// check type
 				$isWildcard = ( strpos($originalPath, '*') !== false );
 				$isExistingDir = ( file_exists($originalPath) and is_dir($originalPath) );
