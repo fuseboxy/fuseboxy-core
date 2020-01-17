@@ -39,15 +39,14 @@ class Framework {
 
 	// initiate fusebox-api variable
 	public static function createAPIObject() {
-		global $fusebox, $fuseboxy;
+		global $fusebox;
 		$fusebox  = new StdClass();
-		$fuseboxy = &$fusebox;
 	}
 
 
 	// load config and assign default value
 	public static function loadConfig() {
-		global $fusebox, $fuseboxy;
+		global $fusebox;
 		// validate config file
 		if ( file_exists(Framework::$configPath) ) {
 			$fusebox->config = include Framework::$configPath;
@@ -69,7 +68,7 @@ class Framework {
 	// load framework utility component
 	// ===> when {$fusebox} api is ready
 	public static function loadHelper() {
-		global $fusebox, $fuseboxy;
+		global $fusebox;
 		// check helper path
 		if ( !file_exists(Framework::$helperPath) ) {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
@@ -88,7 +87,7 @@ class Framework {
 
 	// validate config
 	public static function validateConfig() {
-		global $fusebox, $fuseboxy;
+		global $fusebox;
 		// check required config
 		foreach ( array('commandVariable','commandDelimiter','appPath') as $key ) {
 			if ( empty($fusebox->config[$key]) ) {
@@ -122,7 +121,7 @@ class Framework {
 
 	// api variables
 	public static function setMyself() {
-		global $fusebox, $fuseboxy;
+		global $fusebox;
 		if ( !empty($fusebox->config['urlRewrite']) ) {
 			$fusebox->self = dirname($_SERVER['SCRIPT_NAME']);
 			$fusebox->self = str_replace('\\', '/', $fusebox->self);
@@ -137,7 +136,7 @@ class Framework {
 
 	// auto-load files or directories (recursive)
 	public static function autoLoad() {
-		global $fusebox, $fuseboxy;
+		global $fusebox;
 		$autoLoad = !empty($fusebox->config['autoLoad']) ? $fusebox->config['autoLoad'] : array();
 		foreach ( $fusebox->config['autoLoad'] as $originalPath ) {
 			// call as function
@@ -181,7 +180,7 @@ class Framework {
 	// extract command and url variables from beauty-url
 	// ===> work closely with {$fusebox->config['route']} and F::url()
 	public static function urlRewrite() {
-		global $fusebox, $fuseboxy;
+		global $fusebox;
 		// request <http://{HOST}/{APP}/foo/bar> will have <REQUEST_URI=/{APP}/foo/bar>
 		// request <http://{HOST}/foo/bar> will have <REQUEST_URI=/foo/bar>
 		// request <http://{HOST}/foo/bar?a=1&b=2> will have <REQUEST_URI=/foo/bar?a=1&b=2>
@@ -303,7 +302,7 @@ class Framework {
 	// ===> default merging POST & GET scope
 	// ===> user could define array of scopes to merge
 	public static function formUrl2arguments() {
-		global $fusebox, $fuseboxy, $arguments;
+		global $fusebox, $arguments;
 		if ( isset($fusebox->config['formUrl2arguments']) and !empty($fusebox->config['formUrl2arguments']) ) {
 			global $arguments;
 			// config default
@@ -325,7 +324,7 @@ class Framework {
 
 	// get controller & action out of command
 	public static function setControllerAction() {
-		global $fusebox, $fuseboxy;
+		global $fusebox;
 		// if no command was defined, use {defaultCommand} in config
 		if ( !empty($_GET[$fusebox->config['commandVariable']]) ) {
 			$command = $_GET[$fusebox->config['commandVariable']];
@@ -357,6 +356,8 @@ class Framework {
 		self::urlRewrite();
 		self::formUrl2arguments();
 		self::setControllerAction();
+		// create alias
+		$fuseboxy = &$fusebox;
 		// do not run when no controller specified
 		// ===> e.g. when default-command is empty
 		// ===> otherwise, load controller and run!
