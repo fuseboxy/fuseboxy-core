@@ -292,8 +292,9 @@ class Framework {
 				}
 			}
 			// (11) update REQUEST and SERVER scopes as well
+			// ===> only update query-string when request coming as beauty-url
 			$_REQUEST += $_GET;
-			$_SERVER['QUERY_STRING'] = $qs;
+			if ( stripos($_SERVER['REQUEST_URI'], $_SERVER['SCRIPT_NAME']) != 0 ) $_SERVER['QUERY_STRING'] = $qs;
 		} // if-url-rewrite
 	}
 
