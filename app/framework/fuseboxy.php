@@ -363,7 +363,7 @@ class Framework {
 		// ===> e.g. when default-command is empty
 		// ===> otherwise, load controller and run!
 		if ( !empty($fusebox->controller) ) {
-			$__controllerPath = "{$fusebox->config['appPath']}/controller/{$fusebox->controller}_controller.php";
+			$__controllerPath = $fusebox->config['appPath'].'/controller/'.str_ireplace('-', '_', $fusebox->controller).'_controller.php';
 			F::pageNotFound( !file_exists($__controllerPath) );
 			include $__controllerPath;
 		}
