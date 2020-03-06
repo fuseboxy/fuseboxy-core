@@ -19,6 +19,14 @@ class F {
 	}
 
 
+	// obtain correct path of the file
+	// ===> under app directory for manual installation
+	// ===> under vendor directory for composer installation
+	public static function appPath($path='') {
+		global $fusebox;
+	}
+
+
 	// controller + action
 	public static function command($key='') {
 		global $fusebox;
