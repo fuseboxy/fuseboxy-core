@@ -39,6 +39,12 @@ return array(
 
 
 	/**
+	 *  Directory for Composer package (REQUIRED)
+	 **/
+	'vendorPath' => dirname(dirname(__DIR__)).'/vendor/',
+
+
+	/**
 	 *  For path of stylesheet, script, etc. (OPTIONAL)
 	 **/
 	'baseUrl' => str_replace('//', '/', str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']).'/' ) ),
