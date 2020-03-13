@@ -19,10 +19,23 @@ class F {
 	}
 
 
-	// obtain correct path of the file
+	// obtain correct path of the file (or directory)
 	public static function appPath($path='') {
 		global $fusebox;
-		return $fusebox->config['appPath'].$path;
+		// if nothing specified
+		// ===> simply return config
+		if ( empty($path) ) return $fusebox->config['appPath'];
+		// look into app path
+		$appPathFile = $fusebox->config['appPath'].$path;
+		if ( file_exists($appPathFile) ) return $appPathFile;
+		// if file not found in app path
+		// ===> look through each fuseboxy module under vendor path
+		$glob = glob($fusebox->config['vendorPath'].'{fuseboxy,henrygotmojo}/*/app/'.$path, GLOB_BRACE);
+		if ( !empty($glob[0]) ) return $glob[0];
+		// file not found
+		// ===> return non-exist path
+		// ===> let php show the warning
+		return $appPathFile;
 	}
 
 
