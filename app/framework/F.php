@@ -231,18 +231,18 @@ class F {
 	// ===> turn it into beautify-url (if enable)
 	public static function url($commandWithQueryString='') {
 		global $fusebox;
+		// validation : no command defined
+		// ===> simply return self (no matter url-rewrite or not)
+		if ( empty($commandWithQueryString) ) {
+			return $fusebox->self;
 		// validation : external url
 		// ===> simply return without any transformation
-		if ( false
+		} elseif ( false
 			or $commandWithQueryString[0] == '/' 
 			or substr(strtolower(trim($commandWithQueryString)), 0, 7) == 'http://' 
 			or substr(strtolower(trim($commandWithQueryString)), 0, 8) == 'https://' 
 		) {
 			return $commandWithQueryString;
-		// validation : no command defined
-		// ===> simply return self (no matter url-rewrite or not)
-		} elseif ( empty($commandWithQueryString) ) {
-			return $fusebox->self;
 		// validation : no rewrite with query-string
 		// ===> prepend self and command-variable
 		} elseif ( empty($fusebox->config['urlRewrite']) ) {
