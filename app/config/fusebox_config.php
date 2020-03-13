@@ -47,6 +47,7 @@ return array(
 	/**
 	 *  For path of stylesheet, script, etc. (OPTIONAL)
 	 **/
+	'baseDir' => dirname(dirname(__DIR__)).'/',
 	'baseUrl' => str_replace('//', '/', str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']).'/' ) ),
 
 
