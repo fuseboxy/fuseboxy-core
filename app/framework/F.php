@@ -191,10 +191,9 @@ class F {
 
 	// redirect to specific command
 	// ===> command might include query-string
-	public static function redirect($url, $condition=true, $delay=0) {
-		// check internal or external link
-		$isExternalUrl = ( $url[0] == '/' or substr(strtolower(trim($url)), 0, 7) == 'http://' or substr(strtolower(trim($url)), 0, 8) == 'https://' );
-		if ( !$isExternalUrl ) $url = self::url($url);
+	public static function redirect($command, $condition=true, $delay=0) {
+		// transform command to url
+		$url = self::url($command);
 		// only redirect when condition is true
 		if ( $condition ) {
 			// must use Location when no delay because Refresh doesn't work on ajax-request
@@ -219,11 +218,19 @@ class F {
 	// ===> turn it into beautify-url (if enable)
 	public static function url($commandWithQueryString='') {
 		global $fusebox;
-		// no command defined
+		// validation : external url
+		// ===> simply return without any transformation
+		if ( false
+			or $commandWithQueryString[0] == '/' 
+			or substr(strtolower(trim($commandWithQueryString)), 0, 7) == 'http://' 
+			or substr(strtolower(trim($commandWithQueryString)), 0, 8) == 'https://' 
+		) {
+			return $commandWithQueryString;
+		// validation : no command defined
 		// ===> simply return self (no matter url-rewrite or not)
-		if ( empty($commandWithQueryString) ) {
+		} elseif ( empty($commandWithQueryString) ) {
 			return $fusebox->self;
-		// no rewrite with query-string
+		// validation : no rewrite with query-string
 		// ===> prepend self and command-variable
 		} elseif ( empty($fusebox->config['urlRewrite']) ) {
 			return $fusebox->myself.$commandWithQueryString;
