@@ -59,7 +59,7 @@ return array(
 	 *  ===> wildcard is allowed (please refer to glob function)
 	 **/
 	'autoLoad' => array(
-		dirname(__DIR__).'/model/',
+		//dirname(__DIR__).'/model/',
 	),
 
 
