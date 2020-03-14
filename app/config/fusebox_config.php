@@ -114,6 +114,35 @@ return array(
 
 
 	/**
+	 *  reCAPTCHA setting (OPTIONAL)
+	 *  ===> for Captcha component
+	 **/
+	'captcha' => array(
+		'siteKey'   => '',
+		'secretKey' => '',
+	),
+
+
+	/**
+	 *  Proxy setting (OPTIONAL)
+	 *  ===> for Util::httpRequest()
+	 **/
+	'httpProxy' => '',
+	'httpsProxy' => '',
+
+
+	/**
+	 *  Encrypt setting (OPTIONAL)
+	 *  ===> for Util::crypt()
+	 **/
+	'encrypt' => array(
+		'key'     => '',
+		'mode'    => '',
+		'cipher'  => '',
+	),
+
+
+	/**
 	 *  SMTP setting (OPTIONAL)
 	 *  ===> for Util::sendMail()
 	 **/
@@ -125,27 +154,6 @@ return array(
 		'port'     => '',
 		'username' => '',
 		'password' => '',
-	),
-
-
-	/**
-	 *  reCAPTCHA setting (OPTIONAL)
-	 *  ===> for Captcha component
-	 **/
-	'captcha' => array(
-		'siteKey'   => '',
-		'secretKey' => '',
-	),
-
-
-	/**
-	 *  Encrypt setting (OPTIONAL)
-	 *  ===> for Util::crypt()
-	 **/
-	'encrypt' => array(
-		'key'     => '',
-		'mode'    => '',
-		'cipher'  => '',
 	),
 
 
