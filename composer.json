@@ -4,6 +4,6 @@
 	"license": "MIT",
     "type": "fuseboxy-core",
     "require": {
-        "fuseboxy/fuseboxy-installer": "dev-master"
+        "fuseboxy/fuseboxy-installer": "*"
     }
 }
