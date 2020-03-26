@@ -2,5 +2,8 @@
 	"name": "fuseboxy/fuseboxy-core",
 	"description": "Simple is Beautiful - Easy MVC Framework for PHP",
 	"license": "MIT",
-    "require": {}
+    "type": "fuseboxy-core",
+    "require": {
+        "fuseboxy/fuseboxy-installer": "dev-master"
+    }
 }
