@@ -75,7 +75,7 @@ return array(
 	 *  ===> set it to 777 mode
 	 **/
 	'uploadDir' => dirname(dirname(__DIR__)).'/upload/',
-	'uploadBaseUrl' => str_replace('//', '/', str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']).'/' ) ).'upload/',
+	'uploadUrl' => str_replace('//', '/', str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']).'/' ) ).'upload/',
 
 
 	/**
