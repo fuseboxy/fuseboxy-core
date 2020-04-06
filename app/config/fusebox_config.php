@@ -114,8 +114,10 @@ return array(
 	/**
 	 *  Proxy setting for Util::httpRequest (OPTIONAL)
 	 **/
-	'httpProxy' => '',
-	'httpsProxy' => '',
+	'proxy' => array(
+		'http'  => '',
+		'https' => '',
+	),
 
 
 	/**
