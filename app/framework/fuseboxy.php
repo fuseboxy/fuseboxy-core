@@ -128,46 +128,21 @@ class Framework {
 	}
 
 
-	// auto-load files or directories (recursive)
+	// auto-load files (or run anonyous function)
 	public static function autoLoad() {
 		global $fusebox;
 		$autoLoad = !empty($fusebox->config['autoLoad']) ? $fusebox->config['autoLoad'] : array();
-		foreach ( $fusebox->config['autoLoad'] as $originalPath ) {
+		foreach ( $fusebox->config['autoLoad'] as $pattern ) {
 			// call as function
-			if ( is_callable($originalPath) ) {
-				call_user_func($originalPath);
+			if ( is_callable($pattern) ) {
+				call_user_func($pattern);
 			// load as file
 			} else {
-				// check type
-				$isWildcard = ( strpos($originalPath, '*') !== false );
-				$isExistingDir = ( file_exists($originalPath) and is_dir($originalPath) );
-				$isExistingFile = ( file_exists($originalPath) and is_file($originalPath) );
-				// adjust argument
-				$path = $originalPath;
-				if ( $isExistingDir ) $path .= "/*";
-				$path = str_replace("\\", "/", $path);
-				$path = str_replace("//", "/", $path);
-				// throw error when auto-load path not found
-				if ( !$isWildcard and !$isExistingDir and !$isExistingFile ) {
-					if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-					throw new Exception("Auto-load path not found ({$path})", self::FUSEBOX_INVALID_CONFIG);
-				}
-				// include all file specified
-				foreach ( self::rglob($path) as $file ) {
-					if ( is_file($file) and in_array(pathinfo($file, PATHINFO_EXTENSION), array('php','phar')) ) {
-						require_once $file;
-					}
+				foreach ( glob($pattern) as $path ) {
+					if ( is_file($path) ) require_once $path;
 				}
 			}
 		}
-	}
-	// recursive-glob
-	private static function rglob($pattern, $flags=0) {
-		$files = glob($pattern, $flags);
-		foreach (glob(dirname($pattern).'/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir) {
-			$files = array_merge($files, self::rglob($dir.'/'.basename($pattern), $flags));
-		}
-		return $files;
 	}
 
 

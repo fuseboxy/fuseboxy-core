@@ -44,16 +44,13 @@ return array(
 
 
 	/**
-	 *  Directories or files to auto-include (OPTIONAL)
-	 *  ===> if directory, the include will be recursive
-	 *  ===> if function, it will be run once
-	 *  ===> only php and phar will be included
-	 *  ===> full path is required
-	 *  ===> wildcard is allowed (please refer to glob function)
+	 *  Files to auto-include (OPTIONAL)
+	 *  ===> using path pattern (please refer to glob function)
+	 *  ===> if element is anonymous function, it will be run once
 	 **/
-	'autoLoad' => array(
-		//dirname(__DIR__).'/model/',
-	),
+	'autoLoad' => array(/*
+		dirname(__DIR__).'/model/*.php',
+	*/),
 
 
 	/**
