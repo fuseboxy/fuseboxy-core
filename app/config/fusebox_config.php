@@ -45,7 +45,7 @@ return array(
 
 
 	/**
-	 *  For path of stylesheet, script, etc. (OPTIONAL)
+	 *  For path of image, js, css, etc. (OPTIONAL)
 	 **/
 	'baseDir' => dirname(dirname(__DIR__)).'/',
 	'baseUrl' => str_replace('//', '/', str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']).'/' ) ),
@@ -100,7 +100,7 @@ return array(
 
 
 	/**
-	 *  Route setting (OPTIONAL)
+	 *  Route setting for beauty-url (OPTIONAL)
 	 *  ===> only applicable when {urlRewrite=true}
 	 *  ===> using regex and back-reference to turn path-like-query-string into query-string (forward-slash will be escaped)
 	 *  ===> mapped parameters will go to {$_GET} scope; un-mapped string will not be parsed
@@ -108,45 +108,41 @@ return array(
 	 *  ===> array-key is pattern which match {$_SERVER['REQUEST_URI']} (with or without leading slash)
 	 *  ===> array-value is transformed query-string (without leading question mark)
 	 **/
-	'route' => array(
-		//'/article/(\d)' => 'fuseaction=article.view&id=$1',
-	),
+	'route' => array(/*
+		'/article/(\d)' => 'fuseaction=article.view&id=$1',
+	*/),
 
 
 	/**
-	 *  reCAPTCHA setting (OPTIONAL)
-	 *  ===> for Captcha component
+	 *  reCAPTCHA setting for Captcha component (OPTIONAL)
 	 **/
-	'captcha' => array(
+	'captcha' => array(/*
 		'siteKey'   => '',
 		'secretKey' => '',
-	),
+	*/),
 
 
 	/**
-	 *  Proxy setting (OPTIONAL)
-	 *  ===> for Util::httpRequest()
+	 *  Proxy setting for Util::httpRequest (OPTIONAL)
 	 **/
 	'httpProxy' => '',
 	'httpsProxy' => '',
 
 
 	/**
-	 *  Encrypt setting (OPTIONAL)
-	 *  ===> for Util::crypt()
+	 *  Encrypt setting for Util::crypt (OPTIONAL)
 	 **/
-	'encrypt' => array(
+	'encrypt' => array(/*
 		'key'     => '',
 		'mode'    => '',
 		'cipher'  => '',
-	),
+	*/),
 
 
 	/**
-	 *  SMTP setting (OPTIONAL)
-	 *  ===> for Util::sendMail()
+	 *  SMTP setting for Util::mail (OPTIONAL)
 	 **/
-	'smtp' => array(
+	'smtp' => array(/*
 		'debug'    => 0,   // debugging: 1 = errors and messages, 2 = messages only
 		'auth'     => '',  // authentication enabled
 		'secure'   => '',  // secure transfer enabled
@@ -154,7 +150,7 @@ return array(
 		'port'     => '',
 		'username' => '',
 		'password' => '',
-	),
+	*/),
 
 
 );
