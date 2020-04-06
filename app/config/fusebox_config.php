@@ -25,14 +25,6 @@ return array(
 
 
 	/**
-	 *  Delimiter of command parameter (REQUIRED)
-	 *  ===> should match {defaultCommand} config
-	 *  ===> only support dot (.), dash (-), and underscore (_)
-	 **/
-	'commandDelimiter' => '.',
-
-
-	/**
 	 *  Directory to load controller, model, view, etc. (REQUIRED)
 	 **/
 	'appPath' => dirname(__DIR__).'/',

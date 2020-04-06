@@ -45,7 +45,7 @@ class F {
 		if ( empty($fusebox->config['defaultCommand']) ) {
 			return false;
 		} elseif ( $key == null ) {
-			return $fusebox->controller.$fusebox->config['commandDelimiter'].$fusebox->action;
+			return "{$fusebox->controller}.{$fusebox->action}";
 		} elseif ( strtolower($key) == 'controller' ) {
 			return $fusebox->controller;
 		} elseif ( strtolower($key) == 'action' ) {
@@ -135,7 +135,7 @@ class F {
 		// ===> first item of invoke queue should be original command
 		// ===> second item onward will be the command(s) called by F::invoke()
 		if ( !isset($fusebox->invokeQueue) ) $fusebox->invokeQueue = array();
-		$fusebox->invokeQueue[] = "{$fusebox->controller}{$fusebox->config['commandDelimiter']}{$fusebox->action}";
+		$fusebox->invokeQueue[] = "{$fusebox->controller}.{$fusebox->action}";
 		// parse new command
 		$newCommand = self::parseCommand($newCommand);
 		$fusebox->controller = $newCommand['controller'];
@@ -187,7 +187,7 @@ class F {
 		global $fusebox;
 		// split command by delimiter (when not empty)
 		if ( !empty($command) ) {
-			$arr = explode($fusebox->config['commandDelimiter'], $command, 2);
+			$arr = explode('.', $command, 2);
 			return array(
 				'controller' => $arr[0],
 				'action' => !empty($arr[1]) ? $arr[1] : 'index'
@@ -256,7 +256,7 @@ class F {
 		// ===> first element is command
 		// ===> replace first occurrence of delimiter with slash (if any)
 		if ( strpos($qs[0], '=') === false ) {
-			$qs[0] = explode($fusebox->config['commandDelimiter'], $qs[0], 2);
+			$qs[0] = explode('.', $qs[0], 2);
 			$qs[0] = implode('/', $qs[0]);
 		}
 		// turn query-string into path-like-query-string

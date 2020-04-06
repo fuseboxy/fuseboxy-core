@@ -60,7 +60,6 @@ class Framework {
 		}
 		// define config default value (when necessary)
 		$fusebox->config['commandVariable'] = isset($fusebox->config['commandVariable']) ? $fusebox->config['commandVariable'] : 'fuseaction';
-		$fusebox->config['commandDelimiter'] = isset($fusebox->config['commandDelimiter']) ? $fusebox->config['commandDelimiter'] : '.';
 		$fusebox->config['appPath'] = isset($fusebox->config['appPath']) ? $fusebox->config['appPath'] : (str_replace('\\', '/', dirname(dirname(__FILE__))).'/');
 	}
 
@@ -89,7 +88,7 @@ class Framework {
 	public static function validateConfig() {
 		global $fusebox;
 		// check required config
-		foreach ( array('commandVariable','commandDelimiter','appPath') as $key ) {
+		foreach ( array('commandVariable','appPath') as $key ) {
 			if ( empty($fusebox->config[$key]) ) {
 				if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
 				throw new Exception("Fusebox config variable {{$key}} is required", self::FUSEBOX_MISSING_CONFIG);
@@ -100,11 +99,6 @@ class Framework {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
 			throw new Exception("Config {commandVariable} can not be 'controller' or 'action'", self::FUSEBOX_INVALID_CONFIG);
 
-		}
-		// check command-delimiter
-		if ( !in_array($fusebox->config['commandDelimiter'], array('.', '-', '_')) ) {
-			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception('Config {commandDelimiter} can only be dot (.), dash (-), or underscore (_)', self::FUSEBOX_INVALID_CONFIG);
 		}
 		// check app-path
 		if ( !is_dir($fusebox->config['appPath']) ) {
@@ -253,7 +247,7 @@ class Framework {
 					$qs .= ( $fusebox->config['commandVariable'] . '=' . array_shift($arr) );
 				}
 				if ( count($arr) and strpos($arr[0], '=') === false ) {  // 2nd time
-					$qs .= ( $fusebox->config['commandDelimiter'] . array_shift($arr) );
+					$qs .= ( '.' . array_shift($arr) );
 				}
 				// join remaining elements into query-string
 				$qs .= ( '&' . implode('&', $arr) );
