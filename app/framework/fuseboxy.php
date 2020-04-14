@@ -37,10 +37,11 @@ class Framework {
 	public static $helperPath = __DIR__.'/F.php';
 
 
-	// initiate fusebox-api variable
-	public static function createAPIObject() {
-		global $fusebox;
-		$fusebox  = new StdClass();
+	// initiate fusebox API object
+	public static function initAPI() {
+		global $fusebox, $fuseboxy;
+		$fusebox = new StdClass();
+		$fuseboxy = &$fusebox;
 	}
 
 
@@ -317,7 +318,7 @@ class Framework {
 	public static function run() {
 		global $fusebox, $fuseboxy, $arguments;
 		// main process...
-		self::createAPIObject();
+		self::initAPI();
 		self::loadConfig();
 		self::validateConfig();
 		self::loadHelper();
@@ -326,8 +327,6 @@ class Framework {
 		self::urlRewrite();
 		self::formUrl2arguments();
 		self::setControllerAction();
-		// create alias
-		$fuseboxy = &$fusebox;
 		// do not run when no controller specified
 		// ===> e.g. when default-command is empty
 		// ===> otherwise, load controller and run!
@@ -339,4 +338,4 @@ class Framework {
 	}
 
 
-} // Framework
+} // class
