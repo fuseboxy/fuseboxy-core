@@ -132,18 +132,19 @@ class Framework {
 	// auto-load files (or run anonyous function)
 	public static function autoLoad() {
 		global $fusebox;
-		$autoLoad = !empty($fusebox->config['autoLoad']) ? $fusebox->config['autoLoad'] : array();
-		foreach ( $fusebox->config['autoLoad'] as $pattern ) {
-			// call as function
-			if ( is_callable($pattern) ) {
-				call_user_func($pattern);
-			// load as file
-			} else {
-				foreach ( glob($pattern) as $path ) {
-					if ( is_file($path) ) require_once $path;
+		if ( !empty($fusebox->config['autoLoad']) ) {
+			foreach ( $fusebox->config['autoLoad'] as $pattern ) {
+				// call as function
+				if ( is_callable($pattern) ) {
+					call_user_func($pattern);
+				// load as file
+				} elseif ( !empty($pattern) ) {
+					foreach ( glob($pattern) as $path ) {
+						if ( is_file($path) ) require_once $path;
+					}
 				}
-			}
-		}
+			} // foreach-pattern
+		} // if-autoload
 	}
 
 
