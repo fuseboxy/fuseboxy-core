@@ -50,6 +50,7 @@ return array(
 	 **/
 	'autoLoad' => array(/*
 		dirname(__DIR__).'/model/*.php',
+		dirname(dirname(__DIR__)).'/vendor/fuseboxy/*/app/model/*.php',
 	*/),
 
 
@@ -114,10 +115,10 @@ return array(
 	/**
 	 *  Proxy setting for Util::httpRequest (OPTIONAL)
 	 **/
-	'proxy' => array(
+	'proxy' => array(/*
 		'http'  => '',
 		'https' => '',
-	),
+	*/),
 
 
 	/**
