@@ -30,7 +30,7 @@ class F {
 		if ( file_exists($appPathFile) ) return $appPathFile;
 		// if file not found in app path
 		// ===> look through each fuseboxy module under vendor path
-		$glob = glob($fusebox->config['vendorPath'].'{fuseboxy,henrygotmojo}/*/app/'.$path, GLOB_BRACE);
+		$glob = glob($fusebox->config['vendorPath'].'fuseboxy/*/app/'.$path);
 		if ( !empty($glob[0]) ) return $glob[0];
 		// file not found
 		// ===> return non-exist path
