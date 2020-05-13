@@ -1,6 +1,0 @@
-# files to exclude from composer install
-.git/			export-ignore
-test/			export-ignore
-.gitattributes	export-ignore
-composer.json	export-ignore
-README.md		export-ignore
