@@ -31,8 +31,8 @@ if ( empty($fusebox->error) ) {
 		'message' => $fusebox->error,
 	);
 	// useful variables
-	$controllerLayout = F::config('appPath')."view/{$fusebox->controller}/layout.php";
-	$globalLayout = F::config('appPath').'view/global/layout.php';
+	$controllerLayout = F::appPath("view/{$fusebox->controller}/layout.php");
+	$globalLayout = F::appPath('view/global/layout.php');
 	// show message with login form
 	if ( F::is('account.*,auth.*') and is_file($controllerLayout) ) include $controllerLayout;
 	// show message with global layout
