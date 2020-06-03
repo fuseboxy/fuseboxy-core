@@ -107,10 +107,11 @@ return array(
 	 *  Database setting for ORM component (OPTIONAL)
 	 **/
 	'db' => array(/*
-		'host' => '',
-		'name' => '',
+		'host'     => '',
+		'name'     => '',
 		'username' => '',
 		'password' => '',
+		'freeze'   => ( $_SERVER['HTTP_HOST'] != 'localhost' ),  // optional
 	*/),
 
 
