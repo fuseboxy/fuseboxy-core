@@ -48,10 +48,10 @@ return array(
 	 *  ===> using path pattern (please refer to glob function)
 	 *  ===> if element is anonymous function, it will be run once
 	 **/
-	'autoLoad' => array(/*
-		dirname(__DIR__).'/model/*.php',
-		dirname(dirname(__DIR__)).'/vendor/fuseboxy/*/app/model/*.php',
-	*/),
+	'autoLoad' => array(
+		//dirname(__DIR__).'/model/*.php',
+		//dirname(dirname(__DIR__)).'/vendor/fuseboxy/*/app/model/*.php',
+	),
 
 
 	/**
@@ -84,7 +84,7 @@ return array(
 	 *  ===> apply F::url() to all links
 	 *  ===> there will be no script name
 	 *  ===> controller (if any) and action (if any) will be the first two items after base path
-	 *  ===> remember to modify .htaccess if doing url-rewrite (uncomment the line 'RewriteEngine on')
+	 *  ===> remember to modify {.htaccess} if doing url-rewrite (set "RewriteEngine On")
 	 **/
 	'urlRewrite' => false,
 
@@ -100,6 +100,17 @@ return array(
 	 **/
 	'route' => array(/*
 		'/article/(\d)' => 'fuseaction=article.view&id=$1',
+	*/),
+
+
+	/**
+	 *  Database setting for ORM component (OPTIONAL)
+	 **/
+	'db' => array(/*
+		'host' => '',
+		'name' => '',
+		'username' => '',
+		'password' => '',
 	*/),
 
 
