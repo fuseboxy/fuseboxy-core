@@ -111,7 +111,6 @@ return array(
 		'name'     => '',
 		'username' => '',
 		'password' => '',
-		'freeze'   => ( $_SERVER['HTTP_HOST'] != 'localhost' ),  // optional
 	*/),
 
 
