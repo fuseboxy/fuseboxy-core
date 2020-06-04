@@ -157,7 +157,7 @@ class F {
 
 	// check whether this is an internal invoke
 	// ===> first request, which is not internal, was invoked by framework core (fuseboxy.php)
-	public static function isInvoke() {
+	public static function invokeRequest() {
 		global $fusebox;
 		return !empty($fusebox->invokeQueue);
 	}
