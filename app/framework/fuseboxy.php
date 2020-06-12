@@ -106,11 +106,11 @@ class Framework {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
 			throw new Exception("Directory specified in config {appPath} does not exist ({$fusebox->config['appPath']})", self::FUSEBOX_INVALID_CONFIG);
 		}
-        // check error-controller
-        if ( !empty($fusebox->config['errorController']) and !is_file($fusebox->config['errorController']) ) {
-            if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-            throw new Exception("Error controller does not exist ({$fusebox->config['errorController']})", self::FUSEBOX_INVALID_CONFIG);
-        }
+		// check error-controller
+		if ( !empty($fusebox->config['errorController']) and !is_file($fusebox->config['errorController']) ) {
+			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
+			throw new Exception("Error controller does not exist ({$fusebox->config['errorController']})", self::FUSEBOX_INVALID_CONFIG);
+		}
 	}
 
 
@@ -137,11 +137,12 @@ class Framework {
 				// call as function
 				if ( is_callable($pattern) ) {
 					call_user_func($pattern);
+				// not found
+				} elseif ( !empty($pattern) and empty(glob($pattern)) ) {
+					throw new Exception("Autoload file not found ({$pattern})", self::FUSEBOX_INVALID_CONFIG);
 				// load as file
 				} elseif ( !empty($pattern) ) {
-					foreach ( glob($pattern) as $path ) {
-						if ( is_file($path) ) require_once $path;
-					}
+					foreach ( glob($pattern) as $path ) if ( is_file($path) ) require_once $path;
 				}
 			} // foreach-pattern
 		} // if-autoload
