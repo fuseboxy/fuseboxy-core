@@ -19,6 +19,23 @@ class F {
 	}
 
 
+	// display alert message without aborting operation
+	public static function alert($alert='alert', $condition=true) {
+		if ( $condition ) {
+			if ( is_string($alert) ) $alert = array('message' => $alert );
+			$output  = '<div';
+			if ( !empty($alert['id'])      ) $output .= " id='{$alert['id']}' ";
+			if ( !empty($alert['type'])    ) $output .= " class='alert alert-{$alert['type']}' ";
+			$output .= '>';
+			if ( !empty($alert['icon'])    ) $output .= "<i class='{$alert['icon']}'></i> ";
+			if ( !empty($alert['heading']) ) $output .= "<strong class='ml-1'>{$alert['heading']}</strong> ";
+			if ( !empty($alert['message']) ) $output .= "<span class='ml-1'>{$alert['message']}</span>";
+			$output .= '</div>';
+			echo $output;
+		}
+	}
+
+
 	// obtain correct path of the file (or directory)
 	public static function appPath($path='') {
 		global $fusebox;
@@ -104,29 +121,6 @@ class F {
 	}
 
 
-	// case-sensitive check on command (with wildcard), for example...
-	// - specific controller + action ===> F::is('site.index')
-	// - specific controller ===> F::is('site.*')
-	// - specific action ===> F::is('*.index')
-	public static function is($commandPatternList) {
-		global $fusebox;
-		// allow checking multiple command-patterns
-		if ( !is_array($commandPatternList) ) {
-			$commandPatternList = explode(',', $commandPatternList);
-		}
-		// check each user-provided command-pattern
-		foreach ( $commandPatternList as $commandPattern ) {
-			$commandPattern = self::parseCommand($commandPattern);
-			// consider match when either one is ok
-			if ( in_array($commandPattern['controller'], array('*', $fusebox->controller)) and in_array($commandPattern['action'], array('*', $fusebox->action)) ) {
-				return true;
-			}
-		}
-		// no match
-		return false;
-	}
-
-
 	// invoke specific command
 	// ===> allow accessing arguments scope
 	public static function invoke($newCommand, $arguments=array()) {
@@ -160,6 +154,29 @@ class F {
 	public static function invokeRequest() {
 		global $fusebox;
 		return !empty($fusebox->invokeQueue);
+	}
+
+
+	// case-sensitive check on command (with wildcard), for example...
+	// - specific controller + action ===> F::is('site.index')
+	// - specific controller ===> F::is('site.*')
+	// - specific action ===> F::is('*.index')
+	public static function is($commandPatternList) {
+		global $fusebox;
+		// allow checking multiple command-patterns
+		if ( !is_array($commandPatternList) ) {
+			$commandPatternList = explode(',', $commandPatternList);
+		}
+		// check each user-provided command-pattern
+		foreach ( $commandPatternList as $commandPattern ) {
+			$commandPattern = self::parseCommand($commandPattern);
+			// consider match when either one is ok
+			if ( in_array($commandPattern['controller'], array('*', $fusebox->controller)) and in_array($commandPattern['action'], array('*', $fusebox->action)) ) {
+				return true;
+			}
+		}
+		// no match
+		return false;
 	}
 
 
