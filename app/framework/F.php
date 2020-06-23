@@ -30,9 +30,9 @@ class F {
 			if ( !empty($alert['id'])      ) $output .= " id='{$alert['id']}' ";
 			if ( !empty($alert['type'])    ) $output .= " class='alert alert-{$alert['type']}' ";
 			$output .= '>';
-			if ( !empty($alert['icon'])    ) $output .= "<i class='{$alert['icon']}'></i> ";
-			if ( !empty($alert['heading']) ) $output .= "<strong class='ml-1'>{$alert['heading']}</strong> ";
-			if ( !empty($alert['message']) ) $output .= "<span class='ml-1'>{$alert['message']}</span>";
+			if ( !empty($alert['icon'])    ) $output .= "<i class='{$alert['icon']} mr-1'></i> ";
+			if ( !empty($alert['heading']) ) $output .= "<strong class='mr-1'>{$alert['heading']}</strong> ";
+			if ( !empty($alert['message']) ) $output .= "<span>{$alert['message']}</span>";
 			$output .= '</div>';
 			// display
 			echo $output;
