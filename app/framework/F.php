@@ -241,7 +241,7 @@ class F {
 				die();
 			// invoke redirect at client-side (when header already sent)
 			} else {
-				die("<script>window.setTimeout(function(){document.location.href='{$url}';},{$delay}*0);</script>");
+				die("<script>window.setTimeout(function(){document.location.href='{$url}';},{$delay}*1000);</script>");
 			}
 		}
 	}
