@@ -40,7 +40,7 @@ class Framework {
 	// initiate fusebox API object
 	public static function initAPI() {
 		global $fusebox, $fuseboxy;
-		$fusebox = new StdClass();
+		$fusebox = $fuseboxy = new StdClass();
 		$fuseboxy = &$fusebox;
 	}
 
