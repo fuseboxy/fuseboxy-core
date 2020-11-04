@@ -73,10 +73,9 @@ class Framework {
 		if ( !file_exists(Framework::$helperPath) ) {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
 			throw new Exception("Helper class file not found (".Framework::$helperPath.")", self::FUSEBOX_HELPER_NOT_FOUND);
-		// load helper
-		} elseif ( !class_exists('F') ) {
-			include Framework::$helperPath;
 		}
+		// load helper
+		require_once Framework::$helperPath;
 		// validate after load
 		if ( !class_exists('F') ) {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
