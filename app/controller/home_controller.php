@@ -3,7 +3,10 @@ switch ( $fusebox->action ) :
 
 
 	case 'index':
-		echo 'Hello World!';
+		$layout['content'] = 'Hello World!';
+		if ( is_file( F::appPath('view/global/layout.php') ) ) {
+			include F::appPath('view/global/layout.php');
+		} else echo $layout['content'];
 		break;
 
 
