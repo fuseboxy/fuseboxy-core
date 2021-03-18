@@ -32,7 +32,7 @@ class F {
 			$output .= '>';
 			if ( !empty($alert['icon'])    ) $output .= "<i class='{$alert['icon']} mr-1'></i> ";
 			if ( !empty($alert['heading']) ) $output .= "<strong class='mr-1'>{$alert['heading']}</strong> ";
-			if ( !empty($alert['message']) ) $output .= "<span>{$alert['message']}</span>";
+			if ( !empty($alert['message']) ) $output .= $alert['message'];
 			$output .= '</div>';
 			// display
 			echo $output;
