@@ -10,12 +10,9 @@ header("X-UA-Compatible: IE=Edge");
 // session management
 session_name('FUSEBOXY');
 session_start();
-// load env settings (when necessary)
-if ( is_file('_env.php') ) include '_env.php';
 // load framework
-if ( is_file(__DIR__.'/vendor/fuseboxy/fuseboxy-core/app/framework/fuseboxy.php') ) {
-	include __DIR__.'/vendor/fuseboxy/fuseboxy-core/app/framework/fuseboxy.php';
-	Framework::$configPath = __DIR__.'/app/config/fusebox_config.php';
-} else include 'app/framework/fuseboxy.php';
+include '_env.php';
+include __DIR__.'/vendor/fuseboxy/fuseboxy-core/app/framework/fuseboxy.php';
+Framework::$configPath = __DIR__.'/app/config/fusebox_config.php';
 // run!!
 Framework::run();
