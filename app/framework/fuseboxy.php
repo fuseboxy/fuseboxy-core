@@ -183,33 +183,45 @@ class Framework {
 			// start to parse the path
 			$qs = rtrim($_SERVER['REQUEST_URI'], '/');
 			// (1) unify slash
-			$qs = str_replace('\\', '/', $qs);                                   // e.g.  /my/site//foo\bar\999??a=1&b=2&&c=3&  ------->  /my/site//foo/bar/999??a=1&b=2&&c=3&
+			// e.g.  /my/site//foo\bar\999??a=1&b=2&&c=3&  ------->  /my/site//foo/bar/999??a=1&b=2&&c=3&
+			$qs = str_replace('\\', '/', $qs);
 			// (2) dupe slash, question-mark, and and-sign
-			$qs = preg_replace('/\/+/', '/', $qs);                               // e.g.  /my/site//foo/bar/999??a=1&b=2&&c=3&  ------->  /my/site/foo/bar/999??a=1&b=2&&c=3&
-			$qs = preg_replace('/\?+/', '?', $qs);                               // e.g.  /my/site/foo/bar/999??a=1&b=2&&c=3&  -------->  /my/site/foo/bar/999?a=1&b=2&&c=3&
-			$qs = preg_replace('/&+/' , '&', $qs);                               // e.g.  /my/site/foo/bar/999??a=1&b=2&&c=3&  -------->  /my/site/foo/bar/999?a=1&b=2&c=3&
+			// e.g.  /my/site//foo/bar/999??a=1&b=2&&c=3&  ------->  /my/site/foo/bar/999??a=1&b=2&&c=3&
+			// e.g.  /my/site/foo/bar/999??a=1&b=2&&c=3&  -------->  /my/site/foo/bar/999?a=1&b=2&&c=3&
+			// e.g.  /my/site/foo/bar/999??a=1&b=2&&c=3&  -------->  /my/site/foo/bar/999?a=1&b=2&c=3&
+			$qs = preg_replace('/\/+/', '/', $qs);
+			$qs = preg_replace('/\?+/', '?', $qs);
+			$qs = preg_replace('/&+/' , '&', $qs);
 			// (3) extract (potential) query-string from path
-			$baseDir = dirname($_SERVER['SCRIPT_NAME']);                         // e.g.  /my/site/index.php  ------------------------->  \my\site
-			$baseDir = str_replace('\\', '/', $baseDir);                         // e.g.  \my\site  ----------------------------------->  /my/site
-			if ( substr($baseDir, -1) != '/' ) $baseDir .= '/';                  // e.g.  /my/site  ----------------------------------->  /my/site/
+			// e.g.  /my/site/index.php  ------------------------->  \my\site
+			// e.g.  \my\site  ----------------------------------->  /my/site
+			// e.g.  /my/site  ----------------------------------->  /my/site/
+			// e.g.  /my/site/foo/bar/999?a=1&b=2&c=3&  ---------->  foo/bar/999?a=1&b=2&c=3&
+			$baseDir = dirname($_SERVER['SCRIPT_NAME']);
+			$baseDir = str_replace('\\', '/', $baseDir);
+			if ( substr($baseDir, -1) != '/' ) $baseDir .= '/';
 			$baseDirPattern = preg_quote($baseDir, '/');
-			$qs = preg_replace("/{$baseDirPattern}/", '', $qs, 1);               // e.g.  /my/site/foo/bar/999?a=1&b=2&c=3&  ---------->  foo/bar/999?a=1&b=2&c=3&
+			$qs = preg_replace("/{$baseDirPattern}/", '', $qs, 1);
 			// (4) append leading slash to path
-			if ( substr($qs, 0, 1) != '/' ) $qs = '/'.$qs;                       // e.g.  foo/bar/999?a=1&b=2&c=3&  ------------------->  /foo/bar/999?a=1&b=2&c=3&
+			// e.g.  foo/bar/999?a=1&b=2&c=3&  ------------------->  /foo/bar/999?a=1&b=2&c=3&
+			if ( substr($qs, 0, 1) != '/' ) $qs = '/'.$qs;                       
 			// (5) check if there is route match, and apply the first match
+			// e.g.  /foo/bar/([0-9]+)(.*)  ---------------------->  fuseaction=foo.bar&xyz=$1&$2
 			$hasRouteMatch = false;
 			$routes = F::config('route') ? F::config('route') : array();
-			foreach ( $routes as $urlPattern => $qsReplacement ) {               // e.g.  /foo/bar/([0-9]+)(.*)  ---------------------->  fuseaction=foo.bar&xyz=$1&$2
+			foreach ( $routes as $urlPattern => $qsReplacement ) {
 				// if path-like-query-string match the route pattern...
 				if ( !$hasRouteMatch and preg_match("/{$urlPattern}/", $qs) ) {
 					// turn it into true query-string
-					$qs = preg_replace("/{$urlPattern}/", $qsReplacement, $qs);  // e.g.  /foo/bar/999?a=1&b=2&c=3&  ------------------>  fuseaction=foo.bar&xyz=999?a=1&b=2&c=3&
+					// e.g.  /foo/bar/999?a=1&b=2&c=3&  ---------->  fuseaction=foo.bar&xyz=999?a=1&b=2&c=3&
+					$qs = preg_replace("/{$urlPattern}/", $qsReplacement, $qs);
 					// mark flag
 					$hasRouteMatch = true;
 				}
 			}
 			// (6) unify query-string delim (replace first question-mark only)
-			$qs = preg_replace('/\?/', '&', $qs, 1);                             // e.g.  /foo/bar/999?a=1&b=2&c=3&  ------------------>  /foo/bar/999&a=1&b=2&c=3&
+			// e.g.  /foo/bar/999?a=1&b=2&c=3&  ------------------>  /foo/bar/999&a=1&b=2&c=3&
+			$qs = preg_replace('/\?/', '&', $qs, 1);
 			// (7) if match none of the route, then turn path into query-string
 			if ( !$hasRouteMatch ) {
 				$qs = str_replace('/', '&', trim($qs, '/'));
@@ -230,7 +242,8 @@ class Framework {
 				$qs .= ( '&' . implode('&', $arr) );
 			}
 			// (8) remove unnecessary query-string delimiter
-			$qs = trim($qs, '&');                                                // e.g.  fuseaction=foo.bar&xyz=999?a=1&b=2&c=3&  ---->  fuseaction=foo.bar&xyz=999&a=1&b=2&c=3
+			// e.g.  fuseaction=foo.bar&xyz=999&a=1&b=2&c=3&  ---->  fuseaction=foo.bar&xyz=999&a=1&b=2&c=3
+			$qs = trim($qs, '&');
 			// (9) dupe query-string delimiter again
 			$qs = preg_replace('/&+/' , '&', $qs);
 			// (10) put parameters of query-string into GET scope
