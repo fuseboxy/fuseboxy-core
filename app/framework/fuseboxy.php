@@ -242,7 +242,7 @@ class Framework {
 				$qs .= ( '&' . implode('&', $arr) );
 			}
 			// (8) remove unnecessary query-string delimiter
-			// e.g.  fuseaction=foo.bar&xyz=999&a=1&b=2&c=3&  ---->  fuseaction=foo.bar&xyz=999&a=1&b=2&c=3
+			// e.g.  fuseaction=foo.bar&xyz=999&a=1&b=2&c=3&  ---------->  fuseaction=foo.bar&xyz=999&a=1&b=2&c=3
 			$qs = trim($qs, '&');
 			// (9) dupe query-string delimiter again
 			$qs = preg_replace('/&+/' , '&', $qs);
@@ -275,10 +275,13 @@ class Framework {
 					}
 				}
 			}
-			// (11) update REQUEST and SERVER scopes as well
+			// (11) update REQUEST and SERVER scopes
 			// ===> only update query-string when request coming as beauty-url
+			// e.g.  /my/site/foo/bar/a=1/b=2/c=3  ------------------------------->  update query-string
+			// e.g.  /my/site/index.php?fuseaction=foo.bar&a=1&b=2&c=3  ---------->  do not update query-string
 			$_REQUEST += $_GET;
-			if ( stripos($_SERVER['REQUEST_URI'], $_SERVER['SCRIPT_NAME']) != 0 ) $_SERVER['QUERY_STRING'] = $qs;
+			$isBeautyURL = ( $_SERVER['SCRIPT_NAME'] != substr($_SERVER['REQUEST_URI'], 0, strlen($_SERVER['SCRIPT_NAME'])) );
+			if ( $isBeautyURL ) $_SERVER['QUERY_STRING'] = $qs;
 		} // if-url-rewrite
 	}
 
