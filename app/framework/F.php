@@ -114,15 +114,15 @@ class F {
 	// obtain execution time
 	public static function et($unit='ms') {
 		$unit = strtolower($unit);
-		// validation
-		if ( !isset(Framework::$startTick) ) {
-			throw new Exception('Not started yet', Framework::FUSEBOX_ERROR);
-		} elseif ( !in_array($unit, ['ms','s']) ) {
+		// check unit
+		if ( !in_array($unit, ['ms','s']) ) {
 			throw new Exception('Invalid unit of time', Framework::FUSEBOX_ERROR);
+		// not started yet
+		} elseif ( !isset(Framework::$startTick) ) {
+			return false;
 		}
 		// calculation
-		$et = round(microtime(true)*1000-Framework::$startTick);
-		if ( $unit == 's' ) $et *= 1000;
+		$et = round(microtime(true)*1000-Framework::$startTick) * ( ($unit=='s') ? 1000 : 1 );
 		// done!
 		return $et;
 	}
