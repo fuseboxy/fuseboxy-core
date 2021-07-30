@@ -31,8 +31,9 @@ class Framework {
 	const FUSEBOX_REDIRECT           = 901;
 
 
-	// settings
+	// properties
 	public static $mode;
+	public static $startTick;
 	public static $configPath = __DIR__.'/../config/fusebox_config.php';
 	public static $helperPath = __DIR__.'/F.php';
 
@@ -334,6 +335,8 @@ class Framework {
 	// run specific controller and action
 	public static function run() {
 		global $fusebox, $fuseboxy, $arguments;
+		// mark start time (ms)
+		self::$startTick = microtime(true)*1000;
 		// main process...
 		self::initAPI();
 		self::loadConfig();
