@@ -159,6 +159,11 @@ class Framework {
 		$isRoot = dirname($_SERVER['SCRIPT_NAME']) == rtrim($_SERVER['REQUEST_URI'], '/');
 		// only process when necessary
 		if ( !empty($fusebox->config['urlRewrite']) and !$isRoot ) {
+			// remove dummy url param (when necessary)
+			if ( isset($_SERVER['REDIRECT_QUERY_STRING']) ) {
+				if ( isset($_GET[$_SERVER['REDIRECT_QUERY_STRING']]) ) unset($_GET[$_SERVER['REDIRECT_QUERY_STRING']]);
+				if ( isset($_REQUEST[$_SERVER['REDIRECT_QUERY_STRING']]) ) unset($_REQUEST[$_SERVER['REDIRECT_QUERY_STRING']]);
+			}
 			// cleanse the route config (and keep the sequence)
 			if ( isset($fusebox->config['route']) ) {
 				$fixedRoute = array();
