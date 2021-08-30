@@ -129,7 +129,7 @@ class Framework {
 	}
 
 
-	// auto-load files (or run anonyous function)
+	// autoload files (or run anonyous function)
 	public static function autoLoad() {
 		global $fusebox;
 		if ( !empty($fusebox->config['autoLoad']) ) {
@@ -137,10 +137,10 @@ class Framework {
 				// call as function
 				if ( is_callable($pattern) ) {
 					call_user_func($pattern);
-				// not found
-				} elseif ( !empty($pattern) and empty(glob($pattern)) ) {
+				// file not found (when pattern is file path)
+				} elseif ( !empty($pattern) and empty(glob($pattern)) and strpos($pattern, '*') === false and strtolower(substr($pattern, -4)) == '.php' ) {
 					throw new Exception("Autoload file not found ({$pattern})", self::FUSEBOX_INVALID_CONFIG);
-				// load as file
+				// load files (when directory or file exists)
 				} elseif ( !empty($pattern) ) {
 					foreach ( glob($pattern) as $path ) if ( is_file($path) ) require_once $path;
 				}

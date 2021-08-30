@@ -48,10 +48,10 @@ return array(
 	 *  ===> using path pattern (please refer to glob function)
 	 *  ===> if element is anonymous function, it will be run once
 	 **/
-	'autoLoad' => array(
-		//dirname(dirname(__DIR__)).'/vendor/fuseboxy/*/app/model/*.php',
-		//dirname(__DIR__).'/model/*.php',
-	),
+	'autoLoad' => array(/*
+		dirname(dirname(__DIR__)).'/vendor/autoload.php',
+		dirname(__DIR__).'/model/',
+	*/),
 
 
 	/**
