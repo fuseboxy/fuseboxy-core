@@ -21,12 +21,14 @@ class F {
 
 	// display alert message without aborting operation
 	public static function alert($alert='alert', $condition=true) {
+		$output = null;
+		// check whether to show message
 		if ( $condition ) {
 			// default value
 			if ( is_string($alert) ) $alert = array('message' => $alert);
 			if ( !isset($alert['type']) ) $alert['type'] = 'primary';
 			// prepare output
-			$output  = '<div';
+			$output = '<div';
 			if ( !empty($alert['id'])      ) $output .= " id='{$alert['id']}' ";
 			if ( !empty($alert['type'])    ) $output .= " class='alert alert-{$alert['type']}' ";
 			$output .= '>';
@@ -34,9 +36,11 @@ class F {
 			if ( !empty($alert['heading']) ) $output .= "<strong class='mr-1'>{$alert['heading']}</strong> ";
 			if ( !empty($alert['message']) ) $output .= $alert['message'];
 			$output .= '</div>';
-			// display
+			// display directly
 			echo $output;
 		}
+		// also return as string
+		return $output;
 	}
 
 
