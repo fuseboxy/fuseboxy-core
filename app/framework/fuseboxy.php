@@ -142,6 +142,7 @@ class Framework {
 					throw new Exception("Autoload file not found ({$pattern})", self::FUSEBOX_INVALID_CONFIG);
 				// load files (when directory or file exists)
 				} elseif ( !empty($pattern) ) {
+					if ( is_dir($pattern) or in_array(substr($pattern, -1), ['/','\\']) ) $pattern = rtrim($pattern, '/\\').'/*.php';
 					foreach ( glob($pattern) as $path ) if ( is_file($path) ) require_once $path;
 				}
 			} // foreach-pattern
