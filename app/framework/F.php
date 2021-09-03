@@ -20,8 +20,7 @@ class F {
 
 
 	// display alert message without aborting operation
-	public static function alert($alert='alert', $condition=true) {
-		$output = null;
+	public static function alert($alert='alert', $condition=true, $returnAsString=false) {
 		// check whether to show message
 		if ( $condition ) {
 			// default value
@@ -36,11 +35,13 @@ class F {
 			if ( !empty($alert['heading']) ) $output .= "<strong class='mr-1'>{$alert['heading']}</strong> ";
 			if ( !empty($alert['message']) ) $output .= $alert['message'];
 			$output .= '</div>';
-			// display directly
-			echo $output;
+			// display directly, or...
+			if ( !$returnAsString ) echo $output;
+			// return as string
+			else return $output;
 		}
-		// also return as string
-		return $output;
+		// done!
+		return null;
 	}
 
 
