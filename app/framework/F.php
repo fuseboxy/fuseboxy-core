@@ -68,30 +68,20 @@ class F {
 	// controller + action
 	public static function command($key='') {
 		global $fusebox;
-		if ( empty($fusebox->config['defaultCommand']) ) {
-			return false;
-		} elseif ( $key == null ) {
-			return "{$fusebox->controller}.{$fusebox->action}";
-		} elseif ( strtolower($key) == 'controller' ) {
-			return $fusebox->controller;
-		} elseif ( strtolower($key) == 'action' ) {
-			return $fusebox->action;
-		} else {
-			return false;
-		}
+		if ( empty($fusebox->config['defaultCommand']) ) return false;
+		if ( $key == null ) return "{$fusebox->controller}.{$fusebox->action}";
+		if ( strtolower($key) == 'controller' ) return $fusebox->controller;
+		if ( strtolower($key) == 'action' ) return $fusebox->action;
+		return false;
 	}
 
 
 	// get config
 	public static function config($key=null) {
 		global $fusebox;
-		if ( empty($key) ) {
-			return $fusebox->config;
-		} elseif ( isset($fusebox->config[$key]) ) {
-			return $fusebox->config[$key];
-		} else {
-			return null;
-		}
+		if ( empty($key) ) return $fusebox->config;
+		if ( isset($fusebox->config[$key]) ) return $fusebox->config[$key];
+		return null;
 	}
 
 
