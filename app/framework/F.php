@@ -20,7 +20,13 @@ class F {
 
 
 	// display alert message without aborting operation
-	public static function alert($alert='alert', $condition=true, $returnAsString=false) {
+	public static function alert($alert='alert', $condition=true) {
+		echo self::alertOutput($alert, $condition);
+	}
+
+
+	// obtain alert message instead of displaying directly
+	public static function alertOutput($alert='alert', $condition=true) {
 		// check whether to show message
 		if ( $condition ) {
 			// default value
@@ -35,12 +41,10 @@ class F {
 			if ( !empty($alert['heading']) ) $output .= "<strong class='mr-1'>{$alert['heading']}</strong> ";
 			if ( !empty($alert['message']) ) $output .= $alert['message'];
 			$output .= '</div>';
-			// display directly, or...
-			if ( !$returnAsString ) echo $output;
-			// return as string
-			else return $output;
+			// done!
+			return $output;
 		}
-		// done!
+		// nothing...
 		return null;
 	}
 
