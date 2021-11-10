@@ -145,7 +145,7 @@ class F {
 
 	// invoke specific command
 	// ===> allow accessing arguments scope
-	public static function invoke($newCommand, $arguments=array()) {
+	public static function invoke($newCommand, $arguments=[]) {
 		global $fusebox;
 		// create stack container to keep track of command-in-run
 		// ===> first item of invoke queue should be original command
@@ -168,6 +168,14 @@ class F {
 		$fusebox->action = $originalCommand['action'];
 		// done!
 		return true;
+	}
+
+
+	// obtain output when invoking specific command
+	public static function invokeOutput($command, $arguments=[]) {
+		ob_start();
+		self::invoke($command, $arguments);
+		return ob_get_clean();
 	}
 
 
