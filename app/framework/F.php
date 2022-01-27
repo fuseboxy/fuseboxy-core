@@ -137,8 +137,7 @@ class F {
 				$val = is_array($val) ? implode($delim, $val) : $val;
 				$qs .= "&{$key}={$val}";
 			}
-			header("Location: {$_SERVER['PHP_SELF']}?{$qs}");
-			die();
+			exit( header("Location: {$_SERVER['PHP_SELF']}?{$qs}") );
 		}
 	}
 
@@ -259,16 +258,11 @@ class F {
 			// must use Location when no delay because Refresh doesn't work on ajax-request
 			$headerString = empty($delay) ? "Location:{$url}" : "Refresh:{$delay};url={$url}";
 			// throw header-string as exception in order to abort operation without stopping unit-test
-			if ( Framework::$mode == Framework::FUSEBOX_UNIT_TEST ) {
-				throw new Exception($headerString, Framework::FUSEBOX_REDIRECT);
+			if ( Framework::$mode == Framework::FUSEBOX_UNIT_TEST ) throw new Exception($headerString, Framework::FUSEBOX_REDIRECT);
 			// invoke redirect at server-side
-			} elseif ( !headers_sent() ) {
-				header($headerString);
-				die();
+			elseif ( !headers_sent() ) exit( header($headerString) );
 			// invoke redirect at client-side (when header already sent)
-			} else {
-				die("<script>window.setTimeout(function(){document.location.href='{$url}';},{$delay}*1000);</script>");
-			}
+			else exit("<script>window.setTimeout(function(){document.location.href='{$url}';},{$delay}*1000);</script>");
 		}
 	}
 
