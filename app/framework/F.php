@@ -93,19 +93,15 @@ class F {
 	public static function error($msg='error', $condition=true) {
 		global $fusebox;
 		if ( $condition ) {
-			if ( !headers_sent() ) {
-				header("HTTP/1.0 403 Forbidden");
-			}
+			if ( !headers_sent() ) header("HTTP/1.0 403 Forbidden");
+			// set error message to API object
 			$fusebox->error = $msg;
-			if ( Framework::$mode == Framework::FUSEBOX_UNIT_TEST ) {
-				throw new Exception(self::command()." - ".$fusebox->error, Framework::FUSEBOX_ERROR);
-			} elseif ( !empty($fusebox->config['errorController']) ) {
-				include $fusebox->config['errorController'];
-				die();
-			} else {
-				echo $fusebox->error;
-				die();
-			}
+			// throw header-string as exception in order to abort operation without stopping unit-test
+			if ( Framework::$mode == Framework::FUSEBOX_UNIT_TEST ) throw new Exception(self::command()." - ".$fusebox->error, Framework::FUSEBOX_ERROR);
+			// show error with (customize-able) error-controller
+			elseif ( !empty($fusebox->config['errorController']) ) exit( include $fusebox->config['errorController'] );
+			// simply show error as text
+			else exit($fusebox->error);
 		}
 	}
 
