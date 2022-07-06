@@ -65,7 +65,7 @@ To make a thank you page at `http://{HOST}/index.php?fuseaction=site.thank`
 switch ( $fusebox->action ) :
 	...
 	case 'thank':
-    	include 'app/view/site/thank.php';
+    	include F::appPath('app/view/site/thank.php');
         break;
 	...
 endswitch;
