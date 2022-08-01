@@ -44,6 +44,15 @@ return array(
 
 
 	/**
+	 *  Upload directory (OPTIONAL)
+	 *  ===> for file upload (e.g. scaffold, webform)
+	 *  ===> set it to 777 mode
+	 **/
+	'uploadDir' => dirname(dirname(__DIR__)).'/upload/',
+	'uploadUrl' => str_replace('//', '/', str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']).'/' ) ).'upload/',
+
+
+	/**
 	 *  Files to auto-include (OPTIONAL)
 	 *  ===> using path pattern (please refer to glob function)
 	 *  ===> if element is anonymous function, it will be run once
@@ -71,18 +80,9 @@ return array(
 
 
 	/**
-	 *  Upload directory (OPTIONAL)
-	 *  ===> for scaffold file upload
-	 *  ===> set it to 777 mode
-	 **/
-	'uploadDir' => dirname(dirname(__DIR__)).'/upload/',
-	'uploadUrl' => str_replace('//', '/', str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']).'/' ) ).'upload/',
-
-
-	/**
 	 *  Use beauty-url (OPTIONAL)
 	 *  ===> apply F::url() to all links
-	 *  ===> there will be no script name
+	 *  ===> so that url will have no script name and command variable (index.php?fuseaction=)
 	 *  ===> controller (if any) and action (if any) will be the first two items after base path
 	 *  ===> remember to modify {.htaccess} if doing url-rewrite (set "RewriteEngine On")
 	 **/
@@ -107,10 +107,10 @@ return array(
 	 *  Database setting for ORM component (OPTIONAL)
 	 **/
 	'db' => array(/*
-		'host'     => '',
-		'name'     => '',
-		'username' => '',
-		'password' => '',
+		'host'     => DB_HOST,
+		'name'     => DB_NAME,
+		'username' => DB_UID,
+		'password' => DB_PWD,
 	*/),
 
 
@@ -118,8 +118,8 @@ return array(
 	 *  reCAPTCHA setting for Captcha component (OPTIONAL)
 	 **/
 	'captcha' => array(/*
-		'siteKey'   => '',
-		'secretKey' => '',
+		'siteKey'   => CAPTCHA_SITE,
+		'secretKey' => CAPTCHA_SECRET,
 	*/),
 
 
@@ -127,18 +127,21 @@ return array(
 	 *  Proxy setting for Util::httpRequest (OPTIONAL)
 	 **/
 	'proxy' => array(/*
-		'http'  => '',
-		'https' => '',
+		'http'  => HTTP_PROXY,
+		'https' => HTTPS_PROXY,
 	*/),
 
 
 	/**
 	 *  Encrypt setting for Util::crypt (OPTIONAL)
+	 *  ===> specify as [string] for [encrypt-key] only
 	 **/
 	'encrypt' => array(/*
-		'key'     => '',
-		'mode'    => '',
-		'cipher'  => '',
+		'key'    => ENCRYPT_KEY,
+		'vendor' => ENCRYPT_VENDOR,  // mcrypt or openssl
+		'algo'   => ENCRYPT_ALGO,    // (e.g.) ~MCRYPT_RIJNDAEL_256~, BF-ECB, ...
+		'mode'   => ENCRYPT_MODE,    // (e.g.) ~MCRYPT_MODE_ECB~, ... (used as options for openssl)
+		'iv'     => ENCRYPT_IV,      // initial vector
 	*/),
 
 
@@ -146,13 +149,24 @@ return array(
 	 *  SMTP setting for Util::mail (OPTIONAL)
 	 **/
 	'smtp' => array(/*
-		'debug'    => 0,   // debugging: 1 = errors and messages, 2 = messages only
-		'auth'     => '',  // authentication enabled
-		'secure'   => '',  // secure transfer enabled
-		'host'     => '',
-		'port'     => '',
-		'username' => '',
-		'password' => '',
+		'debug'    => 0,            // debugging (0 = no message; 1 = error & message; 2 = messages only)
+		'secure'   => SMTP_SECURE,  // secure transfer enabled (ssl, tsl, etc.)
+		'auth'     => SMTP_AUTH,    // authentication enabled (boolean)
+		'host'     => SMTP_HOST,
+		'port'     => SMTP_PORT,
+		'username' => SMTP_UID,
+		'password' => SMTP_PWD,
+	*/),
+
+
+	/**
+	 *  Multi-language settings for I18N (OPTIONAL)
+	 *  ===> default [en] when not specified
+	 *  ===> used by I18N & Enum (etc.)
+	 **/
+	'i18n' => array(/*
+		'locales' => I18N_LOCALE_ALL,  // (e.g.) en,zh-hk,zh-cn
+		'current' => I18N_LOCALE,      // (e.g.) en
 	*/),
 
 
