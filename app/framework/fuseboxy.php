@@ -114,6 +114,19 @@ class Framework {
 	}
 
 
+	// fix config
+	public static function fixConfig() {
+		global $fusebox;
+		// unify slash & append trailing-slash
+		foreach ( ['appPath','vendorPath','baseDir','baseUrl','uploadDir','uploadUrl'] as $pathName ) {
+			if ( !empty($fusebox->config[$pathName]) ) {
+				$fusebox->config[$pathName]  = str_replace('\\', '/', $fusebox->config[$pathName]);
+				$fusebox->config[$pathName] .= ( substr($fuseboxy->config[$pathName], -1) != '/' ) ? '/' : '';
+			}
+		}
+	}
+
+
 	// api variables
 	public static function setMyself() {
 		global $fusebox;
