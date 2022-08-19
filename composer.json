@@ -3,5 +3,6 @@
 	"description": "Fuseboxy - Simple, Lightweight, and Unobtrusive MVC Framework for PHP",
 	"license": "MIT",
 	"type": "fuseboxy-core",
-	"require": { "fuseboxy/fuseboxy-installer": "*" }
+	"require": { "fuseboxy/fuseboxy-installer": "*" },
+	"repositories": [ { "type": "git", "url": "https://www.bitbucket.org/henrygotmojo/fuseboxy-installer" } ]
 }
