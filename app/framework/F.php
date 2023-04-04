@@ -121,6 +121,8 @@ class F {
 		// done!
 		return $et;
 	}
+	// alias method
+	public function runtime($unit='ms') { return self::et($unit); }
 
 
 	// turn form variables to url variables
