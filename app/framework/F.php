@@ -13,39 +13,109 @@
 class F {
 
 
-	// check whether this is (jQuery) ajax request
+	/**
+	<fusedoc>
+		<description>
+			check whether this is (jQuery) ajax request
+		</description>
+		<io>
+			<in>
+				<string name="HTTP_X_REQUESTED_WITH" scope="$_SERVER" optional="yes" />
+			</in>
+			<out>
+				<boolean name="~return~" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
 	public static function ajaxRequest() {
 		return ( !empty($_SERVER['HTTP_X_REQUESTED_WITH']) and strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest' );
 	}
 
 
-	// display alert message without aborting operation
-	public static function alert($alert='alert', $condition=true) {
+
+
+	/**
+	<fusedoc>
+		<description>
+			display alert message without aborting operation
+		</description>
+		<io>
+			<in>
+				<string_or_structure name="$flash">
+					<string name="type" optional="yes" default="primary" comments="primary|secondary|success|info|warning|danger|light|dark" />
+					<string name="icon" optional="yes" />
+					<string name="heading" optional="yes" />
+					<string name="message" optional="yes" />
+					<string name="remark" optional="yes" />
+				</string_or_structure>
+			</in>
+			<out />
+		</io>
+	</fusedoc>
+	*/
+	public static function alert($flash='alert', $condition=true) {
 		echo self::alertOutput($alert, $condition);
 	}
 
 
-	// obtain alert message instead of displaying directly
-	public static function alertOutput($alert='alert', $condition=true) {
+
+
+	/*
+	<fusedoc>
+		<description>
+			obtain alert message output
+		</description>
+		<io>
+			<in>
+				<string_or_structure name="$flash">
+					<string name="type" optional="yes" default="primary" comments="primary|secondary|success|info|warning|danger|light|dark" />
+					<string name="id" optional="yes" comments="div[id]" />
+					<string name="icon" optional="yes" />
+					<string name="heading" optional="yes" />
+					<string name="message" optional="yes" />
+					<string name="remark" optional="yes" />
+				</string_or_structure>
+			</in>
+			<out>
+				<string name="~return~" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
+	public static function alertOutput($flash='alert', $condition=true) {
 		// check whether to show message
-		if ( $condition ) {
-			// default value
-			if ( is_string($alert) ) $alert = array('message' => $alert);
-			if ( !isset($alert['type']) ) $alert['type'] = 'primary';
-			// prepare output
-			$output = '<div';
-			if ( !empty($alert['id'])      ) $output .= " id='{$alert['id']}' ";
-			if ( !empty($alert['type'])    ) $output .= " class='alert alert-{$alert['type']}' ";
-			$output .= '>';
-			if ( !empty($alert['icon'])    ) $output .= "<i class='{$alert['icon']} mr-1'></i> ";
-			if ( !empty($alert['heading']) ) $output .= "<strong class='mr-1'>{$alert['heading']}</strong> ";
-			if ( !empty($alert['message']) ) $output .= $alert['message'];
-			$output .= '</div>';
-			// done!
-			return $output;
-		}
-		// nothing...
-		return null;
+		if ( !$condition ) return null;
+		// fix param & set default
+		if ( !empty($flash) ) :
+			if ( !is_array($flash) ) $flash = array('message' => $flash);
+			if ( empty($flash['type']) ) $flash['type'] = 'primary';
+		endif;
+		// capture output
+		ob_start();
+		if (
+			!empty($flash['icon']) or
+			!empty($flash['remark']) or
+			!empty($flash['heading']) or
+			!empty($flash['message'])
+		) :
+			?><div id="<?php echo $flash['id'] ?? ''; ?>" class="alert alert-<?php echo $flash['type']; ?>"><?php
+				if ( !empty($flash['icon']) ) :
+					?><span class="mr-2"><i class="<?php echo $flash['icon']; ?>"></i></span><?php
+				endif;
+				if ( !empty($flash['heading']) ) :
+					?><strong class="mr-1"><?php echo $flash['heading']; ?></strong><?php
+				endif;
+				if ( !empty($flash['message']) ) :
+					?><span><?php echo $flash['message']; ?></span><?php
+				endif;
+				if ( !empty($flash['remark']) ) :
+					?><small class="float-right text-muted pt-1"><?php echo $flash['remark']; ?></small><?php
+				endif;
+			?></div><?php
+		endif;
+		// done!
+		return ob_get_clean();
 	}
 
 
