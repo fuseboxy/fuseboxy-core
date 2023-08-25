@@ -55,7 +55,7 @@ class F {
 	</fusedoc>
 	*/
 	public static function alert($flash='alert', $condition=true) {
-		echo self::alertOutput($alert, $condition);
+		echo self::alertOutput($flash, $condition);
 	}
 
 
