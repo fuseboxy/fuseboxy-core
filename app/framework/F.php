@@ -187,7 +187,8 @@ class F {
 			return false;
 		}
 		// calculation
-		$et = round(microtime(true)*1000-Framework::$startTick) * ( ($unit=='s') ? 1000 : 1 );
+		$et = round(microtime(true)*1000-Framework::$startTick);
+		if ( $unit == 's' ) $et = $et / 1000;
 		// done!
 		return $et;
 	}
