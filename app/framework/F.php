@@ -336,6 +336,35 @@ class F {
 	}
 
 
+
+
+	/**
+	<fusedoc>
+		<description>
+			determine the protocol which client browser is using
+		</description>
+		<io>
+			<in>
+				<string name="HTTP_X_FORWARDED_PROTO" scope="$_SERVER" optional="yes" />
+				<string name="HTTPS" scope="$_SERVER" optional="yes" />
+				<string name="REQUEST_SCHEME" scope="$_SERVER" optional="yes" />
+			</in>
+			<out>
+				<string name="~return~" value="http|https" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
+	private static function requestScheme() {
+		if ( isset($_SERVER['HTTP_X_FORWARDED_PROTO']) ) return $_SERVER['HTTP_X_FORWARDED_PROTO'];
+		if ( isset($_SERVER['HTTPS']) and in_array($_SERVER['HTTPS'], ['on','1']) ) return 'https';
+		if ( isset($_SERVER['REQUEST_SCHEME']) ) return $_SERVER['REQUEST_SCHEME'];
+		return 'http';
+	}
+
+
+
+
 	// transform url (with param)
 	// ===> append fusebox-myself to url
 	// ===> turn it into beautify-url (if enable)
