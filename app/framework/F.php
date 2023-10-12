@@ -227,7 +227,30 @@ class F {
 
 
 
-	// show error, send header, and abort operation
+	/**
+	<fusedoc>
+		<description>
+			show error, send header, and abort operation
+			===> throw exception when unit test
+			===> load error-controller & abort operation (when error-controller specified)
+			===> simply show message & abbort operation (when no error-controller)
+		</description>
+		<io>
+			<in>
+				<!-- constant -->
+				<number name="$mode" scope="Framework" example="101" />
+				<!-- config -->
+				<structure name="config" scope="$fusebox">
+					<path name="errorController" example="/path/to/my/site/app/controller/error_controller.php" />
+				</structure>
+				<!-- parameters -->
+				<string name="$msg" optional="yes" default="error" />
+				<boolean name="$condition" optional="yes" default="true" />
+			</in>
+			<out />
+		</io>
+	</fusedoc>
+	*/
 	public static function error($msg='error', $condition=true) {
 		global $fusebox;
 		if ( $condition ) {
@@ -244,7 +267,26 @@ class F {
 	}
 
 
-	// obtain execution time
+
+
+	/**
+	<fusedoc>
+		<description>
+			obtain execution time
+		</description>
+		<io>
+			<in>
+				<!-- framework -->
+				<number name="$startTick" scope="Framework" comments="millisecond" />
+				<!-- parameter -->
+				<string name="$unit" default="ms" comments="ms|s" />
+			</in>
+			<out>
+				<number name="~return~" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
 	public static function et($unit='ms') {
 		$unit = strtolower($unit);
 		// check unit
@@ -264,9 +306,23 @@ class F {
 	public function runtime($unit='ms') { return self::et($unit); }
 
 
-	// turn form variables to url variables
-	// ===> make it browser-back friendly
-	// ===> convert array to pipe-delimited list
+
+
+	/**
+	<fusedoc>
+		<description>
+			turn form variables to url variables
+			===> make it browser-back-button-friendly
+			===> redirect to same page with form variables moved to query-string
+		</description>
+		<io>
+			<in>
+			</in>
+			<out>
+			</out>
+		</io>
+	</fusedoc>
+	*/
 	public static function form2url($delim='|') {
 		if ( !empty($_POST) ) {
 			$qs = $_SERVER['QUERY_STRING'];
@@ -279,9 +335,39 @@ class F {
 	}
 
 
-	// invoke specific command
-	// ===> allow accessing arguments scope
-	public static function invoke($newCommand, $arguments=[]) {
+
+
+	/**
+	<fusedoc>
+		<description>
+			invoke specific command
+			--
+			[Example use case]
+			===> home page has {Latest News} and {Contact Us} sections
+			===> specify [home.index] and [home.news] and [home.contact] actions in controller
+			===> page [home.index] invokes [home.news] and [home.contact] to show both at same page
+			===> page [home.news] and [home.contact] can also be accessed individually as separate pages
+		</description>
+		<io>
+			<in>
+				<string name="$command" example="product.view" />
+				<structure name="$arguments" optional="yes" default="~emptyArray~" />
+			</in>
+			<out>
+				<!-- return value -->
+				<boolean name="~return~" />
+				<!-- manipulated api object -->
+				<string name="controller" scope="$fusebox" />
+				<string name="action" scope="$fusebox" />
+				<!-- command stack -->
+				<array name="invokeQueue" scope="$fusebox">
+					<string name="+" comments="command" example="product.view|product.recommend|.." />
+				</array>
+			</out>
+		</io>
+	</fusedoc>
+	*/
+	public static function invoke($command, $arguments=[]) {
 		global $fusebox;
 		// create stack container to keep track of command-in-run
 		// ===> first item of invoke queue should be original command
@@ -289,13 +375,13 @@ class F {
 		if ( !isset($fusebox->invokeQueue) ) $fusebox->invokeQueue = array();
 		$fusebox->invokeQueue[] = "{$fusebox->controller}.{$fusebox->action}";
 		// parse new command
-		$newCommand = self::parseCommand($newCommand);
-		$fusebox->controller = $newCommand['controller'];
-		$fusebox->action = $newCommand['action'];
+		$command = self::parseCommand($command);
+		$fusebox->controller = $command['controller'];
+		$fusebox->action = $command['action'];
 		$controllerPath = "{$fusebox->config['appPath']}/controller/{$fusebox->controller}_controller.php";
 		// check controller existence
 		F::pageNotFound( !file_exists($controllerPath) );
-		// run new command
+		// run & display new command
 		include $controllerPath;
 		// trim stack after run
 		// ===> reset to original command
@@ -307,7 +393,24 @@ class F {
 	}
 
 
-	// obtain output when invoking specific command
+
+
+	/**
+	<fusedoc>
+		<description>
+			obtain output when invoking specific command
+		</description>
+		<io>
+			<in>
+				<string name="$command" example="home.news" />
+				<structure name="$arguments" optional="yes" default="~emptyArray~" />
+			</in>
+			<out>
+				<string name="~return~" format="html" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
 	public static function invokeOutput($command, $arguments=[]) {
 		ob_start();
 		self::invoke($command, $arguments);
