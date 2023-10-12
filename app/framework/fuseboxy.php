@@ -31,14 +31,30 @@ class Framework {
 	const FUSEBOX_REDIRECT           = 901;
 
 
-	// properties
+	// properties (configurable)
 	public static $mode;
 	public static $startTick;
 	public static $configPath = __DIR__.'/../config/fusebox_config.php';
 	public static $helperPath = __DIR__.'/F.php';
 
 
-	// initiate fusebox API object
+
+
+	/**
+	<fusedoc>
+		<description>
+			initiate fusebox API object
+			===> use {global} instead of {$_GLOBALS}
+			===> make developer easier to access the object (without typing too much)
+		</description>
+		<io>
+			<in />
+			<out>
+				<object name="$fusebox|$fuseboxy" scope="~global~" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
 	public static function initAPI() {
 		global $fusebox, $fuseboxy;
 		$fusebox = $fuseboxy = new StdClass();
@@ -46,15 +62,36 @@ class Framework {
 	}
 
 
-	// load config and assign default value
+
+
+	/**
+	<fusedoc>
+		<description>
+			load config and assign default value
+		</description>
+		<io>
+			<in>
+				<!-- property -->
+				<string name="$configPath" scope="self" />
+			</in>
+			<out>
+				<!-- framework config -->
+				<structure name="config" scope="$fusebox">
+					<string name="commandVariable" />
+					<string name="appPath" />
+				</structure>
+			</out>
+		</io>
+	</fusedoc>
+	*/
 	public static function loadConfig() {
 		global $fusebox;
 		// validate config file
-		if ( file_exists(Framework::$configPath) ) {
-			$fusebox->config = include Framework::$configPath;
+		if ( file_exists(self::$configPath) ) {
+			$fusebox->config = include self::$configPath;
 		} else {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception("Config file not found (".Framework::$configPath.")", self::FUSEBOX_CONFIG_NOT_FOUND);
+			throw new Exception("Config file not found (".self::$configPath.")", self::FUSEBOX_CONFIG_NOT_FOUND);
 		}
 		if ( !is_array($fusebox->config) ) {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
@@ -66,17 +103,32 @@ class Framework {
 	}
 
 
-	// load framework utility component
-	// ===> when {$fusebox} api is ready
+
+
+	/**
+	<fusedoc>
+		<description>
+			load framework helper utility
+			===> when {$fusebox} api is ready
+		</description>
+		<io>
+			<in>
+				<!-- property -->
+				<string name="$helperPath" scope="self" />
+			</in>
+			<out />
+		</io>
+	</fusedoc>
+	*/
 	public static function loadHelper() {
 		global $fusebox;
 		// check helper path
-		if ( !file_exists(Framework::$helperPath) ) {
+		if ( !file_exists(self::$helperPath) ) {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception("Helper class file not found (".Framework::$helperPath.")", self::FUSEBOX_HELPER_NOT_FOUND);
+			throw new Exception("Helper class file not found (".self::$helperPath.")", self::FUSEBOX_HELPER_NOT_FOUND);
 		}
 		// load helper
-		require_once Framework::$helperPath;
+		require_once self::$helperPath;
 		// validate after load
 		if ( !class_exists('F') ) {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
@@ -85,7 +137,26 @@ class Framework {
 	}
 
 
-	// validate config
+
+
+	/**
+	<fusedoc>
+		<description>
+			validate config
+		</description>
+		<io>
+			<in>
+				<!-- framework config -->
+				<structure name="config" scope="$fusebox">
+					<string name="commandVariable" optional="yes" />
+					<string name="appPath" optional="yes" />
+					<string name="errorController" optional="yes" />
+				</structure>
+			</in>
+			<out />
+		</io>
+	</fusedoc>
+	*/
 	public static function validateConfig() {
 		global $fusebox;
 		// check required config
@@ -114,7 +185,27 @@ class Framework {
 	}
 
 
-	// fix config
+
+
+	/**
+	<fusedoc>
+		<description>
+			fix config
+		</description>
+		<io>
+			<in>
+				<!-- framework config -->
+				<structure name="config" scope="$fusebox" />
+			</in>
+			<out>
+				<!-- framework config -->
+				<structure name="config" scope="$fusebox">
+					<string name="appPath|vendorPath|baseDir|baseUrl|uploadDir|uploadUrl" />
+				</structure>
+			</out>
+		</io>
+	</fusedoc>
+	*/
 	public static function fixConfig() {
 		global $fusebox;
 		// unify slash & append trailing-slash
@@ -127,7 +218,31 @@ class Framework {
 	}
 
 
-	// api variables
+
+
+	/**
+	<fusedoc>
+		<description>
+			prepare api variables
+		</description>
+		<io>
+			<in>
+				<!-- server variables -->
+				<string name="SCRIPT_NAME" scope="$_SERVER" />
+				<!-- framework config -->
+				<structure name="config" scope="$fusebox">
+					<string name="commandVariable" />
+					<boolean name="urlRewrite" />
+				</structure>
+			</in>
+			<out>
+				<!-- framework api object -->
+				<string name="self" scope="$fusebox" example="/my/site/index.php" />
+				<string name="myself" scope="$fusebox" example="/my/site/index.php?fuseaction=" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
 	public static function setMyself() {
 		global $fusebox;
 		if ( !empty($fusebox->config['urlRewrite']) ) {
@@ -142,7 +257,27 @@ class Framework {
 	}
 
 
-	// autoload files (or run anonyous function)
+
+
+	/**
+	<fusedoc>
+		<description>
+			autoload files (or run anonymous function)
+		</description>
+		<io>
+			<in>
+				<!-- server variables -->
+				<string name="SCRIPT_NAME" scope="$_SERVER" />
+				<!-- framework config -->
+				<structure name="autoload" scope="$fusebox">
+					<string name="+" optional="yes" comments="pattern" example="/path/to/my/site/app/model/*.php" />
+					<function name="+" optional="yes" comments="function to run" example="function(){ $foo = 'bar'; }" />
+				</structure>
+			</in>
+			<out />
+		</io>
+	</fusedoc>
+	*/
 	public static function autoLoad() {
 		global $fusebox;
 		if ( !empty($fusebox->config['autoLoad']) ) {
@@ -163,8 +298,36 @@ class Framework {
 	}
 
 
-	// extract command and url variables from beauty-url
-	// ===> work closely with {$fusebox->config['route']} and F::url()
+
+
+	/**
+	<fusedoc>
+		<description>
+			extract command and url variables from beauty-url
+			===> work closely with {$fusebox->config['route']} and F::url()
+		</description>
+		<io>
+			<in>
+				<!-- server variables -->
+				<string name="SCRIPT_NAME" scope="$_SERVER" />
+				<string name="REQUEST_URI" scope="$_SERVER" />
+				<string name="REDIRECT_QUERY_STRING" scope="$_SERVER" optional="yes" />
+				<string name="~REDIRECT_QUERY_STRING~" scope="$_GET|$_REQUEST" optional="yes" />
+				<!-- framework config -->
+				<structure name="config" scope="$fusebox">
+					<string name="commandVariable" />
+					<boolean name="urlRewrite" />
+					<structure name="route" optional="yes" comments="url-rewrite pattern" />
+				</structure>
+			</in>
+			<out>
+				<!-- manipulated php variables -->
+				<string name="QUERY_STRING" scope="$_SERVER" />
+				<mixed name="~queryStringVariables~" scope="$_GET|$_REQUEST" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
 	public static function urlRewrite() {
 		global $fusebox;
 		// request <http://{HOST}/{APP}/foo/bar> will have <REQUEST_URI=/{APP}/foo/bar>
@@ -306,9 +469,32 @@ class Framework {
 	}
 
 
-	// formUrl2arguments
-	// ===> default merging POST & GET scope
-	// ===> user could define array of scopes to merge
+
+
+	/**
+	<fusedoc>
+		<description>
+			formUrl2arguments
+			===> default merging POST & GET scope
+			===> user could define array of scopes to merge
+		</description>
+		<io>
+			<in>
+				<structure name="config" scope="$fusebox">
+					<boolean name="formUrl2arguments" optional="yes" comments="use default scopes & precedence (form-over-url)" />
+					<array name="formUrl2arguments" optional="yes" comments="custom scopes & precedence (e.g. url-over-form, including cookies, etc.)">
+						<structure name="+" comments="variable scopes" example="$_GET|$_POST|$_COOKIES|.." />
+					</array>
+				</structure>
+			</in>
+			<out>
+				<structure name="$arguments">
+					<mixed name="*" />
+				</structure>
+			</out>
+		</io>
+	</fusedoc>
+	*/
 	public static function formUrl2arguments() {
 		global $fusebox, $arguments;
 		if ( isset($fusebox->config['formUrl2arguments']) and !empty($fusebox->config['formUrl2arguments']) ) {
@@ -330,7 +516,31 @@ class Framework {
 	}
 
 
-	// get controller & action out of command
+
+
+	/**
+	<fusedoc>
+		<description>
+			get controller & action out of command
+		</description>
+		<io>
+			<in>
+				<!-- url variables -->
+				<string name="~commandVariable~" scope="$_GET|$_POST" />
+				<!-- framework config -->
+				<structure name="config" scope="$fusebox">
+					<string name="commandVariable" example="fuseaction" />
+					<string name="defaultCommand" example="home.index" />
+				</structure>
+			</in>
+			<out>
+				<!-- framework api object -->
+				<string name="controller" scope="$fusebox" />
+				<string name="action" scope="$fusebox" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
 	public static function setControllerAction() {
 		global $fusebox;
 		// if no command was defined, use {defaultCommand} in config
@@ -351,7 +561,24 @@ class Framework {
 	}
 
 
-	// run specific controller and action
+
+
+	/**
+	<fusedoc>
+		<description>
+			main function
+			===> run specific controller and action
+		</description>
+		<io>
+			<in>
+				<string name="controller" scope="$fusebox" />
+			</in>
+			<out>
+				<number name="$startTick" scope="self" comments="millisecond" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
 	public static function run() {
 		global $fusebox, $fuseboxy, $arguments;
 		// mark start time (ms)
