@@ -119,18 +119,41 @@ class F {
 	}
 
 
-	// obtain correct path of the file (or directory)
-	public static function appPath($path='') {
+
+
+	/**
+	<fusebox>
+		<description>
+			obtain correct path of the file (or directory)
+			===> look for [app] directory first
+			===> then look for [vendor] directory (of composer packages)
+		</description>
+		<io>
+			<in>
+				<!-- framework config -->
+				<structure name="config" scope="$fusebox">
+					<string name="appPath" example="/path/to/my/site/app/" />
+				</structure>
+				<!-- parameter -->
+				<string name="$relPath" optional="yes" comments="file path relative to app directory" example="view/global/layout.php" />
+			</in>
+			<out>
+				<string name="~return~" comments="absolute path (relative path with base directory prepended)" example="/path/to/my/site/app/view/global/layout.php" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
+	public static function appPath($relPath=null) {
 		global $fusebox;
 		// if nothing specified
 		// ===> simply return config
-		if ( empty($path) ) return $fusebox->config['appPath'];
+		if ( empty($relPath) ) return $fusebox->config['appPath'];
 		// look into app path
-		$appPathFile = $fusebox->config['appPath'].$path;
+		$appPathFile = $fusebox->config['appPath'].$relPath;
 		if ( file_exists($appPathFile) ) return $appPathFile;
 		// if file not found in app path
 		// ===> look through each fuseboxy module under vendor path
-		$glob = glob($fusebox->config['vendorPath'].'fuseboxy/*/app/'.$path);
+		$glob = glob($fusebox->config['vendorPath'].'fuseboxy/*/app/'.$relPath);
 		if ( !empty($glob[0]) ) return $glob[0];
 		// file not found
 		// ===> return non-exist path
@@ -139,24 +162,69 @@ class F {
 	}
 
 
-	// controller + action
-	public static function command($key='') {
+
+
+	/**
+	<fusedoc>
+		<description>
+			obtain current controller and/or action
+		</description>
+		<io>
+			<in>
+				<!-- framework api -->
+				<string name="controller" example="home" scope="$fusebox" />
+				<string name="action" example="index" scope="$fusebox" />
+				<!-- framework config -->
+				<structure name="config" scope="$fusebox">
+					<string name="defaultCommand" example="home.index" />
+				</structure>
+				<!-- parameter -->
+				<string name="$key" optional="yes" comments="controller|action" />
+			</in>
+			<out>
+				<string name="~return~" example="home.index|home|index" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
+	public static function command($key=null) {
 		global $fusebox;
 		if ( empty($fusebox->config['defaultCommand']) ) return false;
-		if ( $key == null ) return "{$fusebox->controller}.{$fusebox->action}";
+		if ( empty($key) ) return $fusebox->controller.'.'.$fusebox->action;
 		if ( strtolower($key) == 'controller' ) return $fusebox->controller;
 		if ( strtolower($key) == 'action' ) return $fusebox->action;
-		return false;
-	}
-
-
-	// get config
-	public static function config($key=null) {
-		global $fusebox;
-		if ( empty($key) ) return $fusebox->config;
-		if ( isset($fusebox->config[$key]) ) return $fusebox->config[$key];
 		return null;
 	}
+
+
+
+
+	/**
+	<fusedoc>
+		<description>
+			obtain framework config
+		</description>
+		<io>
+			<in>
+				<!-- framework config -->
+				<structure name="config" scope="$fusebox">
+					<mixed name="*" />
+				</structure>
+				<!-- parameter -->
+				<string name="$key" optional="yes" example="defaultCommand|db|smtp|.." />
+			</in>
+			<out>
+				<mixed name="~return~" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
+	public static function config($key=null) {
+		global $fusebox;
+		return empty($key) ? $fusebox->config : ( $fusebox->config[$key] ?? null );
+	}
+
+
 
 
 	// show error, send header, and abort operation
