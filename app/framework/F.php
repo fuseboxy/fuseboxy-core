@@ -378,9 +378,9 @@ class F {
 		$command = self::parseCommand($command);
 		$fusebox->controller = $command['controller'];
 		$fusebox->action = $command['action'];
-		$controllerPath = "{$fusebox->config['appPath']}/controller/{$fusebox->controller}_controller.php";
+		$controllerPath = self::appPath("controller/{$fusebox->controller}_controller.php");
 		// check controller existence
-		F::pageNotFound( !file_exists($controllerPath) );
+		self::pageNotFound( !file_exists($controllerPath) );
 		// run & display new command
 		include $controllerPath;
 		// trim stack after run
