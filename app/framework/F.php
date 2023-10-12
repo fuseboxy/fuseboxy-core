@@ -1,15 +1,5 @@
-<?php /*
-<fusedoc>
-	<description>
-		Helper component for Fuseboxy framework
-	</description>
-	<io>
-		<in>
-			<string name="$mode" scope="Framework" optional="yes" comments="UNIT_TEST" />
-		</in>
-	</io>
-</fusedoc>
-*/
+<?php
+// Helper component for Fuseboxy framework
 class F {
 
 
@@ -418,18 +408,51 @@ class F {
 	}
 
 
-	// check whether this is an internal invoke
-	// ===> first request, which is not internal, was invoked by framework core (fuseboxy.php)
+
+
+	/**
+	<fusedoc>
+		<description>
+			check whether this is an internal invoke
+			===> first request, which is not internal, was invoked by framework core (fuseboxy.php)
+		</description>
+		<io>
+			<in>
+				<!-- framework -->
+				<array name="invokeQueue" scope="$fusebox" optional="yes" />
+			</in>
+			<out>
+				<boolean name="~return~" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
 	public static function invokeRequest() {
 		global $fusebox;
 		return !empty($fusebox->invokeQueue);
 	}
 
 
-	// case-sensitive check on command (with wildcard), for example...
-	// - specific controller + action ===> F::is('site.index')
-	// - specific controller ===> F::is('site.*')
-	// - specific action ===> F::is('*.index')
+
+
+	/**
+	<fusedoc>
+		<description>
+			case-sensitive check on command (with wildcard), for example...
+			===> specific controller + action ===> F::is('site.index')
+			===> specific controller ===> F::is('site.*')
+			===> specific action ===> F::is('*.index')
+		</description>
+		<io>
+			<in>
+				<list name="$commandPatternList" delim="," example="home.index,news.*,*.news" />
+			</in>
+			<out>
+				<boolean name="~return~" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
 	public static function is($commandPatternList) {
 		global $fusebox;
 		// allow checking multiple command-patterns
@@ -449,26 +472,60 @@ class F {
 	}
 
 
-	// show 404 not found page
+
+
+	/**
+	<fusedoc>
+		<description>
+			show 404 not found page
+			===> throw exception when unit test
+			===> load error-controller & abort operation (when error-controller specified)
+			===> simply display message & abort operation (when no error-controller)
+			--
+			for a customized 404 page
+			===> check in error-controller for [page not found] message
+			===> then load 404 custom page
+		</description>
+		<io>
+			<in>
+				<boolean name="$condition" optional="yes" default="true" />
+			</in>
+			<out />
+		</io>
+	</fusedoc>
+	*/
 	public static function pageNotFound($condition=true) {
 		global $fusebox;
 		if ( $condition ) {
 			if ( !headers_sent() ) header("HTTP/1.0 404 Not Found");
 			$fusebox->error = 'Page not found';
-			if ( Framework::$mode == Framework::FUSEBOX_UNIT_TEST ) {
-				throw new Exception(self::command()." - ".$fusebox->error, Framework::FUSEBOX_PAGE_NOT_FOUND);
-			} elseif ( !empty($fusebox->config['errorController']) ) {
-				include $fusebox->config['errorController'];
-				die();
-			} else {
-				echo $fusebox->error;
-				die();
-			}
+			if ( Framework::$mode == Framework::FUSEBOX_UNIT_TEST ) throw new Exception(self::command()." - ".$fusebox->error, Framework::FUSEBOX_PAGE_NOT_FOUND);
+			elseif ( !empty($fusebox->config['errorController']) ) exit( include $fusebox->config['errorController'] );
+			else exit($fusebox->error);
 		}
 	}
 
 
-	// extract controller & action from command
+
+
+	/**
+	<fusedoc>
+		<description>
+			extract controller & action from command
+		</description>
+		<io>
+			<in>
+				<string name="$command" example="home|product.view|.." />
+			</in>
+			<out>
+				<structure name="~return~">
+					<string name="controller" example="home" />
+					<string name="action" example="index" />
+				</structure>
+			</out>
+		</io>
+	</fusedoc>
+	*/
 	public static function parseCommand($command) {
 		global $fusebox;
 		// split command by delimiter (when not empty)
@@ -488,8 +545,27 @@ class F {
 	}
 
 
-	// redirect to specific command
-	// ===> command might include query-string
+
+
+	/**
+	<fusedoc>
+		<description>
+			redirect to specific command
+			===> command might include query-string
+			===> throw exception when unit test
+			===> redirect by browser header & abort operation (when header not sent yet)
+			===> redirect by javascript & abort operation (when header already sent)
+		</description>
+		<io>
+			<in>
+				<string name="$command" example="product.index|product.view&id=999|.." />
+				<boolean name="$condition" default="true" />
+				<number name="$delay" default="0" comments="number of seconds to wait before redirection" />
+			</in>
+			<out />
+		</io>
+	</fusedoc>
+	*/
 	public static function redirect($command, $condition=true, $delay=0) {
 		// transform command to url
 		$url = self::url($command);
@@ -536,10 +612,32 @@ class F {
 
 
 
-	// transform url (with param)
-	// ===> append fusebox-myself to url
-	// ===> turn it into beautify-url (if enable)
-	public static function url($commandWithQueryString='') {
+	/**
+	<fusedoc>
+		<description>
+			transform url (with param)
+			===> append fusebox-myself to url
+			===> turn it into beautify-url (if enable)
+		</description>
+		<io>
+			<in>
+				<!-- config -->
+				<structure name="config" scope="$fusebox">
+					<string name="commandVariable" example="fuseaction" />
+					<boolean name="urlRewrite" />
+					<structure name="route" comments="url-rewrite patterns" />
+				</structure>
+				<!-- parameter -->
+				<string name="$commandWithQueryString" optional="yes" example="product.view&id=10" />
+			</in>
+			<out>
+				<string name="~returnNormalURL~" oncondition="when {urlRewrite=true}" example="/my/site/index.php?fuseaction=product.view&id=10" />
+				<string name="~returnBeautifyURL~" oncondition="when {urlRewrite=false}" example="/my/site/product/view/id=10" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
+	public static function url($commandWithQueryString=null) {
 		global $fusebox;
 		// validation : no command defined
 		// ===> simply return self (no matter url-rewrite or not)
