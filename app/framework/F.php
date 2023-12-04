@@ -340,7 +340,7 @@ class F {
 		</description>
 		<io>
 			<in>
-				<string name="$command" example="product.view" />
+				<string name="$commandWithQueryString" example="product.view&id=999" />
 				<structure name="$arguments" optional="yes" default="~emptyArray~" />
 			</in>
 			<out>
@@ -357,21 +357,29 @@ class F {
 		</io>
 	</fusedoc>
 	*/
-	public static function invoke($command, $arguments=[]) {
+	public static function invoke($commandWithQueryString, $arguments=[]) {
 		global $fusebox;
 		// create stack container to keep track of command-in-run
 		// ===> first item of invoke queue should be original command
 		// ===> second item onward will be the command(s) called by F::invoke()
 		if ( !isset($fusebox->invokeQueue) ) $fusebox->invokeQueue = array();
 		$fusebox->invokeQueue[] = "{$fusebox->controller}.{$fusebox->action}";
+		// split new command & query-string (if any)
+		$commandWithQueryString = str_replace('?', '&', $commandWithQueryString);
+		$arr = explode('&', $commandWithQueryString);
+		$command = $arr[0] ?? '';
+		$queryString = $arr[1] ?? '';
 		// parse new command
 		$command = self::parseCommand($command);
 		$fusebox->controller = $command['controller'];
 		$fusebox->action = $command['action'];
-		$controllerPath = self::appPath("controller/{$fusebox->controller}_controller.php");
+		$controllerPath = "{$fusebox->config['appPath']}/controller/{$fusebox->controller}_controller.php";
+		// merge query-string & arguments
+		parse_str($queryString, $queryString);
+		$arguments = array_merge($queryString, $arguments);
 		// check controller existence
-		self::pageNotFound( !file_exists($controllerPath) );
-		// run & display new command
+		F::pageNotFound( !file_exists($controllerPath) );
+		// run new command
 		include $controllerPath;
 		// trim stack after run
 		// ===> reset to original command
