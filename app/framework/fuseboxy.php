@@ -581,25 +581,29 @@ class Framework {
 	*/
 	public static function run() {
 		global $fusebox, $fuseboxy, $arguments;
-		// mark start time (ms)
-		self::$startTick = microtime(true)*1000;
-		// main process...
-		self::initAPI();
-		self::loadConfig();
-		self::validateConfig();
-		self::loadHelper();
-		self::setMyself();
-		self::autoLoad();
-		self::urlRewrite();
-		self::formUrl2arguments();
-		self::setControllerAction();
-		// do not run when no controller specified
-		// ===> e.g. when default-command is empty
-		// ===> otherwise, load controller and run!
-		if ( !empty($fusebox->controller) ) {
-			$__controllerPath = F::appPath('controller/'.str_ireplace('-', '_', $fusebox->controller).'_controller.php');
-			F::pageNotFound( !file_exists($__controllerPath) );
-			include $__controllerPath;
+		try {
+			// mark start time (ms)
+			self::$startTick = microtime(true)*1000;
+			// main process...
+			self::initAPI();
+			self::loadConfig();
+			self::validateConfig();
+			self::loadHelper();
+			self::setMyself();
+			self::autoLoad();
+			self::urlRewrite();
+			self::formUrl2arguments();
+			self::setControllerAction();
+			// do not run when no controller specified
+			// ===> e.g. when default-command is empty
+			// ===> otherwise, load controller and run!
+			if ( !empty($fusebox->controller) ) {
+				$__controllerPath = F::appPath('controller/'.str_ireplace('-', '_', $fusebox->controller).'_controller.php');
+				F::pageNotFound( !file_exists($__controllerPath) );
+				include $__controllerPath;
+			}
+		} catch (Exception $e) {
+			F::error($e);
 		}
 	}
 
