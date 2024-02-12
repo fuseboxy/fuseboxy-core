@@ -1,8 +1,7 @@
 Fuseboxy
 ========
 
-# Simple is Beautiful - Easy MVC framework for PHP
-(inspired by ColdFusion Fusebox Framework)
+# Non-intrusive & Addictive MVC Framework for PHP
 
 
 
@@ -11,9 +10,11 @@ Fuseboxy
 
 Fusebox is an application framework (or methodology) invented by Steve Nelson in the 90's for ColdFusion scripting language (CFML).
 
-Please note that this framework is ***NOT*** a direct port of the original Fusebox framework.
+Mr. Nelson might or might not have noticed that the Fusebox framework was actually an implementation of the concept of Model-View-Controller (MVC) methodolgy, which made the whole thing very friendly and sensible.
 
-This framework only applies the concept of Fusebox methodology.
+Please note that this framework is ***NOT*** a direct port of the original Fusebox framework. This framework only applies the concept of Fusebox (or MVC actually) methodology.
+
+The name "Fuseboxy" means doing it in a Fusebox way.
 
 
 
