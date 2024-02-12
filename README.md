@@ -1,9 +1,7 @@
-Fuseboxy
-========
+FUSEBOXY (2.x)
+==============
 
 # Non-intrusive & Addictive MVC Framework for PHP
-
-
 
 
 ## What is Fusebox?
