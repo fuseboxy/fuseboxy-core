@@ -1,5 +1,5 @@
-Fuseboxy
-========
+FUSERBOXY (1.x)
+===============
 
 # Simple is Beautiful - Easy MVC framework for PHP
 (inspired by ColdFusion Fusebox Framework)
