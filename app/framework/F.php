@@ -293,7 +293,7 @@ class F {
 		return $et;
 	}
 	// alias method
-	public function runtime($unit='ms') { return self::et($unit); }
+	public static function runtime($unit='ms') { return self::et($unit); }
 
 
 
