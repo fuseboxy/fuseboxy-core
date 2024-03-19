@@ -43,6 +43,80 @@ class Framework {
 	/**
 	<fusedoc>
 		<description>
+			autoload files (or run anonymous function)
+		</description>
+		<io>
+			<in>
+				<!-- server variables -->
+				<string name="SCRIPT_NAME" scope="$_SERVER" />
+				<!-- framework config -->
+				<structure name="autoload" scope="$fusebox">
+					<string name="+" optional="yes" comments="pattern" example="/path/to/my/site/app/model/*.php" />
+					<function name="+" optional="yes" comments="function to run" example="function(){ $foo = 'bar'; }" />
+				</structure>
+			</in>
+			<out />
+		</io>
+	</fusedoc>
+	*/
+	public static function autoLoad() {
+		global $fusebox;
+		if ( !empty($fusebox->config['autoLoad']) ) {
+			foreach ( $fusebox->config['autoLoad'] as $pattern ) {
+				// call as function
+				if ( is_callable($pattern) ) {
+					call_user_func($pattern);
+				// file not found (when pattern is file path)
+				} elseif ( !empty($pattern) and empty(glob($pattern)) and strpos($pattern, '*') === false and strtolower(substr($pattern, -4)) == '.php' ) {
+					throw new Exception("Autoload file not found ({$pattern})", self::FUSEBOX_INVALID_CONFIG);
+				// load files (when directory or file exists)
+				} elseif ( !empty($pattern) ) {
+					if ( is_dir($pattern) or in_array(substr($pattern, -1), ['/','\\']) ) $pattern = rtrim($pattern, '/\\').'/*.php';
+					foreach ( glob($pattern) as $path ) if ( is_file($path) ) require_once $path;
+				}
+			} // foreach-pattern
+		} // if-autoload
+	}
+
+
+
+
+	/**
+	<fusedoc>
+		<description>
+			fix config
+		</description>
+		<io>
+			<in>
+				<!-- framework config -->
+				<structure name="config" scope="$fusebox" />
+			</in>
+			<out>
+				<!-- framework config -->
+				<structure name="config" scope="$fusebox">
+					<string name="appPath|vendorPath|baseDir|baseUrl|uploadDir|uploadUrl" />
+				</structure>
+			</out>
+		</io>
+	</fusedoc>
+	*/
+	public static function fixConfig() {
+		global $fusebox;
+		// unify slash & append trailing-slash
+		foreach ( ['appPath','vendorPath','baseDir','baseUrl','uploadDir','uploadUrl'] as $pathName ) {
+			if ( !empty($fusebox->config[$pathName]) ) {
+				$fusebox->config[$pathName]  = str_replace('\\', '/', $fusebox->config[$pathName]);
+				$fusebox->config[$pathName] .= ( substr($fuseboxy->config[$pathName], -1) != '/' ) ? '/' : '';
+			}
+		}
+	}
+
+
+
+
+	/**
+	<fusedoc>
+		<description>
 			initiate fusebox API object
 			===> use {global} instead of {$_GLOBALS}
 			===> make developer easier to access the object (without typing too much)
@@ -142,45 +216,44 @@ class Framework {
 	/**
 	<fusedoc>
 		<description>
-			validate config
+			formUrl2arguments
+			===> default merging POST & GET scope
+			===> user could define array of scopes to merge
 		</description>
 		<io>
 			<in>
-				<!-- framework config -->
 				<structure name="config" scope="$fusebox">
-					<string name="commandVariable" optional="yes" />
-					<string name="appPath" optional="yes" />
-					<string name="errorController" optional="yes" />
+					<boolean name="formUrl2arguments" optional="yes" comments="use default scopes & precedence (form-over-url)" />
+					<array name="formUrl2arguments" optional="yes" comments="custom scopes & precedence (e.g. url-over-form, including cookies, etc.)">
+						<structure name="+" comments="variable scopes" example="$_GET|$_POST|$_COOKIES|.." />
+					</array>
 				</structure>
 			</in>
-			<out />
+			<out>
+				<structure name="$arguments">
+					<mixed name="*" />
+				</structure>
+			</out>
 		</io>
 	</fusedoc>
 	*/
-	public static function validateConfig() {
-		global $fusebox;
-		// check required config
-		foreach ( array('commandVariable','appPath') as $key ) {
-			if ( empty($fusebox->config[$key]) ) {
-				if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-				throw new Exception("Fusebox config variable {{$key}} is required", self::FUSEBOX_MISSING_CONFIG);
+	public static function formUrl2arguments() {
+		global $fusebox, $arguments;
+		if ( isset($fusebox->config['formUrl2arguments']) and !empty($fusebox->config['formUrl2arguments']) ) {
+			global $arguments;
+			// config default
+			if ( $fusebox->config['formUrl2arguments'] === true or $fusebox->config['formUrl2arguments'] === 1 ) {
+				$fusebox->config['formUrl2arguments'] = array($_GET, $_POST);
 			}
-		}
-		// check command-variable
-		if ( in_array(strtolower($fusebox->config['commandVariable']), array('controller','action')) ) {
-			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception("Config {commandVariable} can not be 'controller' or 'action'", self::FUSEBOX_INVALID_CONFIG);
-
-		}
-		// check app-path
-		if ( !is_dir($fusebox->config['appPath']) ) {
-			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception("Directory specified in config {appPath} does not exist ({$fusebox->config['appPath']})", self::FUSEBOX_INVALID_CONFIG);
-		}
-		// check error-controller
-		if ( !empty($fusebox->config['errorController']) and !is_file($fusebox->config['errorController']) ) {
-			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception("Error controller does not exist ({$fusebox->config['errorController']})", self::FUSEBOX_INVALID_CONFIG);
+			// copy variables from scope to container (precedence = first-come-first-serve)
+			if ( is_array($fusebox->config['formUrl2arguments']) ) {
+				$arguments = array();
+				foreach ( $fusebox->config['formUrl2arguments'] as $scope ) $arguments += $scope;
+			// validation
+			} else {
+				if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
+				throw new Exception("Config {formUrl2arguments} must be Boolean or Array", self::FUSEBOX_INVALID_CONFIG);
+			}
 		}
 	}
 
@@ -190,31 +263,90 @@ class Framework {
 	/**
 	<fusedoc>
 		<description>
-			fix config
+			main function
+			===> run specific controller and action
 		</description>
 		<io>
 			<in>
-				<!-- framework config -->
-				<structure name="config" scope="$fusebox" />
+				<string name="controller" scope="$fusebox" />
 			</in>
 			<out>
-				<!-- framework config -->
-				<structure name="config" scope="$fusebox">
-					<string name="appPath|vendorPath|baseDir|baseUrl|uploadDir|uploadUrl" />
-				</structure>
+				<number name="$startTick" scope="self" comments="millisecond" />
 			</out>
 		</io>
 	</fusedoc>
 	*/
-	public static function fixConfig() {
-		global $fusebox;
-		// unify slash & append trailing-slash
-		foreach ( ['appPath','vendorPath','baseDir','baseUrl','uploadDir','uploadUrl'] as $pathName ) {
-			if ( !empty($fusebox->config[$pathName]) ) {
-				$fusebox->config[$pathName]  = str_replace('\\', '/', $fusebox->config[$pathName]);
-				$fusebox->config[$pathName] .= ( substr($fuseboxy->config[$pathName], -1) != '/' ) ? '/' : '';
+	public static function run() {
+		global $fusebox, $fuseboxy, $arguments;
+		try {
+			// mark start time (ms)
+			self::$startTick = microtime(true)*1000;
+			// main process...
+			self::initAPI();
+			self::loadConfig();
+			self::validateConfig();
+			self::loadHelper();
+			self::setMyself();
+			self::autoLoad();
+			self::urlRewrite();
+			self::formUrl2arguments();
+			self::setControllerAction();
+			// do not run when no controller specified
+			// ===> e.g. when default-command is empty
+			// ===> otherwise, load controller and run!
+			if ( !empty($fusebox->controller) ) {
+				$__controllerPath = F::appPath('controller/'.str_ireplace('-', '_', $fusebox->controller).'_controller.php');
+				F::pageNotFound( !file_exists($__controllerPath) );
+				include $__controllerPath;
 			}
+		} catch (Exception $e) {
+			F::error($e);
 		}
+	}
+
+
+
+
+	/**
+	<fusedoc>
+		<description>
+			get controller & action out of command
+		</description>
+		<io>
+			<in>
+				<!-- url variables -->
+				<string name="~commandVariable~" scope="$_GET|$_POST" />
+				<!-- framework config -->
+				<structure name="config" scope="$fusebox">
+					<string name="commandVariable" example="fuseaction" />
+					<string name="defaultCommand" example="home.index" />
+				</structure>
+			</in>
+			<out>
+				<!-- framework api object -->
+				<string name="controller" scope="$fusebox" />
+				<string name="action" scope="$fusebox" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
+	public static function setControllerAction() {
+		global $fusebox;
+		// if no command was defined, use {defaultCommand} in config
+		if ( !empty($_GET[$fusebox->config['commandVariable']]) ) {
+			$command = $_GET[$fusebox->config['commandVariable']];
+		} elseif ( !empty($_POST[$fusebox->config['commandVariable']]) ) {
+			$command = $_POST[$fusebox->config['commandVariable']];
+		} elseif ( !empty($fusebox->config['defaultCommand']) ) {
+			$command = $fusebox->config['defaultCommand'];
+		} else {
+			$command = false;
+		}
+		// parse controller & action
+		$parsed = F::parseCommand($command);
+		// modify fusebox-api variable
+		$fusebox->controller = $parsed['controller'];
+		$fusebox->action = $parsed['action'];
 	}
 
 
@@ -254,47 +386,6 @@ class Framework {
 			$fusebox->self = $_SERVER['SCRIPT_NAME'];
 			$fusebox->myself = "{$fusebox->self}?{$fusebox->config['commandVariable']}=";
 		}
-	}
-
-
-
-
-	/**
-	<fusedoc>
-		<description>
-			autoload files (or run anonymous function)
-		</description>
-		<io>
-			<in>
-				<!-- server variables -->
-				<string name="SCRIPT_NAME" scope="$_SERVER" />
-				<!-- framework config -->
-				<structure name="autoload" scope="$fusebox">
-					<string name="+" optional="yes" comments="pattern" example="/path/to/my/site/app/model/*.php" />
-					<function name="+" optional="yes" comments="function to run" example="function(){ $foo = 'bar'; }" />
-				</structure>
-			</in>
-			<out />
-		</io>
-	</fusedoc>
-	*/
-	public static function autoLoad() {
-		global $fusebox;
-		if ( !empty($fusebox->config['autoLoad']) ) {
-			foreach ( $fusebox->config['autoLoad'] as $pattern ) {
-				// call as function
-				if ( is_callable($pattern) ) {
-					call_user_func($pattern);
-				// file not found (when pattern is file path)
-				} elseif ( !empty($pattern) and empty(glob($pattern)) and strpos($pattern, '*') === false and strtolower(substr($pattern, -4)) == '.php' ) {
-					throw new Exception("Autoload file not found ({$pattern})", self::FUSEBOX_INVALID_CONFIG);
-				// load files (when directory or file exists)
-				} elseif ( !empty($pattern) ) {
-					if ( is_dir($pattern) or in_array(substr($pattern, -1), ['/','\\']) ) $pattern = rtrim($pattern, '/\\').'/*.php';
-					foreach ( glob($pattern) as $path ) if ( is_file($path) ) require_once $path;
-				}
-			} // foreach-pattern
-		} // if-autoload
 	}
 
 
@@ -474,136 +565,45 @@ class Framework {
 	/**
 	<fusedoc>
 		<description>
-			formUrl2arguments
-			===> default merging POST & GET scope
-			===> user could define array of scopes to merge
+			validate config
 		</description>
 		<io>
 			<in>
-				<structure name="config" scope="$fusebox">
-					<boolean name="formUrl2arguments" optional="yes" comments="use default scopes & precedence (form-over-url)" />
-					<array name="formUrl2arguments" optional="yes" comments="custom scopes & precedence (e.g. url-over-form, including cookies, etc.)">
-						<structure name="+" comments="variable scopes" example="$_GET|$_POST|$_COOKIES|.." />
-					</array>
-				</structure>
-			</in>
-			<out>
-				<structure name="$arguments">
-					<mixed name="*" />
-				</structure>
-			</out>
-		</io>
-	</fusedoc>
-	*/
-	public static function formUrl2arguments() {
-		global $fusebox, $arguments;
-		if ( isset($fusebox->config['formUrl2arguments']) and !empty($fusebox->config['formUrl2arguments']) ) {
-			global $arguments;
-			// config default
-			if ( $fusebox->config['formUrl2arguments'] === true or $fusebox->config['formUrl2arguments'] === 1 ) {
-				$fusebox->config['formUrl2arguments'] = array($_GET, $_POST);
-			}
-			// copy variables from scope to container (precedence = first-come-first-serve)
-			if ( is_array($fusebox->config['formUrl2arguments']) ) {
-				$arguments = array();
-				foreach ( $fusebox->config['formUrl2arguments'] as $scope ) $arguments += $scope;
-			// validation
-			} else {
-				if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-				throw new Exception("Config {formUrl2arguments} must be Boolean or Array", self::FUSEBOX_INVALID_CONFIG);
-			}
-		}
-	}
-
-
-
-
-	/**
-	<fusedoc>
-		<description>
-			get controller & action out of command
-		</description>
-		<io>
-			<in>
-				<!-- url variables -->
-				<string name="~commandVariable~" scope="$_GET|$_POST" />
 				<!-- framework config -->
 				<structure name="config" scope="$fusebox">
-					<string name="commandVariable" example="fuseaction" />
-					<string name="defaultCommand" example="home.index" />
+					<string name="commandVariable" optional="yes" />
+					<string name="appPath" optional="yes" />
+					<string name="errorController" optional="yes" />
 				</structure>
 			</in>
-			<out>
-				<!-- framework api object -->
-				<string name="controller" scope="$fusebox" />
-				<string name="action" scope="$fusebox" />
-			</out>
+			<out />
 		</io>
 	</fusedoc>
 	*/
-	public static function setControllerAction() {
+	public static function validateConfig() {
 		global $fusebox;
-		// if no command was defined, use {defaultCommand} in config
-		if ( !empty($_GET[$fusebox->config['commandVariable']]) ) {
-			$command = $_GET[$fusebox->config['commandVariable']];
-		} elseif ( !empty($_POST[$fusebox->config['commandVariable']]) ) {
-			$command = $_POST[$fusebox->config['commandVariable']];
-		} elseif ( !empty($fusebox->config['defaultCommand']) ) {
-			$command = $fusebox->config['defaultCommand'];
-		} else {
-			$command = false;
-		}
-		// parse controller & action
-		$parsed = F::parseCommand($command);
-		// modify fusebox-api variable
-		$fusebox->controller = $parsed['controller'];
-		$fusebox->action = $parsed['action'];
-	}
-
-
-
-
-	/**
-	<fusedoc>
-		<description>
-			main function
-			===> run specific controller and action
-		</description>
-		<io>
-			<in>
-				<string name="controller" scope="$fusebox" />
-			</in>
-			<out>
-				<number name="$startTick" scope="self" comments="millisecond" />
-			</out>
-		</io>
-	</fusedoc>
-	*/
-	public static function run() {
-		global $fusebox, $fuseboxy, $arguments;
-		try {
-			// mark start time (ms)
-			self::$startTick = microtime(true)*1000;
-			// main process...
-			self::initAPI();
-			self::loadConfig();
-			self::validateConfig();
-			self::loadHelper();
-			self::setMyself();
-			self::autoLoad();
-			self::urlRewrite();
-			self::formUrl2arguments();
-			self::setControllerAction();
-			// do not run when no controller specified
-			// ===> e.g. when default-command is empty
-			// ===> otherwise, load controller and run!
-			if ( !empty($fusebox->controller) ) {
-				$__controllerPath = F::appPath('controller/'.str_ireplace('-', '_', $fusebox->controller).'_controller.php');
-				F::pageNotFound( !file_exists($__controllerPath) );
-				include $__controllerPath;
+		// check required config
+		foreach ( array('commandVariable','appPath') as $key ) {
+			if ( empty($fusebox->config[$key]) ) {
+				if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
+				throw new Exception("Fusebox config variable {{$key}} is required", self::FUSEBOX_MISSING_CONFIG);
 			}
-		} catch (Exception $e) {
-			F::error($e);
+		}
+		// check command-variable
+		if ( in_array(strtolower($fusebox->config['commandVariable']), array('controller','action')) ) {
+			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
+			throw new Exception("Config {commandVariable} can not be 'controller' or 'action'", self::FUSEBOX_INVALID_CONFIG);
+
+		}
+		// check app-path
+		if ( !is_dir($fusebox->config['appPath']) ) {
+			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
+			throw new Exception("Directory specified in config {appPath} does not exist ({$fusebox->config['appPath']})", self::FUSEBOX_INVALID_CONFIG);
+		}
+		// check error-controller
+		if ( !empty($fusebox->config['errorController']) and !is_file($fusebox->config['errorController']) ) {
+			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
+			throw new Exception("Error controller does not exist ({$fusebox->config['errorController']})", self::FUSEBOX_INVALID_CONFIG);
 		}
 	}
 
