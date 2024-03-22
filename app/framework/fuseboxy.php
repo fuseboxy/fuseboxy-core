@@ -187,12 +187,12 @@ class Framework {
 		if ( file_exists(self::$configPath) ) {
 			$fusebox->config = include self::$configPath;
 		} else {
-			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception("Config file not found (".self::$configPath.")", self::FUSEBOX_CONFIG_NOT_FOUND);
+			if ( !headers_sent() ) header('HTTP/1.0 500 Internal Server Error');
+			throw new Exception('Config file not found ('.self::$configPath.')', self::FUSEBOX_CONFIG_NOT_FOUND);
 		}
 		if ( !is_array($fusebox->config) ) {
-			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception("Config file must return an Array", self::FUSEBOX_CONFIG_NOT_DEFINED);
+			if ( !headers_sent() ) header('HTTP/1.0 500 Internal Server Error');
+			throw new Exception('Config file must return an array', self::FUSEBOX_CONFIG_NOT_DEFINED);
 		}
 		// define config default value (when necessary)
 		$fusebox->config['commandVariable'] = isset($fusebox->config['commandVariable']) ? $fusebox->config['commandVariable'] : 'fuseaction';
