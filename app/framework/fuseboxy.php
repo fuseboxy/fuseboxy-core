@@ -63,15 +63,21 @@ class Framework {
 		global $fusebox;
 		if ( !empty($fusebox->config['autoLoad']) ) {
 			foreach ( $fusebox->config['autoLoad'] as $pattern ) {
+				$isFunction = is_callable($pattern);
+				$isPatternLikeDir = ( is_dir($pattern) or in_array(substr($pattern, -1), ['/','\\']) );
+				$isPatternLikeFile = ( !empty($pattern) and strpos($pattern, '*') === false and strtolower(substr($pattern, -4)) == '.php' );
 				// call as function
-				if ( is_callable($pattern) ) {
+				if ( $isFunction ) {
 					call_user_func($pattern);
-				// file not found (when pattern is file path)
-				} elseif ( !empty($pattern) and empty(glob($pattern)) and strpos($pattern, '*') === false and strtolower(substr($pattern, -4)) == '.php' ) {
+				// directory not found
+				} elseif ( $isPatternLikeDir and !is_dir($pattern) ) {
+					throw new Exception("Autoload directory not found ({$pattern})", self::FUSEBOX_INVALID_CONFIG);
+				// file not found
+				} elseif ( $isPatternLikeFile and empty(glob($pattern)) ) {
 					throw new Exception("Autoload file not found ({$pattern})", self::FUSEBOX_INVALID_CONFIG);
 				// load files (when directory or file exists)
 				} elseif ( !empty($pattern) ) {
-					if ( is_dir($pattern) or in_array(substr($pattern, -1), ['/','\\']) ) $pattern = rtrim($pattern, '/\\').'/*.php';
+					if ( $isPatternLikeDir ) $pattern = rtrim($pattern, '/\\').'/*.php';
 					foreach ( glob($pattern) as $path ) if ( is_file($path) ) require_once $path;
 				}
 			} // foreach-pattern
