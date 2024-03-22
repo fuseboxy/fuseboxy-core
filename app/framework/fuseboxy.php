@@ -64,21 +64,35 @@ class Framework {
 		if ( !empty($fusebox->config['autoLoad']) ) {
 			foreach ( $fusebox->config['autoLoad'] as $pattern ) {
 				$isFunction = is_callable($pattern);
-				$isPatternLikeDir = ( is_dir($pattern) or in_array(substr($pattern, -1), ['/','\\']) );
-				$isPatternLikeFile = ( !empty($pattern) and strpos($pattern, '*') === false and strtolower(substr($pattern, -4)) == '.php' );
+				$isPatternLikeDir = ( !$isFunction and ( is_dir($pattern) or in_array(substr($pattern, -1), ['/','\\']) ) );
+				$isPatternLikeFile = ( !$isFunction and !empty($pattern) and strpos($pattern, '*') === false and strtolower(substr($pattern, -4)) == '.php' );
 				// call as function
 				if ( $isFunction ) {
 					call_user_func($pattern);
-				// directory not found
-				} elseif ( $isPatternLikeDir and !is_dir($pattern) ) {
-					throw new Exception("Autoload directory not found ({$pattern})", self::FUSEBOX_INVALID_CONFIG);
 				// file not found
 				} elseif ( $isPatternLikeFile and empty(glob($pattern)) ) {
 					throw new Exception("Autoload file not found ({$pattern})", self::FUSEBOX_INVALID_CONFIG);
 				// load files (when directory or file exists)
 				} elseif ( !empty($pattern) ) {
+					// when only specified directory
+					// ===> load php files but not others
 					if ( $isPatternLikeDir ) $pattern = rtrim($pattern, '/\\').'/*.php';
-					foreach ( glob($pattern) as $path ) if ( is_file($path) ) require_once $path;
+					// go through each item
+					foreach ( glob($pattern) as $path ) {
+						// when not file
+						// ===> simply do nothing
+						if ( !is_file($path) ) {
+							// do nothing...
+						// when file is php
+						// ===> load & run as php
+						} elseif ( is_file($path) and pathinfo(strtolower($path), PATHINFO_EXTENSION) == 'php' ) {
+							require_once $path;
+						// when file is other type
+						// ===> display the content (for security purpose)
+						} elseif ( is_file($path) ) {
+							echo file_get_contents($path);
+						}
+					} // foreach-glob-pattern
 				}
 			} // foreach-pattern
 		} // if-autoload
