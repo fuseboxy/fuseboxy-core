@@ -69,6 +69,9 @@ class Framework {
 				// call as function
 				if ( $isFunction ) {
 					call_user_func($pattern);
+				// directory not found
+				} elseif ( $isPatternLikeDir and !is_dir($pattern) ) {
+					throw new Exception("Autoload directory not found ({$pattern})", self::FUSEBOX_INVALID_CONFIG);
 				// file not found
 				} elseif ( $isPatternLikeFile and empty(glob($pattern)) ) {
 					throw new Exception("Autoload file not found ({$pattern})", self::FUSEBOX_INVALID_CONFIG);
