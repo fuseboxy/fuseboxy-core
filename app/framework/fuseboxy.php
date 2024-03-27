@@ -140,6 +140,37 @@ class Framework {
 	/**
 	<fusedoc>
 		<description>
+			formUrl2arguments
+			===> merge  GET & POST scopes
+			===> variable in GET scope will be overwritten by same variable in POST scope
+		</description>
+		<io>
+			<in>
+				<structure name="config" scope="$fusebox">
+					<boolean name="formUrl2arguments" />
+				</structure>
+			</in>
+			<out>
+				<structure name="$arguments">
+					<mixed name="*" />
+				</structure>
+			</out>
+		</io>
+	</fusedoc>
+	*/
+	public static function formUrl2arguments() {
+		global $fusebox, $arguments;
+		if ( !empty($fusebox->config['formUrl2arguments']) ) {
+			$arguments = array_merge($_GET, $_POST);
+		}
+	}
+
+
+
+
+	/**
+	<fusedoc>
+		<description>
 			initiate fusebox API object
 			===> use {global} instead of {$_GLOBALS}
 			===> make developer easier to access the object (without typing too much)
@@ -230,53 +261,6 @@ class Framework {
 		if ( !class_exists('F') ) {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
 			throw new Exception("Helper class (F) not defined", self::FUSEBOX_HELPER_NOT_DEFINED);
-		}
-	}
-
-
-
-
-	/**
-	<fusedoc>
-		<description>
-			formUrl2arguments
-			===> default merging POST & GET scope
-			===> user could define array of scopes to merge
-		</description>
-		<io>
-			<in>
-				<structure name="config" scope="$fusebox">
-					<boolean name="formUrl2arguments" optional="yes" comments="use default scopes & precedence (form-over-url)" />
-					<array name="formUrl2arguments" optional="yes" comments="custom scopes & precedence (e.g. url-over-form, including cookies, etc.)">
-						<structure name="+" comments="variable scopes" example="$_GET|$_POST|$_COOKIES|.." />
-					</array>
-				</structure>
-			</in>
-			<out>
-				<structure name="$arguments">
-					<mixed name="*" />
-				</structure>
-			</out>
-		</io>
-	</fusedoc>
-	*/
-	public static function formUrl2arguments() {
-		global $fusebox, $arguments;
-		if ( isset($fusebox->config['formUrl2arguments']) and !empty($fusebox->config['formUrl2arguments']) ) {
-			global $arguments;
-			// config default
-			if ( $fusebox->config['formUrl2arguments'] === true or $fusebox->config['formUrl2arguments'] === 1 ) {
-				$fusebox->config['formUrl2arguments'] = array($_GET, $_POST);
-			}
-			// copy variables from scope to container (precedence = first-come-first-serve)
-			if ( is_array($fusebox->config['formUrl2arguments']) ) {
-				$arguments = array();
-				foreach ( $fusebox->config['formUrl2arguments'] as $scope ) $arguments += $scope;
-			// validation
-			} else {
-				if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-				throw new Exception("Config {formUrl2arguments} must be Boolean or Array", self::FUSEBOX_INVALID_CONFIG);
-			}
 		}
 	}
 
