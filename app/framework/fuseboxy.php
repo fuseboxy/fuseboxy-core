@@ -237,30 +237,30 @@ class Framework {
 	<fusedoc>
 		<description>
 			load framework helper utility
-			===> when {$fusebox} api is ready
 		</description>
 		<io>
 			<in>
 				<!-- property -->
 				<string name="$helperPath" scope="self" />
+				<!-- file -->
+				<file name="~helperPath~" />
 			</in>
 			<out />
 		</io>
 	</fusedoc>
 	*/
 	public static function loadHelper() {
-		global $fusebox;
 		// check helper path
-		if ( !file_exists(self::$helperPath) ) {
+		if ( !is_file(self::$helperPath) ) {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception("Helper class file not found (".self::$helperPath.")", self::FUSEBOX_HELPER_NOT_FOUND);
+			throw new Exception('Helper class file not found ('.self::$helperPath.')', self::FUSEBOX_HELPER_NOT_FOUND);
 		}
 		// load helper
 		require_once self::$helperPath;
 		// validate after load
 		if ( !class_exists('F') ) {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception("Helper class (F) not defined", self::FUSEBOX_HELPER_NOT_DEFINED);
+			throw new Exception('Helper class (F) not defined', self::FUSEBOX_HELPER_NOT_DEFINED);
 		}
 	}
 
