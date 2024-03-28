@@ -583,27 +583,36 @@ class Framework {
 	public static function validateConfig() {
 		global $fusebox;
 		// check required config
-		foreach ( array('commandVariable','appPath') as $key ) {
+		foreach ( [
+			'appPath',
+			'commandVariable',
+		] as $key ) {
 			if ( empty($fusebox->config[$key]) ) {
 				if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-				throw new Exception("Fusebox config variable {{$key}} is required", self::FUSEBOX_MISSING_CONFIG);
+				throw new Exception("Fusebox config [{$key}] is required", self::FUSEBOX_MISSING_CONFIG);
 			}
-		}
-		// check command-variable
-		if ( in_array(strtolower($fusebox->config['commandVariable']), array('controller','action')) ) {
-			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception("Config {commandVariable} can not be 'controller' or 'action'", self::FUSEBOX_INVALID_CONFIG);
-
 		}
 		// check app-path
 		if ( !is_dir($fusebox->config['appPath']) ) {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception("Directory specified in config {appPath} does not exist ({$fusebox->config['appPath']})", self::FUSEBOX_INVALID_CONFIG);
+			throw new Exception("Directory of fusebox config [appPath] not found ({$fusebox->config['appPath']})", self::FUSEBOX_INVALID_CONFIG);
+		}
+		// check command-variable
+		$reserved = array('controller', 'action');
+		if ( in_array(strtolower($fusebox->config['commandVariable']), $reserved) ) {
+			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
+			throw new Exception('Fusebox config [commandVariable] cannot be a reserved word (reserved='.implode(',', $reserved).')', self::FUSEBOX_INVALID_CONFIG);
+
 		}
 		// check error-controller
-		if ( !empty($fusebox->config['errorController']) and !is_file($fusebox->config['errorController']) ) {
-			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception("Error controller does not exist ({$fusebox->config['errorController']})", self::FUSEBOX_INVALID_CONFIG);
+		if ( !empty($fusebox->config['errorController']) ) {
+			if ( !is_file($fusebox->config['errorController']) ) {
+				if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
+				throw new Exception("Error controller not found ({$fusebox->config['errorController']})", self::FUSEBOX_INVALID_CONFIG);
+			} elseif ( strtolower(pathinfo($fusebox->config['errorController'], PATHINFO_EXTENSION)) != 'php' ) {
+				if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
+				throw new Exception("Error controller must be PHP ({$fusebox->config['errorController']})", self::FUSEBOX_INVALID_CONFIG);
+			}
 		}
 	}
 
