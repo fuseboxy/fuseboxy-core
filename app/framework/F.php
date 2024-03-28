@@ -192,7 +192,9 @@ class F {
 	/**
 	<fusedoc>
 		<description>
-			obtain framework config
+			getter & setter of framework config
+			===> use reserved word {__undefined__} as default
+			===> so that user can set config to null
 		</description>
 		<io>
 			<in>
@@ -201,7 +203,8 @@ class F {
 					<mixed name="*" />
 				</structure>
 				<!-- parameter -->
-				<string name="$key" optional="yes" example="defaultCommand|db|smtp|.." />
+				<string name="$key" optional="yes" default="__undefined__" example="defaultCommand|db|smtp|.." />
+				<mixed name="$val" optional="yes" default="__undefined__" />
 			</in>
 			<out>
 				<mixed name="~return~" />
@@ -209,9 +212,14 @@ class F {
 		</io>
 	</fusedoc>
 	*/
-	public static function config($key=null) {
+	public static function config($key='__undefined__', $val='__undefined__') {
 		global $fusebox;
-		return empty($key) ? $fusebox->config : ( $fusebox->config[$key] ?? null );
+		// setter
+		if ( $key != '__undefined__' and $val != '__undefined__' ) $fusebox->config[$key] = $val;
+		// getter (specific)
+		if ( $key != '__undefined__' ) return $fusebox->config[$key] ?? null;
+		// getter (all)
+		return $fusebox->config;
 	}
 
 
