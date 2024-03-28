@@ -125,11 +125,27 @@ class Framework {
 	*/
 	public static function fixConfig() {
 		global $fusebox;
-		// unify slash & append trailing-slash
-		foreach ( ['appPath','vendorPath','baseDir','baseUrl','uploadDir','uploadUrl'] as $pathName ) {
+		// validation
+		if ( !isset($fusebox->config) ) {
+			if ( !headers_sent() ) header('HTTP/1.0 500 Internal Server Error');
+			throw new Exception('Fusebox config not defined', self::FUSEBOX_CONFIG_NOT_DEFINED);
+		}
+		// fix paths in config
+		foreach ( [
+			'appPath',
+			'vendorPath',
+			'baseDir',
+			'baseUrl',
+			'uploadDir',
+			'uploadUrl',
+		] as $pathName ) {
 			if ( !empty($fusebox->config[$pathName]) ) {
-				$fusebox->config[$pathName]  = str_replace('\\', '/', $fusebox->config[$pathName]);
-				$fusebox->config[$pathName] .= ( substr($fuseboxy->config[$pathName], -1) != '/' ) ? '/' : '';
+				// unify slash
+				$fusebox->config[$pathName] = str_replace('\\', '/', $fusebox->config[$pathName]);
+				// dedupe slash
+				$fusebox->config[$pathName] = preg_replace('/\/+/', '/', $fusebox->config[$pathName]);
+				// append trailing slash
+				$fusebox->config[$pathName] .= ( substr($fusebox->config[$pathName], -1) != '/' ) ? '/' : '';
 			}
 		}
 	}
