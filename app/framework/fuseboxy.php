@@ -317,7 +317,7 @@ class Framework {
 	/**
 	<fusedoc>
 		<description>
-			get controller & action out of command
+			extract controller & action out of command
 		</description>
 		<io>
 			<in>
@@ -339,19 +339,12 @@ class Framework {
 	*/
 	public static function setControllerAction() {
 		global $fusebox;
+		// obtain command variable (if any)
+		$commandVariable = F::config('commandVariable');
 		// if no command was defined, use {defaultCommand} in config
-		if ( !empty($_GET[$fusebox->config['commandVariable']]) ) {
-			$command = $_GET[$fusebox->config['commandVariable']];
-		} elseif ( !empty($_POST[$fusebox->config['commandVariable']]) ) {
-			$command = $_POST[$fusebox->config['commandVariable']];
-		} elseif ( !empty($fusebox->config['defaultCommand']) ) {
-			$command = $fusebox->config['defaultCommand'];
-		} else {
-			$command = false;
-		}
-		// parse controller & action
+		$command = $_GET[$commandVariable] ?? $_POST[$commandVariable] ?? F::config('defaultCommand');
+		// parse command & modify api variable
 		$parsed = F::parseCommand($command);
-		// modify fusebox-api variable
 		$fusebox->controller = $parsed['controller'];
 		$fusebox->action = $parsed['action'];
 	}
