@@ -192,9 +192,7 @@ class F {
 	/**
 	<fusedoc>
 		<description>
-			getter & setter of framework config
-			===> use reserved word {__undefined__} as default
-			===> so that user can set config to null
+			getter of framework config
 		</description>
 		<io>
 			<in>
@@ -203,8 +201,7 @@ class F {
 					<mixed name="*" />
 				</structure>
 				<!-- parameter -->
-				<string name="$key" optional="yes" default="__undefined__" example="defaultCommand|db|smtp|.." />
-				<mixed name="$val" optional="yes" default="__undefined__" />
+                <string name="$key" optional="yes" example="defaultCommand|db|smtp|.." />
 			</in>
 			<out>
 				<mixed name="~return~" />
@@ -212,14 +209,9 @@ class F {
 		</io>
 	</fusedoc>
 	*/
-	public static function config($key='__undefined__', $val='__undefined__') {
+    public static function config($key=null) {
 		global $fusebox;
-		// setter
-		if ( $key != '__undefined__' and $val != '__undefined__' ) $fusebox->config[$key] = $val;
-		// getter (specific)
-		if ( $key != '__undefined__' ) return $fusebox->config[$key] ?? null;
-		// getter (all)
-		return $fusebox->config;
+        return empty($key) ? $fusebox->config : ( $fusebox->config[$key] ?? null );
 	}
 
 
@@ -623,6 +615,38 @@ class F {
 		if ( isset($_SERVER['HTTPS']) and in_array($_SERVER['HTTPS'], ['on','1']) ) return 'https';
 		if ( isset($_SERVER['REQUEST_SCHEME']) ) return $_SERVER['REQUEST_SCHEME'];
 		return 'http';
+	}
+
+
+
+
+	/**
+	<fusedoc>
+		<description>
+			setter of framework config
+		</description>
+		<io>
+			<in>
+				<!-- framework config -->
+				<structure name="config" scope="$fusebox">
+					<mixed name="*" />
+				</structure>
+				<!-- parameter -->
+				<string name="$key" example="defaultCommand|db|smtp|.." />
+				<mixed name="$val" />
+			</in>
+			<out>
+				<!-- modified framework config -->
+				<structure name="config" scope="$fusebox">
+					<mixed name="~return~" />
+				</structure>
+			</out>
+		</io>
+	</fusedoc>
+	*/
+	public static function setConfig($key, $val) {
+		global $fusebox;
+		$fusebox->config[$key] = $val;
 	}
 
 
