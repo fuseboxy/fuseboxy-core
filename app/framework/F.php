@@ -546,8 +546,8 @@ class F {
 		// both are false when command is empty
 		} else {
 			return array(
-				'controller' => false,
-				'action' => false,
+				'controller' => null,
+				'action' => null,
 			);
 		}
 	}
