@@ -60,45 +60,42 @@ class Framework {
 	</fusedoc>
 	*/
 	public static function autoLoad() {
-		global $fusebox;
-		if ( !empty($fusebox->config['autoLoad']) ) {
-			foreach ( $fusebox->config['autoLoad'] as $pattern ) {
-				$isFunction = is_callable($pattern);
-				$isPatternLikeDir = ( !$isFunction and ( is_dir($pattern) or in_array(substr($pattern, -1), ['/','\\']) ) );
-				$isPatternLikeFile = ( !$isFunction and !empty($pattern) and strpos($pattern, '*') === false and strtolower(substr($pattern, -4)) == '.php' );
-				// call as function
-				if ( $isFunction ) {
-					call_user_func($pattern);
-				// directory not found
-				} elseif ( $isPatternLikeDir and !is_dir($pattern) ) {
-					throw new Exception("Autoload directory not found ({$pattern})", self::FUSEBOX_INVALID_CONFIG);
-				// file not found
-				} elseif ( $isPatternLikeFile and empty(glob($pattern)) ) {
-					throw new Exception("Autoload file not found ({$pattern})", self::FUSEBOX_INVALID_CONFIG);
-				// load files (when directory or file exists)
-				} elseif ( !empty($pattern) ) {
-					// when only specified directory
-					// ===> load php files but not others
-					if ( $isPatternLikeDir ) $pattern = rtrim($pattern, '/\\').'/*.php';
-					// go through each item
-					foreach ( glob($pattern) as $path ) {
-						// when not file
-						// ===> simply do nothing
-						if ( !is_file($path) ) {
-							// do nothing...
-						// when file is php
-						// ===> load & run as php
-						} elseif ( is_file($path) and pathinfo(strtolower($path), PATHINFO_EXTENSION) == 'php' ) {
-							require_once $path;
-						// when file is other type
-						// ===> display the content (for security purpose)
-						} elseif ( is_file($path) ) {
-							echo file_get_contents($path);
-						}
-					} // foreach-glob-pattern
-				}
-			} // foreach-pattern
-		} // if-autoload
+		foreach ( F::config('autoLoad') ?? [] as $pattern ) {
+			$isFunction = is_callable($pattern);
+			$isPatternLikeDir = ( !$isFunction and ( is_dir($pattern) or in_array(substr($pattern, -1), ['/','\\']) ) );
+			$isPatternLikeFile = ( !$isFunction and !empty($pattern) and strpos($pattern, '*') === false and strtolower(substr($pattern, -4)) == '.php' );
+			// call as function
+			if ( $isFunction ) {
+				call_user_func($pattern);
+			// directory not found
+			} elseif ( $isPatternLikeDir and !is_dir($pattern) ) {
+				throw new Exception("Autoload directory not found ({$pattern})", self::FUSEBOX_INVALID_CONFIG);
+			// file not found
+			} elseif ( $isPatternLikeFile and empty(glob($pattern)) ) {
+				throw new Exception("Autoload file not found ({$pattern})", self::FUSEBOX_INVALID_CONFIG);
+			// load files (when directory or file exists)
+			} elseif ( !empty($pattern) ) {
+				// when only specified directory
+				// ===> load php files but not others
+				if ( $isPatternLikeDir ) $pattern = rtrim($pattern, '/\\').'/*.php';
+				// go through each item
+				foreach ( glob($pattern) as $path ) {
+					// when not file
+					// ===> simply do nothing
+					if ( !is_file($path) ) {
+						// do nothing...
+					// when file is php
+					// ===> load & run as php
+					} elseif ( is_file($path) and pathinfo(strtolower($path), PATHINFO_EXTENSION) == 'php' ) {
+						require_once $path;
+					// when file is other type
+					// ===> display the content (for security purpose)
+					} elseif ( is_file($path) ) {
+						echo file_get_contents($path);
+					}
+				} // foreach-glob-pattern
+			}
+		} // foreach-pattern
 	}
 
 
@@ -139,13 +136,13 @@ class Framework {
 			'uploadDir',
 			'uploadUrl',
 		] as $pathName ) {
-			if ( !empty($fusebox->config[$pathName]) ) {
+			if ( F::config($pathName) ) {
 				// unify slash
-				$fusebox->config[$pathName] = str_replace('\\', '/', $fusebox->config[$pathName]);
+				$fusebox->config[$pathName] = str_replace('\\', '/', F::config($pathName));
 				// dedupe slash
-				$fusebox->config[$pathName] = preg_replace('/\/+/', '/', $fusebox->config[$pathName]);
+				$fusebox->config[$pathName] = preg_replace('/\/+/', '/', F::config($pathName));
 				// append trailing slash
-				$fusebox->config[$pathName] .= ( substr($fusebox->config[$pathName], -1) != '/' ) ? '/' : '';
+				$fusebox->config[$pathName] .= ( substr(F::config($pathName), -1) != '/' ) ? '/' : '';
 			}
 		}
 	}
@@ -175,10 +172,8 @@ class Framework {
 	</fusedoc>
 	*/
 	public static function formUrl2arguments() {
-		global $fusebox, $arguments;
-		if ( !empty($fusebox->config['formUrl2arguments']) ) {
-			$arguments = array_merge($_GET, $_POST);
-		}
+		global $arguments;
+		if ( F::config('formUrl2arguments') ) $arguments = array_merge($_GET, $_POST);
 	}
 
 
@@ -237,7 +232,7 @@ class Framework {
 			if ( !headers_sent() ) header('HTTP/1.0 500 Internal Server Error');
 			throw new Exception('Config file not found ('.self::$configPath.')', self::FUSEBOX_CONFIG_NOT_FOUND);
 		}
-		if ( !is_array($fusebox->config) ) {
+		if ( !is_array(F::config()) ) {
 			if ( !headers_sent() ) header('HTTP/1.0 500 Internal Server Error');
 			throw new Exception('Config file must return an array', self::FUSEBOX_CONFIG_NOT_DEFINED);
 		}
@@ -394,12 +389,12 @@ class Framework {
 	public static function setMyself() {
 		global $fusebox;
 		// validation
-		if ( empty($fusebox->config['commandVariable']) ) {
+		if ( !F::config('commandVariable') ) {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
 			throw new Exception('Fusebox config [commandVariable] is required', self::FUSEBOX_MISSING_CONFIG);
 		}
 		// beautify
-		if ( !empty($fusebox->config['urlRewrite']) ) {
+		if ( F::config('urlRewrite') ) {
 			$fusebox->self = dirname($_SERVER['SCRIPT_NAME']);
 			$fusebox->self = str_replace('\\', '/', $fusebox->self);
 			if ( substr($fusebox->self, -1) != '/' ) $fusebox->self .= '/';
@@ -407,7 +402,7 @@ class Framework {
 		// normal
 		} else {
 			$fusebox->self = $_SERVER['SCRIPT_NAME'];
-			$fusebox->myself = "{$fusebox->self}?{$fusebox->config['commandVariable']}=";
+			$fusebox->myself = $fusebox->self.'?'.F::config('commandVariable').'=';
 		}
 	}
 
@@ -447,18 +442,18 @@ class Framework {
 		// request <http://{HOST}/{APP}/foo/bar> will have <REQUEST_URI=/{APP}/foo/bar>
 		// request <http://{HOST}/foo/bar> will have <REQUEST_URI=/foo/bar>
 		// request <http://{HOST}/foo/bar?a=1&b=2> will have <REQUEST_URI=/foo/bar?a=1&b=2>
-		$isRoot = dirname($_SERVER['SCRIPT_NAME']) == rtrim($_SERVER['REQUEST_URI'], '/');
+		$isRoot = ( dirname($_SERVER['SCRIPT_NAME']) == rtrim($_SERVER['REQUEST_URI'], '/') );
 		// only process when necessary
-		if ( !empty($fusebox->config['urlRewrite']) and !$isRoot ) {
+		if ( !$isRoot and F::config('urlRewrite') ) {
 			// remove dummy url param (when necessary)
 			if ( isset($_SERVER['REDIRECT_QUERY_STRING']) ) {
 				if ( isset($_GET[$_SERVER['REDIRECT_QUERY_STRING']]) ) unset($_GET[$_SERVER['REDIRECT_QUERY_STRING']]);
 				if ( isset($_REQUEST[$_SERVER['REDIRECT_QUERY_STRING']]) ) unset($_REQUEST[$_SERVER['REDIRECT_QUERY_STRING']]);
 			}
 			// cleanse the route config (and keep the sequence)
-			if ( isset($fusebox->config['route']) ) {
+			if ( F::config('route') ) {
 				$fixedRoute = array();
-				foreach ( $fusebox->config['route'] as $urlPattern => $qsReplacement ) {
+				foreach ( F::config('route') as $urlPattern => $qsReplacement ) {
 					// clean unnecessary spaces
 					$urlPattern = trim($urlPattern);
 					$qsReplacement = trim($qsReplacement);
@@ -530,7 +525,7 @@ class Framework {
 				// ===> treat as command-variable when element was unnamed (no equal-sign)
 				// ===> treat as url-param when element was named (has equal-sign)
 				if ( count($arr) and strpos($arr[0], '=') === false ) {  // 1st time
-					$qs .= ( $fusebox->config['commandVariable'] . '=' . array_shift($arr) );
+					$qs .= ( F::config('commandVariable') . '=' . array_shift($arr) );
 				}
 				if ( count($arr) and strpos($arr[0], '=') === false ) {  // 2nd time
 					$qs .= ( '.' . array_shift($arr) );
@@ -604,34 +599,32 @@ class Framework {
 	</fusedoc>
 	*/
 	public static function validateConfig() {
-		global $fusebox;
 		// check app-path
-		if ( empty($fusebox->config['appPath']) ) {
+		if ( !F::config('appPath') ) {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
 			throw new Exception('Fusebox config [appPath] is required', self::FUSEBOX_MISSING_CONFIG);
-		} elseif ( !is_dir($fusebox->config['appPath']) ) {
+		} elseif ( !is_dir(F::config('appPath')) ) {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception("Directory of fusebox config [appPath] not found ({$fusebox->config['appPath']})", self::FUSEBOX_INVALID_CONFIG);
+			throw new Exception('Directory of fusebox config [appPath] not found ('.F::config('appPath').')', self::FUSEBOX_INVALID_CONFIG);
 		}
 		// check command-variable
 		$reserved = array('controller', 'action');
-		if ( empty($fusebox->config['commandVariable']) ) {
+		if ( !F::config('commandVariable') ) {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
 			throw new Exception('Fusebox config [commandVariable] is required', self::FUSEBOX_MISSING_CONFIG);
-		} elseif ( in_array(strtolower($fusebox->config['commandVariable']), $reserved) ) {
+		} elseif ( in_array(strtolower(F::config('commandVariable')), $reserved) ) {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
 			throw new Exception('Fusebox config [commandVariable] cannot be a reserved word (reserved='.implode(',', $reserved).')', self::FUSEBOX_INVALID_CONFIG);
-
 		}
 		// check error-controller
-		if ( empty($fusebox->config['errorController']) ) {
+		if ( !F::config('errorController') ) {
 			// (allow not defined)
-		} elseif ( !is_file($fusebox->config['errorController']) ) {
+		} elseif ( !is_file(F::config('errorController')) ) {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception("Error controller not found ({$fusebox->config['errorController']})", self::FUSEBOX_INVALID_CONFIG);
-		} elseif ( strtolower(pathinfo($fusebox->config['errorController'], PATHINFO_EXTENSION)) != 'php' ) {
+			throw new Exception('Error controller not found ('.F::config('errorController').')', self::FUSEBOX_INVALID_CONFIG);
+		} elseif ( strtolower(pathinfo(F::config('errorController'), PATHINFO_EXTENSION)) != 'php' ) {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception("Error controller must be PHP ({$fusebox->config['errorController']})", self::FUSEBOX_INVALID_CONFIG);
+			throw new Exception('Error controller must be PHP ('.F::config('errorController').')', self::FUSEBOX_INVALID_CONFIG);
 		}
 	}
 
