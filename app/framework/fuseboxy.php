@@ -393,11 +393,18 @@ class Framework {
 	*/
 	public static function setMyself() {
 		global $fusebox;
+		// validation
+		if ( empty($fusebox->config['commandVariable']) ) {
+			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
+			throw new Exception('Fusebox config [commandVariable] is required', self::FUSEBOX_MISSING_CONFIG);
+		}
+		// beautify
 		if ( !empty($fusebox->config['urlRewrite']) ) {
 			$fusebox->self = dirname($_SERVER['SCRIPT_NAME']);
 			$fusebox->self = str_replace('\\', '/', $fusebox->self);
 			if ( substr($fusebox->self, -1) != '/' ) $fusebox->self .= '/';
 			$fusebox->myself = $fusebox->self;
+		// normal
 		} else {
 			$fusebox->self = $_SERVER['SCRIPT_NAME'];
 			$fusebox->myself = "{$fusebox->self}?{$fusebox->config['commandVariable']}=";
