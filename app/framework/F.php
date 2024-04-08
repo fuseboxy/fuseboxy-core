@@ -181,10 +181,15 @@ class F {
 	*/
 	public static function command($key=null) {
 		global $fusebox;
+		// when command not found in config/url/form
 		if ( empty($fusebox->controller) and empty($fusebox->action) ) return null;
+		// get full command
 		if ( empty($key) ) return $fusebox->controller.'.'.$fusebox->action;
+		// get controller only
 		if ( strtolower($key) == 'controller' ) return $fusebox->controller;
+		// get action only
 		if ( strtolower($key) == 'action' ) return $fusebox->action;
+		// otherwise...
 		return null;
 	}
 
