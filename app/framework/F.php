@@ -256,7 +256,7 @@ class F {
 			// set error message to API object
 			$fusebox->error = $msg;
 			// throw header-string as exception in order to abort operation without stopping unit-test
-			if ( Framework::$mode == Framework::FUSEBOX_UNIT_TEST ) throw new Exception(self::command()." - ".$fusebox->error, Framework::FUSEBOX_ERROR);
+			if ( Framework::$unitTest ) throw new Exception(self::command()." - ".$fusebox->error, Framework::FUSEBOX_ERROR);
 			// show error with (customize-able) error-controller
 			elseif ( !empty($fusebox->config['errorController']) ) exit( include $fusebox->config['errorController'] );
 			// simply show error as text
@@ -515,7 +515,7 @@ class F {
 		if ( $condition ) {
 			if ( !headers_sent() ) header("HTTP/1.0 404 Not Found");
 			$fusebox->error = 'Page not found';
-			if ( Framework::$mode == Framework::FUSEBOX_UNIT_TEST ) throw new Exception(self::command()." - ".$fusebox->error, Framework::FUSEBOX_PAGE_NOT_FOUND);
+			if ( Framework::$unitTest ) throw new Exception(self::command()." - ".$fusebox->error, Framework::FUSEBOX_PAGE_NOT_FOUND);
 			elseif ( !empty($fusebox->config['errorController']) ) exit( include $fusebox->config['errorController'] );
 			else exit($fusebox->error);
 		}
@@ -590,7 +590,7 @@ class F {
 			// must use Location when no delay because Refresh doesn't work on ajax-request
 			$headerString = empty($delay) ? "Location:{$url}" : "Refresh:{$delay};url={$url}";
 			// throw header-string as exception in order to abort operation without stopping unit-test
-			if ( Framework::$mode == Framework::FUSEBOX_UNIT_TEST ) throw new Exception($headerString, Framework::FUSEBOX_REDIRECT);
+			if ( Framework::$unitTest ) throw new Exception($headerString, Framework::FUSEBOX_REDIRECT);
 			// invoke redirect at server-side
 			elseif ( !headers_sent() ) exit( header($headerString) );
 			// invoke redirect at client-side (when header already sent)

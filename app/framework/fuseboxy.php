@@ -16,8 +16,6 @@
 class Framework {
 
 
-	// constant : mode
-	const FUSEBOX_UNIT_TEST          = 101;
 	// constant : error
 	const FUSEBOX_CONFIG_NOT_FOUND   = 501;
 	const FUSEBOX_CONFIG_NOT_DEFINED = 502;
@@ -32,7 +30,7 @@ class Framework {
 
 
 	// properties (configurable)
-	public static $mode;
+	public static $unitTest = false;
 	public static $startTick;
 	public static $configPath = __DIR__.'/../config/fusebox_config.php';
 	public static $helperPath = __DIR__.'/F.php';
