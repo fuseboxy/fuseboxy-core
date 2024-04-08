@@ -135,16 +135,17 @@ class Framework {
 			'baseUrl',
 			'uploadDir',
 			'uploadUrl',
-		] as $pathName ) {
-			if ( F::config($pathName) ) {
+		] as $configKey ) {
+			// check if config available
+			if ( F::config($configKey) ) {
 				// unify slash
-				$fusebox->config[$pathName] = str_replace('\\', '/', F::config($pathName));
+				F::config($configKey, str_replace('\\', '/', F::config($configKey)));
 				// dedupe slash
-				$fusebox->config[$pathName] = preg_replace('/\/+/', '/', F::config($pathName));
+				F::config($configKey, preg_replace('/\/+/', '/', F::config($configKey)));
 				// append trailing slash
-				$fusebox->config[$pathName] .= ( substr(F::config($pathName), -1) != '/' ) ? '/' : '';
-			}
-		}
+				F::config($configKey, F::config($configKey).( ( substr(F::config($configKey), -1) != '/' ) ? '/' : '' ));
+			} // if-config
+		} // foreach-configKey
 	}
 
 
@@ -237,8 +238,8 @@ class Framework {
 			throw new Exception('Config file must return an array', self::FUSEBOX_CONFIG_NOT_DEFINED);
 		}
 		// define config default value (when necessary)
-		$fusebox->config['commandVariable'] = isset($fusebox->config['commandVariable']) ? $fusebox->config['commandVariable'] : 'fuseaction';
-		$fusebox->config['appPath'] = isset($fusebox->config['appPath']) ? $fusebox->config['appPath'] : (str_replace('\\', '/', dirname(dirname(__FILE__))).'/');
+		F::config('commandVariable', F::config('commandVariable') ?? 'fuseaction');
+		F::config('appPath', F::config('appPath') ?? dirname(dirname(__FILE__)));
 	}
 
 
@@ -413,7 +414,7 @@ class Framework {
 	<fusedoc>
 		<description>
 			extract command and url variables from beauty-url
-			===> work closely with {$fusebox->config['route']} and F::url()
+			===> work closely with {route} config and F::url()
 		</description>
 		<io>
 			<in>
@@ -470,7 +471,7 @@ class Framework {
 					// put into container
 					$fixedRoute[$urlPattern] = $qsReplacement;
 				}
-				$fusebox->config['route'] = $fixedRoute;
+				F::config('route', $fixedRoute);
 			}
 			// start to parse the path
 			$qs = rtrim($_SERVER['REQUEST_URI'], '/');

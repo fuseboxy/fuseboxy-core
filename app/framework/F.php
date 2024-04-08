@@ -189,30 +189,38 @@ class F {
 
 
 
-	/**
-	<fusedoc>
-		<description>
-			getter of framework config
-		</description>
-		<io>
-			<in>
-				<!-- framework config -->
-				<structure name="config" scope="$fusebox">
-					<mixed name="*" />
-				</structure>
-				<!-- parameter -->
-                <string name="$key" optional="yes" example="defaultCommand|db|smtp|.." />
-			</in>
-			<out>
-				<mixed name="~return~" />
-			</out>
-		</io>
-	</fusedoc>
-	*/
-    public static function config($key=null) {
-		global $fusebox;
-        return empty($key) ? $fusebox->config : ( $fusebox->config[$key] ?? null );
-	}
+    /**
+    <fusedoc>
+        <description>
+            getter & setter of framework config
+            ===> use reserved word {{undefined}} as default
+            ===> so that user can set config to null
+        </description>
+        <io>
+            <in>
+                <!-- framework config -->
+                <structure name="config" scope="$fusebox">
+                    <mixed name="*" />
+                </structure>
+                <!-- parameter -->
+                <string name="$key" optional="yes" default="{{undefined}}" example="defaultCommand|db|smtp|.." />
+                <mixed name="$val" optional="yes" default="{{undefined}}" />
+            </in>
+            <out>
+                <mixed name="~return~" />
+            </out>
+        </io>
+    </fusedoc>
+    */
+    public static function config($key='{{undefined}}', $val='{{undefined}}') {
+        global $fusebox;
+        // setter
+        if ( $key != '{{undefined}}' and $val != '{{undefined}}' ) $fusebox->config[$key] = $val;
+        // getter (specific)
+        if ( $key != '{{undefined}}' ) return $fusebox->config[$key] ?? null;
+        // getter (all)
+        return $fusebox->config;
+    }
 
 
 
@@ -615,38 +623,6 @@ class F {
 		if ( isset($_SERVER['HTTPS']) and in_array($_SERVER['HTTPS'], ['on','1']) ) return 'https';
 		if ( isset($_SERVER['REQUEST_SCHEME']) ) return $_SERVER['REQUEST_SCHEME'];
 		return 'http';
-	}
-
-
-
-
-	/**
-	<fusedoc>
-		<description>
-			setter of framework config
-		</description>
-		<io>
-			<in>
-				<!-- framework config -->
-				<structure name="config" scope="$fusebox">
-					<mixed name="*" />
-				</structure>
-				<!-- parameter -->
-				<string name="$key" example="defaultCommand|db|smtp|.." />
-				<mixed name="$val" />
-			</in>
-			<out>
-				<!-- modified framework config -->
-				<structure name="config" scope="$fusebox">
-					<mixed name="~return~" />
-				</structure>
-			</out>
-		</io>
-	</fusedoc>
-	*/
-	public static function setConfig($key, $val) {
-		global $fusebox;
-		$fusebox->config[$key] = $val;
 	}
 
 
