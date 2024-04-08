@@ -301,6 +301,7 @@ class Framework {
 			// main process...
 			self::initAPI();
 			self::loadConfig();
+			self::fixConfig();
 			self::validateConfig();
 			self::loadHelper();
 			self::setMyself();
