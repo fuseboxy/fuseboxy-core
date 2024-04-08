@@ -181,7 +181,7 @@ class F {
 	*/
 	public static function command($key=null) {
 		global $fusebox;
-		if ( empty($fusebox->config['defaultCommand']) ) return false;
+		if ( empty($fusebox->config['defaultCommand']) ) return null;
 		if ( empty($key) ) return $fusebox->controller.'.'.$fusebox->action;
 		if ( strtolower($key) == 'controller' ) return $fusebox->controller;
 		if ( strtolower($key) == 'action' ) return $fusebox->action;
