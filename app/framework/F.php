@@ -196,41 +196,39 @@ class F {
 
 
 
-    /**
-    <fusedoc>
-        <description>
-            getter & setter of framework config
-            ===> use reserved word {{undefined}} as default
-            ===> so that user can set config to null
-        </description>
-        <io>
-            <in>
-                <!-- framework config -->
-                <structure name="config" scope="$fusebox">
-                    <mixed name="*" />
-                </structure>
-                <!-- parameter -->
-                <string name="$key" optional="yes" default="{{undefined}}" example="defaultCommand|db|smtp|.." />
-                <mixed name="$val" optional="yes" default="{{undefined}}" />
-            </in>
-            <out>
-                <mixed name="~return~" />
-            </out>
-        </io>
-    </fusedoc>
-    */
-    public static function config($key='{{undefined}}', $val='{{undefined}}') {
-        global $fusebox;
-        // setter
-        if ( $key != '{{undefined}}' and $val != '{{undefined}}' ) {
-        	$fusebox->config[$key] = $val;
-        	return $val;
-        }
-        // getter (specific)
-        if ( $key != '{{undefined}}' ) return $fusebox->config[$key] ?? null;
-        // getter (all)
-        return $fusebox->config;
-    }
+	/**
+	<fusedoc>
+		<description>
+			getter & setter of framework config
+			===> use reserved word {{undefined}} as default
+			===> so that user can set config to null
+		</description>
+		<io>
+			<in>
+				<!-- framework config -->
+				<structure name="config" scope="$fusebox">
+					<mixed name="*" />
+				</structure>
+				<!-- parameter -->
+				<string name="$key" optional="yes" default="~null~" example="defaultCommand|db|smtp|.." />
+				<mixed name="$val" optional="yes" default="{{undefined}}" />
+			</in>
+			<out>
+				<mixed name="~return~" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
+	public static function config($key=null, $val='{{undefined}}') {
+		global $fusebox;
+		// getter (all)
+		if ( empty($key) ) return $fusebox->config;
+		// getter (specific)
+		if ( $val == '{{undefined}}' ) return $fusebox->config[$key] ?? null;
+		// setter
+		$fusebox->config[$key] = $val;
+		return $val;
+	}
 
 
 
