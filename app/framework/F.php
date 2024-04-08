@@ -217,7 +217,10 @@ class F {
     public static function config($key='{{undefined}}', $val='{{undefined}}') {
         global $fusebox;
         // setter
-        if ( $key != '{{undefined}}' and $val != '{{undefined}}' ) $fusebox->config[$key] = $val;
+        if ( $key != '{{undefined}}' and $val != '{{undefined}}' ) {
+        	$fusebox->config[$key] = $val;
+        	return $val;
+        }
         // getter (specific)
         if ( $key != '{{undefined}}' ) return $fusebox->config[$key] ?? null;
         // getter (all)
