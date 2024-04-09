@@ -125,7 +125,9 @@ class Framework {
 			if ( !headers_sent() ) header('HTTP/1.0 500 Internal Server Error');
 			throw new Exception('Fusebox config not defined', self::FUSEBOX_CONFIG_NOT_DEFINED);
 		}
-		// fix paths in config
+		// fix path config
+		// ===> adjust slash of each path
+		// ===> only proceed when certain path is specified
 		foreach ( [
 			'appPath',
 			'vendorPath',
@@ -143,7 +145,32 @@ class Framework {
 				// append trailing slash
 				F::config($configKey, F::config($configKey).( ( substr(F::config($configKey), -1) != '/' ) ? '/' : '' ));
 			} // if-config
-		} // foreach-configKey
+		}
+		// fix route config
+		// ===> keep the sequence
+		// ===> adjust certain syntax in regex
+		if ( F::config('route') ) {
+			$fixedRoute = array();
+			foreach ( F::config('route') as $urlPattern => $qsReplacement ) {
+				// clean unnecessary spaces
+				$urlPattern = trim($urlPattern);
+				$qsReplacement = trim($qsReplacement);
+				// prepend forward-slash (when necessary)
+				if ( substr($urlPattern, 0, 1) !== '/' and substr($urlPattern, 0, 2) != '\\/' ) {
+					$urlPattern = '/'.$urlPattern;
+				}
+				// remove multi-(forward-)slash
+				do { $urlPattern = str_replace('//', '/', $urlPattern); } while ( strpos($urlPattern, '//') !== false );
+				// escape forward-slash
+				$urlPattern = str_replace('/', '\\/', $urlPattern);
+				// fix double-escaped forward-slash
+				$urlPattern = str_replace('\\\\/', '\\/', $urlPattern);
+				// put into container
+				$fixedRoute[$urlPattern] = $qsReplacement;
+			}
+			// replace whole route config
+			F::config('route', $fixedRoute);
+		}
 	}
 
 
@@ -449,28 +476,6 @@ class Framework {
 			if ( isset($_SERVER['REDIRECT_QUERY_STRING']) ) {
 				if ( isset($_GET[$_SERVER['REDIRECT_QUERY_STRING']]) ) unset($_GET[$_SERVER['REDIRECT_QUERY_STRING']]);
 				if ( isset($_REQUEST[$_SERVER['REDIRECT_QUERY_STRING']]) ) unset($_REQUEST[$_SERVER['REDIRECT_QUERY_STRING']]);
-			}
-			// cleanse the route config (and keep the sequence)
-			if ( F::config('route') ) {
-				$fixedRoute = array();
-				foreach ( F::config('route') as $urlPattern => $qsReplacement ) {
-					// clean unnecessary spaces
-					$urlPattern = trim($urlPattern);
-					$qsReplacement = trim($qsReplacement);
-					// prepend forward-slash (when necessary)
-					if ( substr($urlPattern, 0, 1) !== '/' and substr($urlPattern, 0, 2) != '\\/' ) {
-						$urlPattern = '/'.$urlPattern;
-					}
-					// remove multi-(forward-)slash
-					do { $urlPattern = str_replace('//', '/', $urlPattern); } while ( strpos($urlPattern, '//') !== false );
-					// escape forward-slash
-					$urlPattern = str_replace('/', '\\/', $urlPattern);
-					// fix double-escaped forward-slash
-					$urlPattern = str_replace('\\\\/', '\\/', $urlPattern);
-					// put into container
-					$fixedRoute[$urlPattern] = $qsReplacement;
-				}
-				F::config('route', $fixedRoute);
 			}
 			// start to parse the path
 			$qs = rtrim($_SERVER['REQUEST_URI'], '/');
