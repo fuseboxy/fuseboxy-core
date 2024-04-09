@@ -278,35 +278,6 @@ class F {
 	/**
 	<fusedoc>
 		<description>
-			turn form variables to url variables
-			===> make it browser-back-button-friendly
-			===> redirect to same page with form variables moved to query-string
-		</description>
-		<io>
-			<in>
-			</in>
-			<out>
-			</out>
-		</io>
-	</fusedoc>
-	*/
-	public static function form2url($delim='|') {
-		if ( !empty($_POST) ) {
-			$qs = $_SERVER['QUERY_STRING'];
-			foreach ( $_POST as $key => $val ) {
-				$val = is_array($val) ? implode($delim, $val) : $val;
-				$qs .= "&{$key}={$val}";
-			}
-			exit( header("Location: {$_SERVER['PHP_SELF']}?{$qs}") );
-		}
-	}
-
-
-
-
-	/**
-	<fusedoc>
-		<description>
 			invoke specific command
 			--
 			[Example use case]
