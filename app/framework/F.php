@@ -278,45 +278,6 @@ class F {
 	/**
 	<fusedoc>
 		<description>
-			obtain execution time
-		</description>
-		<io>
-			<in>
-				<!-- framework -->
-				<number name="$startTick" scope="Framework" comments="millisecond" />
-				<!-- parameter -->
-				<string name="$unit" default="ms" comments="ms|s" />
-			</in>
-			<out>
-				<number name="~return~" />
-			</out>
-		</io>
-	</fusedoc>
-	*/
-	public static function et($unit='ms') {
-		$unit = strtolower($unit);
-		// check unit
-		if ( !in_array($unit, ['ms','s']) ) {
-			throw new Exception('Invalid unit of time', Framework::FUSEBOX_ERROR);
-		// not started yet
-		} elseif ( !isset(Framework::$startTick) ) {
-			return false;
-		}
-		// calculation
-		$et = round(microtime(true)*1000-Framework::$startTick);
-		if ( $unit == 's' ) $et = $et / 1000;
-		// done!
-		return $et;
-	}
-	// alias method
-	public static function runtime($unit='ms') { return self::et($unit); }
-
-
-
-
-	/**
-	<fusedoc>
-		<description>
 			turn form variables to url variables
 			===> make it browser-back-button-friendly
 			===> redirect to same page with form variables moved to query-string
@@ -632,6 +593,45 @@ class F {
 		if ( isset($_SERVER['REQUEST_SCHEME']) ) return $_SERVER['REQUEST_SCHEME'];
 		return 'http';
 	}
+
+
+
+
+	/**
+	<fusedoc>
+		<description>
+			obtain execution time
+		</description>
+		<io>
+			<in>
+				<!-- framework -->
+				<number name="$startTick" scope="Framework" comments="millisecond" />
+				<!-- parameter -->
+				<string name="$unit" default="ms" comments="ms|s" />
+			</in>
+			<out>
+				<number name="~return~" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
+	public static function runtime($unit='ms') {
+		$unit = strtolower($unit);
+		// check unit
+		if ( !in_array($unit, ['ms','s']) ) {
+			throw new Exception('Invalid unit of time', Framework::FUSEBOX_ERROR);
+		// not started yet
+		} elseif ( !isset(Framework::$startTick) ) {
+			return false;
+		}
+		// calculation
+		$et = round(microtime(true)*1000-Framework::$startTick);
+		if ( $unit == 's' ) $et = $et / 1000;
+		// done!
+		return $et;
+	}
+	// alias method
+	public static function et($unit='ms') { return self::runtime($unit); }
 
 
 
