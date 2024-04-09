@@ -143,7 +143,7 @@ class F {
 		if ( file_exists($appPathFile) ) return $appPathFile;
 		// if file not found in app path
 		// ===> look through each fuseboxy module under vendor path
-		if ( F::config('vendorPath') ) {
+		if ( self::config('vendorPath') ) {
 			$glob = glob($fusebox->config['vendorPath'].'fuseboxy/*/app/'.$relPath);
 			if ( !empty($glob[0]) ) return $glob[0];
 		}
@@ -326,7 +326,7 @@ class F {
 		parse_str($queryString, $queryString);
 		$arguments = array_merge($queryString, $arguments);
 		// check controller existence
-		F::pageNotFound( !file_exists($controllerPath) );
+		self::pageNotFound( !file_exists($controllerPath) );
 		// run new command
 		include $controllerPath;
 		// trim stack after run
@@ -334,8 +334,6 @@ class F {
 		$originalCommand = self::parseCommand( array_pop($fusebox->invokeQueue) );
 		$fusebox->controller = $originalCommand['controller'];
 		$fusebox->action = $originalCommand['action'];
-		// done!
-		return true;
 	}
 
 
@@ -419,11 +417,11 @@ class F {
 		foreach ( $commandPatternList as $commandPattern ) {
 			$commandPattern = self::parseCommand($commandPattern);
 			// consider match when either one is ok
-			if ( in_array($commandPattern['controller'], array('*', $fusebox->controller)) and in_array($commandPattern['action'], array('*', $fusebox->action)) ) {
-				return true;
-			}
+			$isControllerMatched = in_array($commandPattern['controller'], [ '*', $fusebox->controller ]);
+			$isActionMatched = in_array($commandPattern['action'], [ '*', $fusebox->action ]);
+			if ( $isControllerMatched and $isActionMatched ) return true;
 		}
-		// no match
+		// no match...
 		return false;
 	}
 
@@ -589,12 +587,9 @@ class F {
 	public static function runtime($unit='ms') {
 		$unit = strtolower($unit);
 		// check unit
-		if ( !in_array($unit, ['ms','s']) ) {
-			throw new Exception('Invalid unit of time', Framework::FUSEBOX_ERROR);
+		if ( !in_array($unit, ['ms','s']) ) throw new Exception('Invalid unit of time', Framework::FUSEBOX_ERROR);
 		// not started yet
-		} elseif ( !isset(Framework::$startTick) ) {
-			return false;
-		}
+		if ( !isset(Framework::$startTick) ) return null;
 		// calculation
 		$et = round(microtime(true)*1000-Framework::$startTick);
 		if ( $unit == 's' ) $et = $et / 1000;
