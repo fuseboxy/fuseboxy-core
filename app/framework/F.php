@@ -174,7 +174,7 @@ class F {
 				<string name="$key" optional="yes" comments="controller|action" />
 			</in>
 			<out>
-				<string name="~return~" example="home.index|home|index" />
+				<string name="~return~" example="home.index|home|index|.." />
 			</out>
 		</io>
 	</fusedoc>
@@ -292,8 +292,6 @@ class F {
 				<structure name="$arguments" optional="yes" default="~emptyArray~" />
 			</in>
 			<out>
-				<!-- return value -->
-				<boolean name="~return~" />
 				<!-- manipulated api object -->
 				<string name="controller" scope="$fusebox" />
 				<string name="action" scope="$fusebox" />
@@ -325,15 +323,19 @@ class F {
 		// merge query-string & arguments
 		parse_str($queryString, $queryString);
 		$arguments = array_merge($queryString, $arguments);
-		// check controller existence
-		self::pageNotFound( !file_exists($controllerPath) );
-		// run new command
-		include $controllerPath;
-		// trim stack after run
-		// ===> reset to original command
-		$originalCommand = self::parseCommand( array_pop($fusebox->invokeQueue) );
+		// when controller found
+		// ===> load controller to invoke command
+		if ( file_exists($controllerPath) ) include $controllerPath;
+		// trim queue afterward
+		// ===> regardless whether successfully run or not
+		// ===> restore to original command (previous command in queue)
+		$originalCommand = self::parseCommand(array_pop($fusebox->invokeQueue));
 		$fusebox->controller = $originalCommand['controller'];
 		$fusebox->action = $originalCommand['action'];
+		// when controller not found
+		// ===> command not run indeed
+		// ===> throw error
+		self::pageNotFound(!file_exists($controllerPath));
 	}
 
 
