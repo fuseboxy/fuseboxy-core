@@ -568,12 +568,12 @@ class F {
 		</io>
 	</fusedoc>
 	*/
-	private static function requestScheme() {
+	public static function requestScheme() {
 		if ( isset($_SERVER['HTTP_X_FORWARDED_PROTO']) ) return $_SERVER['HTTP_X_FORWARDED_PROTO'];
-		if ( isset($_SERVER['HTTPS']) and in_array($_SERVER['HTTPS'], ['on','1']) ) return 'https';
-		if ( isset($_SERVER['REQUEST_SCHEME']) ) return $_SERVER['REQUEST_SCHEME'];
+		if ( isset($_SERVER['HTTPS']) and in_array(strtolower((string)$_SERVER['HTTPS']), ['on','1']) ) return 'https';
+		if ( isset($_SERVER['REQUEST_SCHEME']) ) return strtolower($_SERVER['REQUEST_SCHEME']);
 		if ( isset($_SERVER['HTTP_HOST']) or isset($_GET) or isset($_POST) ) return 'http';
-		if ( isset($_SERVER['SHELL']) or ( isset($_SERVER['SESSIONNAME']) and $_SERVER['SESSIONNAME'] == 'Console' ) ) return 'cli';
+		if ( isset($_SERVER['SHELL']) or ( isset($_SERVER['SESSIONNAME']) and strtolower($_SERVER['SESSIONNAME']) == 'console' ) ) return 'cli';
 		return null;
 	}
 
