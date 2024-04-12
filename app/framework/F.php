@@ -551,12 +551,19 @@ class F {
 		</description>
 		<io>
 			<in>
-				<string name="HTTP_X_FORWARDED_PROTO" scope="$_SERVER" optional="yes" />
-				<string name="HTTPS" scope="$_SERVER" optional="yes" />
-				<string name="REQUEST_SCHEME" scope="$_SERVER" optional="yes" />
+				<structure name="$_SERVER">
+					<string name="HTTP_X_FORWARDED_PROTO" optional="yes" />
+					<string name="HTTPS" optional="yes" />
+					<string name="REQUEST_SCHEME" optional="yes" />
+					<string name="HTTP_POST" optional="yes" />
+					<string name="SHELL" optional="yes" />
+					<string name="SESSIONNAME" optional="yes" />
+				</structure>
+				<structure name="$_GET" optional="yes" />
+				<structure name="$_POST" optional="yes" />
 			</in>
 			<out>
-				<string name="~return~" value="http|https" />
+				<string name="~return~" value="https|http|cli" />
 			</out>
 		</io>
 	</fusedoc>
@@ -565,7 +572,9 @@ class F {
 		if ( isset($_SERVER['HTTP_X_FORWARDED_PROTO']) ) return $_SERVER['HTTP_X_FORWARDED_PROTO'];
 		if ( isset($_SERVER['HTTPS']) and in_array($_SERVER['HTTPS'], ['on','1']) ) return 'https';
 		if ( isset($_SERVER['REQUEST_SCHEME']) ) return $_SERVER['REQUEST_SCHEME'];
-		return 'http';
+		if ( isset($_SERVER['HTTP_HOST']) or isset($_GET) or isset($_POST) ) return 'http';
+		if ( isset($_SERVER['SHELL']) or ( isset($_SERVER['SESSIONNAME']) and $_SERVER['SESSIONNAME'] == 'Console' ) ) return 'cli';
+		return null;
 	}
 
 
