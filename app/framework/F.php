@@ -312,7 +312,7 @@ class F {
 		$fusebox->invokeQueue[] = "{$fusebox->controller}.{$fusebox->action}";
 		// split new command & query-string (if any)
 		$commandWithQueryString = str_replace('?', '&', $commandWithQueryString);
-		$arr = explode('&', $commandWithQueryString);
+		$arr = explode('&', $commandWithQueryString, 2);
 		$command = $arr[0] ?? '';
 		$queryString = $arr[1] ?? '';
 		// parse new command
@@ -320,9 +320,11 @@ class F {
 		$fusebox->controller = $command['controller'];
 		$fusebox->action = $command['action'];
 		$controllerPath = "{$fusebox->config['appPath']}/controller/{$fusebox->controller}_controller.php";
-		// merge query-string & arguments
+		// put query string variables into arguments & url scope
 		parse_str($queryString, $queryString);
 		$arguments = array_merge($queryString, $arguments);
+		$originalGetScope = $_GET;
+		$_GET = array_merge($_GET, $queryString);
 		// when controller found
 		// ===> load controller to invoke command
 		if ( file_exists($controllerPath) ) include $controllerPath;
@@ -332,6 +334,7 @@ class F {
 		$originalCommand = self::parseCommand(array_pop($fusebox->invokeQueue));
 		$fusebox->controller = $originalCommand['controller'];
 		$fusebox->action = $originalCommand['action'];
+		$_GET = $originalGetScope;
 		// when controller not found
 		// ===> command not run indeed
 		// ===> throw error
