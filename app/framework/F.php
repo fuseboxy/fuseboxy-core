@@ -250,8 +250,13 @@ class F {
 					<path name="errorController" example="/path/to/my/site/app/controller/error_controller.php" />
 				</structure>
 				<!-- parameters -->
-				<string name="$msg" optional="yes" default="error" />
+				<string name="$msg" optional="yes" default="Error" />
 				<boolean name="$condition" optional="yes" default="true" />
+				<structure name="$options">
+					<string name="headerString" optional="yes" default="HTTP/1.0 403 Forbidden" />
+					<number name="errorCode" optional="yes" default="~Framework::FUSEBOX_ERROR~" />
+					<mixed name="~customOptions~" comments="more custom options available for error-controller" />
+				</structure>
 			</in>
 			<out>
 				<string name="$fusebox->error" comments="for error-controller" />
@@ -259,17 +264,21 @@ class F {
 		</io>
 	</fusedoc>
 	*/
-	public static function error($msg='error', $condition=true) {
+	public static function error($msg='Error', $condition=true, $options=[]) {
 		global $fusebox;
+		// default options
+		$options['headerString'] = $options['headerString'] ?? 'HTTP/1.0 403 Forbidden';
+		$options['errorCode'] = $options['errorCode'] ?? Framework::FUSEBOX_ERROR;
+		// only show error when condition is true
 		if ( $condition ) {
-			if ( !headers_sent() ) header("HTTP/1.0 403 Forbidden");
+			if ( !headers_sent() ) header($options['headerString']);
 			// set error message to api object
 			// ===> make it available to error-controller
 			$fusebox->error = $msg;
 			// when unit test
 			// ===> throw exception
 			// ===> (do not abort operation)
-			if ( Framework::$unitTest ) throw new Exception('['.self::command().'] '.$fusebox->error, Framework::FUSEBOX_ERROR);
+			if ( Framework::$unitTest ) throw new Exception('['.self::command().'] '.$fusebox->error, $options['errorCode']);
 			// when has error-controller
 			// ===> display/handle the error by error-controller
 			// ===> (abort operation afterward)
@@ -458,32 +467,15 @@ class F {
 			<in>
 				<boolean name="$condition" optional="yes" default="true" />
 			</in>
-			<out>
-				<string name="$fusebox->error" comments="for error-controller" />
-			</out>
+			<out />
 		</io>
 	</fusedoc>
 	*/
 	public static function pageNotFound($condition=true) {
-		global $fusebox;
-		if ( $condition ) {
-			if ( !headers_sent() ) header("HTTP/1.0 404 Not Found");
-			// set error message to api object
-			// ===> make it available to error-controller
-			$fusebox->error = 'Page not found';
-			// when unit test
-			// ===> throw exception
-			// ====> (do not abort operation)
-			if ( Framework::$unitTest ) throw new Exception('['.self::command().'] '.$fusebox->error, Framework::FUSEBOX_PAGE_NOT_FOUND);
-			// when has error-controller
-			// ===> display/handle the error by error-controller
-			// ===> (abort operation afterward)
-			if ( !empty($fusebox->config['errorController']) ) exit( include $fusebox->config['errorController'] );
-			// otherwise
-			// ===> simply display error as text
-			// ===> (abort operation afterward)
-			exit($fusebox->error);
-		}
+		self::error('Page not found', $condition, [
+			'headerString' => 'HTTP/1.0 404 Not Found',
+			'errorCode' => Framework::FUSEBOX_PAGE_NOT_FOUND,
+		]);
 	}
 
 
