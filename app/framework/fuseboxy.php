@@ -16,20 +16,17 @@
 class Framework {
 
 
-	// constant : error
-	const FUSEBOX_CONFIG_NOT_FOUND   = 501;
-	const FUSEBOX_CONFIG_NOT_DEFINED = 502;
-	const FUSEBOX_HELPER_NOT_FOUND   = 503;
-	const FUSEBOX_HELPER_NOT_DEFINED = 504;
-	const FUSEBOX_MISSING_CONFIG     = 505;
-	const FUSEBOX_INVALID_CONFIG     = 506;
-	const FUSEBOX_ERROR              = 507;
-	const FUSEBOX_PAGE_NOT_FOUND     = 508;
-	// constant : others
-	const FUSEBOX_REDIRECT           = 901;
-
-
-	// properties (configurable)
+	// constant : error codes
+	const FUSEBOX_REDIRECT           = 302;
+	const FUSEBOX_PAGE_NOT_FOUND     = 404;
+	const FUSEBOX_ERROR              = 500;
+	const FUSEBOX_CONFIG_NOT_FOUND   = 901;
+	const FUSEBOX_CONFIG_NOT_DEFINED = 902;
+	const FUSEBOX_HELPER_NOT_FOUND   = 903;
+	const FUSEBOX_HELPER_NOT_DEFINED = 904;
+	const FUSEBOX_MISSING_CONFIG     = 905;
+	const FUSEBOX_INVALID_CONFIG     = 906;
+	// configurable properties
 	public static $unitTest = false;
 	public static $startTick;
 	public static $configPath = __DIR__.'/../config/fusebox_config.php';
