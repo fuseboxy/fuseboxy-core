@@ -252,10 +252,10 @@ class F {
 				<!-- parameters -->
 				<string name="$msg" optional="yes" default="Error" />
 				<boolean name="$condition" optional="yes" default="true" />
-				<structure name="$options">
+				<structure name="$options" optional="yes">
 					<string name="headerString" optional="yes" default="HTTP/1.0 403 Forbidden" />
 					<number name="errorCode" optional="yes" default="~Framework::FUSEBOX_ERROR~" />
-					<mixed name="~customOptions~" comments="more custom options available for error-controller" />
+					<mixed name="~customOption~" comments="more custom options available for error-controller" />
 				</structure>
 			</in>
 			<out>
@@ -466,16 +466,17 @@ class F {
 		<io>
 			<in>
 				<boolean name="$condition" optional="yes" default="true" />
+				<structure name="$options" optional="yes" default="~emptyArray~" />
 			</in>
 			<out />
 		</io>
 	</fusedoc>
 	*/
-	public static function pageNotFound($condition=true) {
-		self::error('Page not found', $condition, [
+	public static function pageNotFound($condition=true, $options=[]) {
+		self::error('Page not found', $condition, array_merge($options, [
 			'headerString' => 'HTTP/1.0 404 Not Found',
 			'errorCode' => Framework::FUSEBOX_PAGE_NOT_FOUND,
-		]);
+		]));
 	}
 
 
