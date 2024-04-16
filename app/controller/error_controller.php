@@ -3,9 +3,12 @@
 	<io>
 		<in>
 			<string name="error" scope="$fusebox" />
+			<structure name="$options" optional="yes">
+				<mixed name="~customOption~" comments="specified to {F::error|F::pageNotFound} method explicitly" />
+			</structure>
 		</in>
 		<out>
-			<structure name="flash" scope="$arguments">
+			<structure name="flash" scope="$arguments" comments="for global layout">
 				<string name="type" />
 				<string name="icon" />
 				<string name="message" />
