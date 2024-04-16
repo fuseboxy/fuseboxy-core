@@ -253,7 +253,9 @@ class F {
 				<string name="$msg" optional="yes" default="error" />
 				<boolean name="$condition" optional="yes" default="true" />
 			</in>
-			<out />
+			<out>
+				<string name="$fusebox->error" comments="for error-controller" />
+			</out>
 		</io>
 	</fusedoc>
 	*/
@@ -261,14 +263,21 @@ class F {
 		global $fusebox;
 		if ( $condition ) {
 			if ( !headers_sent() ) header("HTTP/1.0 403 Forbidden");
-			// set error message to API object
+			// set error message to api object
+			// ===> make it available to error-controller
 			$fusebox->error = $msg;
-			// throw header-string as exception in order to abort operation without stopping unit-test
-			if ( Framework::$unitTest ) throw new Exception(self::command()." - ".$fusebox->error, Framework::FUSEBOX_ERROR);
-			// show error with (customize-able) error-controller
-			elseif ( !empty($fusebox->config['errorController']) ) exit( include $fusebox->config['errorController'] );
-			// simply show error as text
-			else exit($fusebox->error);
+			// when unit test
+			// ===> throw exception
+			// ===> (do not abort operation)
+			if ( Framework::$unitTest ) throw new Exception('['.self::command().'] '.$fusebox->error, Framework::FUSEBOX_ERROR);
+			// when has error-controller
+			// ===> display/handle the error by error-controller
+			// ===> (abort operation afterward)
+			if ( !empty($fusebox->config['errorController']) ) exit( include $fusebox->config['errorController'] );
+			// otherwise
+			// ===> simply display error as text
+			// ===> (abort operation afterward)
+			exit($fusebox->error);
 		}
 	}
 
@@ -442,14 +451,16 @@ class F {
 			===> simply display message & abort operation (when no error-controller)
 			--
 			for a customized 404 page
-			===> check in error-controller for [page not found] message
+			===> look for [page not found] message at error-controller
 			===> then load 404 custom page
 		</description>
 		<io>
 			<in>
 				<boolean name="$condition" optional="yes" default="true" />
 			</in>
-			<out />
+			<out>
+				<string name="$fusebox->error" comments="for error-controller" />
+			</out>
 		</io>
 	</fusedoc>
 	*/
@@ -457,10 +468,21 @@ class F {
 		global $fusebox;
 		if ( $condition ) {
 			if ( !headers_sent() ) header("HTTP/1.0 404 Not Found");
+			// set error message to api object
+			// ===> make it available to error-controller
 			$fusebox->error = 'Page not found';
-			if ( Framework::$unitTest ) throw new Exception(self::command()." - ".$fusebox->error, Framework::FUSEBOX_PAGE_NOT_FOUND);
-			elseif ( !empty($fusebox->config['errorController']) ) exit( include $fusebox->config['errorController'] );
-			else exit($fusebox->error);
+			// when unit test
+			// ===> throw exception
+			// ====> (do not abort operation)
+			if ( Framework::$unitTest ) throw new Exception('['.self::command().'] '.$fusebox->error, Framework::FUSEBOX_PAGE_NOT_FOUND);
+			// when has error-controller
+			// ===> display/handle the error by error-controller
+			// ===> (abort operation afterward)
+			if ( !empty($fusebox->config['errorController']) ) exit( include $fusebox->config['errorController'] );
+			// otherwise
+			// ===> simply display error as text
+			// ===> (abort operation afterward)
+			exit($fusebox->error);
 		}
 	}
 
@@ -526,18 +548,28 @@ class F {
 	</fusedoc>
 	*/
 	public static function redirect($command, $condition=true, $delay=0) {
-		// transform command to url
+		// convert command to url
 		$url = self::url($command);
 		// only redirect when condition is true
 		if ( $condition ) {
-			// must use Location when no delay because Refresh doesn't work on ajax-request
+			// when no delay
+			// ===> must use {Location} to ensure ajax-request compatibility
+			// ===> when delay specified
+			// ===> very likely it is not invoked by ajax-request
+			// ===> simply use {Refresh} to perform the redirection
 			$headerString = empty($delay) ? "Location:{$url}" : "Refresh:{$delay};url={$url}";
-			// throw header-string as exception in order to abort operation without stopping unit-test
+			// when unit test
+			// ===> throw header-string as exception
+			// ===> (do not abort operation)
 			if ( Framework::$unitTest ) throw new Exception($headerString, Framework::FUSEBOX_REDIRECT);
-			// invoke redirect at server-side
-			elseif ( !headers_sent() ) exit( header($headerString) );
-			// invoke redirect at client-side (when header already sent)
-			else exit("<script>window.setTimeout(function(){document.location.href='{$url}';},{$delay}*1000);</script>");
+			// when no header sent to client yet
+			// ===> trigger redirect at server-side
+			// ===> (abort operation afterward)
+			if ( !headers_sent() ) exit( header($headerString) );
+			// otherwise
+			// ===> trigger redirect at client-side
+			// ===> (abort operation afterward)
+			exit("<script>window.setTimeout(function(){document.location.href='{$url}';},{$delay}*1000);</script>");
 		}
 	}
 
