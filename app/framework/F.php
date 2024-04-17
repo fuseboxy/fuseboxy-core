@@ -134,17 +134,16 @@ class F {
 	</fusedoc>
 	*/
 	public static function appPath($relPath=null) {
-		global $fusebox;
 		// if nothing specified
 		// ===> simply return config
-		if ( empty($relPath) ) return $fusebox->config['appPath'];
+		if ( empty($relPath) ) return self::config('appPath');
 		// look into app path
-		$appPathFile = $fusebox->config['appPath'].$relPath;
+		$appPathFile = self::config('appPath').$relPath;
 		if ( file_exists($appPathFile) ) return $appPathFile;
 		// if file not found in app path
 		// ===> look through each fuseboxy module under vendor path
 		if ( self::config('vendorPath') ) {
-			$glob = glob($fusebox->config['vendorPath'].'fuseboxy/*/app/'.$relPath);
+			$glob = glob(self::config('vendorPath').'fuseboxy/*/app/'.$relPath);
 			if ( !empty($glob[0]) ) return $glob[0];
 		}
 		// file not found
@@ -282,7 +281,7 @@ class F {
 			// when has error-controller
 			// ===> display/handle the error by error-controller
 			// ===> (abort operation afterward)
-			if ( !empty($fusebox->config['errorController']) ) exit( include $fusebox->config['errorController'] );
+			if ( self::config('errorController') ) exit( include self::config('errorController') );
 			// otherwise
 			// ===> simply display error as text
 			// ===> (abort operation afterward)
@@ -337,7 +336,7 @@ class F {
 		$command = self::parseCommand($command);
 		$fusebox->controller = $command['controller'];
 		$fusebox->action = $command['action'];
-		$controllerPath = "{$fusebox->config['appPath']}/controller/{$fusebox->controller}_controller.php";
+		$controllerPath = self::config('appPath').'/controller/'.$fusebox->controller.'_controller.php';
 		// put query string variables into arguments & url scope
 		parse_str($queryString, $queryString);
 		$arguments = array_merge($queryString, $arguments);
@@ -501,21 +500,14 @@ class F {
 	</fusedoc>
 	*/
 	public static function parseCommand($command) {
-		global $fusebox;
-		// split command by delimiter (when not empty)
-		if ( !empty($command) ) {
-			$arr = explode('.', $command, 2);
-			return array(
-				'controller' => $arr[0],
-				'action' => !empty($arr[1]) ? $arr[1] : 'index'
-			);
 		// both are false when command is empty
-		} else {
-			return array(
-				'controller' => null,
-				'action' => null,
-			);
-		}
+		if ( empty($command) ) return array('controller' => null, 'action' => null);
+		// split command by delimiter (when not empty)
+		$arr = explode('.', $command, 2);
+		return array(
+			'controller' => $arr[0],
+			'action' => !empty($arr[1]) ? $arr[1] : 'index'
+		);
 	}
 
 
@@ -650,6 +642,9 @@ class F {
 		</description>
 		<io>
 			<in>
+				<!-- framework api -->
+				<string name="self" scope="$fusebox" />
+				<string name="myself" scope="$fusebox" />
 				<!-- config -->
 				<structure name="config" scope="$fusebox">
 					<string name="commandVariable" example="fuseaction" />
