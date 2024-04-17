@@ -229,6 +229,30 @@ class Framework {
 	/**
 	<fusedoc>
 		<description>
+			mark start time (millisecond)
+		</description>
+		<io>
+			<in />
+			<out>
+				<!-- property -->
+				<number name="$startTick" scope="Framework" />
+				<!-- return value -->
+				<number name="~return~" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
+	public static function initTimer() {
+		self::$startTick = microtime(true) * 1000;
+		return self::$startTick;
+	}
+
+
+
+
+	/**
+	<fusedoc>
+		<description>
 			load config and assign default value
 		</description>
 		<io>
@@ -320,9 +344,7 @@ class Framework {
 	public static function run() {
 		global $fusebox, $fuseboxy, $arguments;
 		try {
-			// mark start time (ms)
-			self::$startTick = microtime(true)*1000;
-			// main process...
+			self::initTimer();
 			self::initAPI();
 			self::loadConfig();
 			self::fixConfig();
