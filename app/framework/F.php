@@ -668,23 +668,19 @@ class F {
 	*/
 	public static function url($commandWithQueryString=null) {
 		global $fusebox;
-		// validation : no command defined
+		// when no command defined
 		// ===> simply return self (no matter url-rewrite or not)
-		if ( empty($commandWithQueryString) ) {
-			return $fusebox->self;
-		// validation : external url
+		if ( empty($commandWithQueryString) ) return $fusebox->self;
+		// when external url
 		// ===> simply return without any transformation
-		} elseif ( false
-			or $commandWithQueryString[0] == '/' 
-			or substr(strtolower(trim($commandWithQueryString)), 0, 7) == 'http://' 
-			or substr(strtolower(trim($commandWithQueryString)), 0, 8) == 'https://' 
-		) {
-			return $commandWithQueryString;
-		// validation : no rewrite with query-string
-		// ===> prepend self and command-variable
-		} elseif ( empty($fusebox->config['urlRewrite']) ) {
-			return $fusebox->myself.$commandWithQueryString;
-		}
+		if ( false
+			or $commandWithQueryString[0] == '/'
+			or substr(strtolower(trim($commandWithQueryString)), 0, 7) == 'http://'
+			or substr(strtolower(trim($commandWithQueryString)), 0, 8) == 'https://'
+		) return $commandWithQueryString;
+		// when rewrite not enabled
+		// ===> simply return ugly url (self + commandVariable + command + queryString)
+		if ( empty($fusebox->config['urlRewrite']) ) return $fusebox->myself.$commandWithQueryString;
 		// rewrite (with or without query-string)
 		// ===> transform to beauty-url
 		// ===> check route as well
