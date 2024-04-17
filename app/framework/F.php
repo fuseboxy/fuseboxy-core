@@ -81,30 +81,26 @@ class F {
 			if ( !is_array($flash) ) $flash = array('message' => $flash);
 			if ( empty($flash['type']) ) $flash['type'] = 'primary';
 		endif;
-		// capture output
+		// when no content
+		// ===> simply return nothing
+		if ( empty($flash['icon']) and empty($flash['heading']) and empty($flash['message']) and empty($flash['remark']) ) return null;
+		// when has any content
+		// ===> capture output & return
 		ob_start();
-		if (
-			!empty($flash['icon']) or
-			!empty($flash['remark']) or
-			!empty($flash['heading']) or
-			!empty($flash['message'])
-		) :
-			?><div id="<?php echo $flash['id'] ?? ''; ?>" class="alert alert-<?php echo $flash['type']; ?>"><?php
-				if ( !empty($flash['icon']) ) :
-					?><i class="<?php echo $flash['icon']; ?>">&ensp;</i><?php
-				endif;
-				if ( !empty($flash['heading']) ) :
-					?><strong class="mr-1"><?php echo $flash['heading']; ?></strong><?php
-				endif;
-				if ( !empty($flash['message']) ) :
-					?><span><?php echo $flash['message']; ?></span><?php
-				endif;
-				if ( !empty($flash['remark']) ) :
-					?><small class="float-right text-muted pt-1"><?php echo $flash['remark']; ?></small><?php
-				endif;
-			?></div><?php
-		endif;
-		// done!
+		?><div id="<?php echo $flash['id'] ?? ''; ?>" class="alert alert-<?php echo $flash['type']; ?>"><?php
+			if ( !empty($flash['icon']) ) :
+				?><i class="<?php echo $flash['icon']; ?>">&ensp;</i><?php
+			endif;
+			if ( !empty($flash['heading']) ) :
+				?><strong class="mr-1"><?php echo $flash['heading']; ?></strong><?php
+			endif;
+			if ( !empty($flash['message']) ) :
+				?><span><?php echo $flash['message']; ?></span><?php
+			endif;
+			if ( !empty($flash['remark']) ) :
+				?><small class="float-right text-muted pt-1"><?php echo $flash['remark']; ?></small><?php
+			endif;
+		?></div><?php
 		return ob_get_clean();
 	}
 
