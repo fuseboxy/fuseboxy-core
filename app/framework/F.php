@@ -601,8 +601,9 @@ class F {
 			<in>
 				<!-- framework -->
 				<number name="$startTick" scope="Framework" comments="millisecond" />
-				<!-- parameter -->
+				<!-- parameters -->
 				<string name="$unit" default="ms" comments="ms|s" />
+				<boolean name="$showUnit" default="false" />
 			</in>
 			<out>
 				<number name="~return~" />
@@ -610,20 +611,21 @@ class F {
 		</io>
 	</fusedoc>
 	*/
-	public static function runtime($unit='ms') {
-		$unit = strtolower($unit);
+	public static function runtime($unit=null, $showUnit=false) {
+		// set default & fix format
+		$unit = strtolower($unit ?? 'ms');
 		// check unit
-		if ( !in_array($unit, ['ms','s']) ) throw new Exception('Invalid unit of time', Framework::FUSEBOX_ERROR);
+		if ( !in_array($unit, ['ms','s']) ) throw new Exception('Invalid unit for runtime', Framework::FUSEBOX_ERROR);
 		// not started yet
 		if ( !isset(Framework::$startTick) ) return null;
 		// calculation
 		$et = round(microtime(true)*1000-Framework::$startTick);
-		if ( $unit == 's' ) $et = $et / 1000;
+		if ( $unit == 's' ) $et = $et/1000;
 		// done!
-		return $et;
+		return $et.( $showUnit ? $unit : '' );
 	}
 	// alias method
-	public static function et($unit='ms') { return self::runtime($unit); }
+	public static function et($unit='ms', $showUnit=false) { return self::runtime($unit, $showUnit); }
 
 
 
