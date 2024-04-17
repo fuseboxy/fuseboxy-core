@@ -261,28 +261,28 @@ class F {
 	*/
 	public static function error($msg='Error', $condition=true, $options=[]) {
 		global $fusebox;
+		// check whether to proceed
+		if ( !$condition ) return null;
 		// default options
 		$options['headerString'] = $options['headerString'] ?? 'HTTP/1.0 403 Forbidden';
 		$options['errorCode'] = $options['errorCode'] ?? Framework::FUSEBOX_ERROR;
-		// only show error when condition is true
-		if ( $condition ) {
-			if ( !headers_sent() ) header($options['headerString']);
-			// set error message to api object
-			// ===> make it available to error-controller
-			$fusebox->error = $msg;
-			// when unit test
-			// ===> throw exception
-			// ===> (do not abort operation)
-			if ( Framework::$unitTest ) throw new Exception('['.self::command().'] '.$fusebox->error, $options['errorCode']);
-			// when has error-controller
-			// ===> display/handle the error by error-controller
-			// ===> (abort operation afterward)
-			if ( self::config('errorController') ) exit( include self::config('errorController') );
-			// otherwise
-			// ===> simply display error as text
-			// ===> (abort operation afterward)
-			exit($fusebox->error);
-		}
+		// send http header to browser (when necessary)
+		if ( !headers_sent() ) header($options['headerString']);
+		// set error message to api object
+		// ===> make it available to error-controller
+		$fusebox->error = $msg;
+		// when unit test
+		// ===> throw exception
+		// ===> (do not abort operation)
+		if ( Framework::$unitTest ) throw new Exception('['.self::command().'] '.$fusebox->error, $options['errorCode']);
+		// when has error-controller
+		// ===> display/handle the error by error-controller
+		// ===> (abort operation afterward)
+		if ( self::config('errorController') ) exit( include self::config('errorController') );
+		// otherwise
+		// ===> simply display error as text
+		// ===> (abort operation afterward)
+		exit($fusebox->error);
 	}
 
 
@@ -529,29 +529,28 @@ class F {
 	</fusedoc>
 	*/
 	public static function redirect($command, $condition=true, $delay=0) {
+		// check whether to proceed
+		if ( !$condition ) return null;
 		// convert command to url
 		$url = self::url($command);
-		// only redirect when condition is true
-		if ( $condition ) {
-			// when no delay
-			// ===> must use {Location} to ensure ajax-request compatibility
-			// ===> when delay specified
-			// ===> very likely it is not invoked by ajax-request
-			// ===> simply use {Refresh} to perform the redirection
-			$headerString = empty($delay) ? "Location:{$url}" : "Refresh:{$delay};url={$url}";
-			// when unit test
-			// ===> throw header-string as exception
-			// ===> (do not abort operation)
-			if ( Framework::$unitTest ) throw new Exception($headerString, Framework::FUSEBOX_REDIRECT);
-			// when no header sent to client yet
-			// ===> trigger redirect at server-side
-			// ===> (abort operation afterward)
-			if ( !headers_sent() ) exit( header($headerString) );
-			// otherwise
-			// ===> trigger redirect at client-side
-			// ===> (abort operation afterward)
-			exit("<script>window.setTimeout(function(){document.location.href='{$url}';},{$delay}*1000);</script>");
-		}
+		// when no delay
+		// ===> must use {Location} to ensure ajax-request compatibility
+		// ===> when delay specified
+		// ===> very likely it is not invoked by ajax-request
+		// ===> simply use {Refresh} to perform the redirection
+		$headerString = empty($delay) ? "Location:{$url}" : "Refresh:{$delay};url={$url}";
+		// when unit test
+		// ===> throw header-string as exception
+		// ===> (do not abort operation)
+		if ( Framework::$unitTest ) throw new Exception($headerString, Framework::FUSEBOX_REDIRECT);
+		// when no header sent to client yet
+		// ===> trigger redirect at server-side
+		// ===> (abort operation afterward)
+		if ( !headers_sent() ) exit( header($headerString) );
+		// otherwise
+		// ===> trigger redirect at client-side
+		// ===> (abort operation afterward)
+		exit("<script>window.setTimeout(function(){document.location.href='{$url}';},{$delay}*1000);</script>");
 	}
 
 
