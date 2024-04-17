@@ -660,8 +660,8 @@ class F {
 				<string name="$commandWithQueryString" optional="yes" example="product.view&id=10" />
 			</in>
 			<out>
-				<string name="~returnNormalURL~" oncondition="when {urlRewrite=true}" example="/my/site/index.php?fuseaction=product.view&id=10" />
-				<string name="~returnBeautifyURL~" oncondition="when {urlRewrite=false}" example="/my/site/product/view/id=10" />
+				<string name="~returnNormalURL~" oncondition="when {urlRewrite=false}" example="/my/site/index.php?fuseaction=product.view&id=10" />
+				<string name="~returnBeautifyURL~" oncondition="when {urlRewrite=true}" example="/my/site/product/view/id=10" />
 			</out>
 		</io>
 	</fusedoc>
@@ -680,7 +680,37 @@ class F {
 		) return $commandWithQueryString;
 		// when rewrite not enabled
 		// ===> simply return ugly url (self + commandVariable + command + queryString)
-		if ( empty($fusebox->config['urlRewrite']) ) return $fusebox->myself.$commandWithQueryString;
+		if ( !F::config('urlRewrite') ) return $fusebox->myself.$commandWithQueryString;
+		// done!
+		return self::url__beautifyByRouteMatched($commandWithQueryString) ?? self::url__beautifyBySimpleRules($commandWithQueryString);
+	}
+
+
+
+
+	/**
+	<fusedoc>
+		<description>
+		</description>
+		<io>
+			<in>
+				<!-- framework api -->
+				<string name="self" scope="$fusebox" />
+				<!-- config -->
+				<structure name="config" scope="$fusebox">
+					<boolean name="urlRewrite" />
+				</structure>
+				<!-- parameter -->
+				<string name="$commandWithQueryString" optional="yes" example="product.view&id=10" />
+			</in>
+			<out>
+				<string name="~return~" oncondition="when {urlRewrite=true}" example="/my/site/product/view/id=10" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
+	public static function url__beautifyBySimpleRules($commandWithQueryString) {
+		global $fusebox;
 		// rewrite (with or without query-string)
 		// ===> transform to beauty-url
 		// ===> check route as well
@@ -693,69 +723,105 @@ class F {
 			$qs[0] = implode('/', $qs[0]);
 		}
 		// turn query-string into path-like-query-string
+		// ===> e.g. convert <a=1&b=2&c=3> to </a=1/b=2/c=3>
 		$qsPath = implode('/', $qs);
-		$qsPath = preg_replace('~^/+|/+$|/(?=/)~', '', $qsPath);  // remove multi-slash
-		$qsPath = trim($qsPath, '/');  // trim leading and trailing slash
-		// further beautify the url according to route pattern
-		// ===> e.g. convert <article&type=abc&id=1> to <article/abc/1> instead of <article/type=abc/id=1>
-		if ( !empty($fusebox->config['route']) ) {
-			// compare it against each route pattern
-			foreach ( $fusebox->config['route'] as $routePattern => $routeReplacement ) {
-				// parse route-replacement
-				$arr = explode('&', $routeReplacement);
-				$routeReplacement = array();
-				foreach ( $arr as $keyEqVal ) {
-					list($key, $val) = explode('=', $keyEqVal, 2);
-					$routeReplacement[$key] = $val;
-				}
-				// parse input-url
-				$arr = explode('&', self::config('commandVariable').'='.$commandWithQueryString);
-				$inputUrl = array();
-				foreach ( $arr as $keyEqVal ) {
-					list($key, $val) = explode('=', $keyEqVal, 2);
-					$inputUrl[$key] = $val;
-				}
-				// check whether all variables matched
-				$routeReplacementKeys = array_keys($routeReplacement);
-				$inputUrlKeys = array_keys($inputUrl);
-				sort($routeReplacementKeys);
-				sort($inputUrlKeys);
-				$isAllVariablesMatched = ( $routeReplacementKeys == $inputUrlKeys );
-				// check whether command matched
-				$commandVar = self::config('commandVariable');
-				$isCommandMatched = ( isset($routeReplacement[$commandVar]) and isset($inputUrl[$commandVar]) and preg_match('/'.preg_quote($routeReplacement[$commandVar]).'/', $inputUrl[$commandVar]) );
-				// only proceed when all variables matched and command matched
-				if ( $isAllVariablesMatched and $isCommandMatched ) {
-					// get each back-reference value
-					$backRef = array();
-					foreach ( $routeReplacement as $key => $val ) {
-						// check back-reference format
-						if ( substr($val, 0, 1) == '$' and is_numeric(substr($val, 1)) and strpos($val, '.') === false ) {
-							$backRef[$val] = $inputUrl[$key];
-						}
-					}
-					// go through each pair of brackets in route-pattern
-					// ===> replace it with corresponding back-reference value
-					$result = str_replace("\/", '/', $routePattern);
-					preg_match_all("/\(.*?\)/", $routePattern, $matches);
-					if ( !empty($matches) ) {
-						foreach ( $matches[0] as $i => $backRefKey ) {
-							if ( isset($backRef['$'.($i+1)]) ) {
-								$backRefVal = $backRef['$'.($i+1)];
-								$result = preg_replace('/'.preg_quote($backRefKey).'/', $backRefVal, $result, 1);
-							}
-						}
-					}
-					// append the base-url
-					$result = $fusebox->self.$result;
-					$result = str_replace('//', '/', $result);
-					return $result;
-				} // isAllVariablesMatched-and-isCommandMatched
-			} // foreach-fuseboxConfig-route
-		} // if-fuseboxConfig-route
-		// if no route defined or no match
-		// ===> simply prepend self to query-string-path
+		// remove multi-slashes
+		$qsPath = preg_replace('~^/+|/+$|/(?=/)~', '', $qsPath);
+		// trim leading and trailing slash
+		$qsPath = trim($qsPath, '/');
+		// done!
 		return $fusebox->self.$qsPath;
+	}
+
+
+
+
+	/**
+	<fusedoc>
+		<description>
+			further beautify the url according to route pattern
+			===> e.g. convert <article&type=abc&id=1> to <article/abc/1> instead of <article/type=abc/id=1>
+		</description>
+		<io>
+			<in>
+				<!-- framework api -->
+				<string name="self" scope="$fusebox" />
+				<!-- config -->
+				<structure name="config" scope="$fusebox">
+					<boolean name="urlRewrite" />
+					<string name="commandVariable" />
+					<structure name="route">
+						<string name="~pattern~" value="~regex~" />
+					</structure>
+				</structure>
+				<!-- parameter -->
+				<string name="$commandWithQueryString" optional="yes" example="product.view&id=10" />
+			</in>
+			<out>
+				<string name="~return~" oncondition="when {urlRewrite=true}" example="/my/site/product/view/id=10" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
+
+	public static function url__beautifyByRouteMatched($commandWithQueryString) {
+		global $fusebox;
+		// go through & compare against each pattern
+		// ===> return the first match only
+		foreach ( self::config('route') ?? [] as $routePattern => $routeReplacement ) {
+			// parse route-replacement
+			$arr = explode('&', $routeReplacement);
+			$routeReplacement = array();
+			foreach ( $arr as $keyEqVal ) {
+				list($key, $val) = explode('=', $keyEqVal, 2);
+				$routeReplacement[$key] = $val;
+			}
+			// parse input-url
+			$arr = explode('&', self::config('commandVariable').'='.$commandWithQueryString);
+			$inputUrl = array();
+			foreach ( $arr as $keyEqVal ) {
+				list($key, $val) = explode('=', $keyEqVal, 2);
+				$inputUrl[$key] = $val;
+			}
+			// check whether all variables matched
+			$routeReplacementKeys = array_keys($routeReplacement);
+			$inputUrlKeys = array_keys($inputUrl);
+			sort($routeReplacementKeys);
+			sort($inputUrlKeys);
+			$isAllVarsMatched = ( $routeReplacementKeys == $inputUrlKeys );
+			// check whether command matched
+			$commandVar = self::config('commandVariable');
+			$isCommandMatched = ( isset($routeReplacement[$commandVar]) and isset($inputUrl[$commandVar]) and preg_match('/'.preg_quote($routeReplacement[$commandVar]).'/', $inputUrl[$commandVar]) );
+			// only proceed when all variables matched and command matched
+			if ( $isAllVarsMatched and $isCommandMatched ) {
+				// get each back-reference value
+				$backRef = array();
+				foreach ( $routeReplacement as $key => $val ) {
+					// check back-reference format
+					if ( substr($val, 0, 1) == '$' and is_numeric(substr($val, 1)) and strpos($val, '.') === false ) {
+						$backRef[$val] = $inputUrl[$key];
+					}
+				}
+				// go through each pair of brackets in route-pattern
+				// ===> replace it with corresponding back-reference value
+				$result = str_replace("\/", '/', $routePattern);
+				preg_match_all("/\(.*?\)/", $routePattern, $matches);
+				if ( !empty($matches) ) {
+					foreach ( $matches[0] as $i => $backRefKey ) {
+						if ( isset($backRef['$'.($i+1)]) ) {
+							$backRefVal = $backRef['$'.($i+1)];
+							$result = preg_replace('/'.preg_quote($backRefKey).'/', $backRefVal, $result, 1);
+						}
+					}
+				}
+				// append the base-url
+				$result = $fusebox->self.$result;
+				$result = str_replace('//', '/', $result);
+				return $result;
+			} // isAllVarsMatched-and-isCommandMatched
+		} // foreach-route
+		// no match...
+		return null;
 	}
 
 
