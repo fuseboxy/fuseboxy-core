@@ -91,7 +91,7 @@ class F {
 		) :
 			?><div id="<?php echo $flash['id'] ?? ''; ?>" class="alert alert-<?php echo $flash['type']; ?>"><?php
 				if ( !empty($flash['icon']) ) :
-					?><span class="mr-2"><i class="<?php echo $flash['icon']; ?>"></i></span><?php
+					?><i class="<?php echo $flash['icon']; ?>">&ensp;</i><?php
 				endif;
 				if ( !empty($flash['heading']) ) :
 					?><strong class="mr-1"><?php echo $flash['heading']; ?></strong><?php
