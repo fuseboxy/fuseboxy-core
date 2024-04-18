@@ -370,6 +370,7 @@ class Framework {
 	*/
 	public static function run() {
 		global $fusebox, $fuseboxy, $arguments;
+		// start!!
 		try {
 			self::initTimer();
 			self::initAPI();
@@ -383,14 +384,19 @@ class Framework {
 			self::urlRewrite();
 			self::formUrl2arguments();
 			self::setControllerAction();
-			// do not run when no controller specified
-			// ===> e.g. when default-command is empty
-			// ===> otherwise, load controller and run!
+			// when controller not specified
+			// ===> (e.g. config {defaultCommand} is empty)
+			// ===> simply do nothing...
 			if ( !empty($fusebox->controller) ) {
-				$__controllerPath = F::appPath('controller/'.str_ireplace('-', '_', $fusebox->controller).'_controller.php');
-				F::pageNotFound( !file_exists($__controllerPath) );
-				include $__controllerPath;
+				// when controller specified but file not exists
+				// ===> page not found...
+				$__controllerPath__ = F::appPath('controller/'.str_ireplace('-', '_', $fusebox->controller).'_controller.php');
+				F::pageNotFound( !file_exists($__controllerPath__) );
+				// when controller specified & available
+				// ===> load file to run~~
+				include $__controllerPath__;
 			}
+		// any runtime error...
 		} catch (Exception $e) {
 			F::error($e);
 		}
