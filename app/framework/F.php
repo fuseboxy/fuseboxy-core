@@ -624,8 +624,6 @@ class F {
 		// done!
 		return $et.( $showUnit ? $unit : '' );
 	}
-	// alias method
-	public static function et($unit='ms', $showUnit=false) { return self::runtime($unit, $showUnit); }
 
 
 
