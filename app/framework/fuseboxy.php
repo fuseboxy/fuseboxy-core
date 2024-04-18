@@ -176,6 +176,33 @@ class Framework {
 	/**
 	<fusedoc>
 		<description>
+			auto-redirect page to HTTPS (when neccessary)
+			===> only perform simple redirection (and will NOT retain any form data)
+		</description>
+		<io>
+			<in>
+				<structure name="config" scope="$fusebox">
+					<boolean name="forceHttps" optional="yes" />
+				</structure>
+				<structure name="$_SERVER">
+					<string name="HTTP_HOST" />
+					<string name="REQUEST_URI" />
+				</structure>
+			</in>
+			<out />
+		</io>
+	</fusedoc>
+	*/
+	public static function forceHttps() {
+		F::redirect('https://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], F::config('forceHttps') and F::requestScheme() == 'http');
+	}
+
+
+
+
+	/**
+	<fusedoc>
+		<description>
 			formUrl2arguments
 			===> merge  GET & POST scopes
 			===> variable in GET scope will be overwritten by same variable in POST scope
@@ -344,6 +371,7 @@ class Framework {
 	public static function run() {
 		global $fusebox, $fuseboxy, $arguments;
 		try {
+			self::forceHttps();
 			self::initTimer();
 			self::initAPI();
 			self::loadConfig();

@@ -90,6 +90,14 @@ return array(
 
 
 	/**
+	 *  Force HTTPS (OPTIONAL)
+	 *  ===> auto-redirect page to HTTPS when neccessary
+	 *  ===> only perform simple redirection and will not retain form data
+	 **/
+	'forceHttps' => false,
+
+
+	/**
 	 *  Route setting for beauty-url (OPTIONAL)
 	 *  ===> only applicable when {urlRewrite=true}
 	 *  ===> using regex and back-reference to turn path-like-query-string into query-string (forward-slash will be escaped)
