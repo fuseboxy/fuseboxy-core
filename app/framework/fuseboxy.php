@@ -371,13 +371,13 @@ class Framework {
 	public static function run() {
 		global $fusebox, $fuseboxy, $arguments;
 		try {
-			self::forceHttps();
 			self::initTimer();
 			self::initAPI();
 			self::loadConfig();
 			self::fixConfig();
 			self::validateConfig();
 			self::loadHelper();
+			self::forceHttps();
 			self::setMyself();
 			self::autoLoad();
 			self::urlRewrite();
