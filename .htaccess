@@ -1,10 +1,5 @@
 <IfModule rewrite_module>
 RewriteEngine On
-# force https
-RewriteCond %{HTTPS} !on
-RewriteCond %{HTTP_HOST} !^127\.0\.0\.1(?::\d+)?$
-RewriteCond %{HTTP_HOST} !^localhost(?::\d+)?$ [NC]
-RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 # if a directory or a file exists, use it directly
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
