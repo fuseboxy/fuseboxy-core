@@ -5,5 +5,12 @@
 	"type": "fuseboxy-core",
 	"require": {
 		"fuseboxy/fuseboxy-installer": "2.*"
+	},
+    "repositories": [
+    	{ "type": "git", "url": "https://github.com/fuseboxy/fuseboxy-installer" }
+    ],
+	"config": {
+		"platform": { "php": "^8.3" },
+		"allow-plugins": { "fuseboxy/fuseboxy-installer": true }
 	}
 }
