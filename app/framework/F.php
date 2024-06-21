@@ -278,7 +278,7 @@ class F {
 		// when has error-controller
 		// ===> display/handle the error by error-controller
 		// ===> (abort operation afterward)
-		if ( self::config('errorController') ) exit( include self::config('errorController') );
+		if ( self::config('errorController') and is_file(self::config('errorController')) ) exit( include self::config('errorController') );
 		// otherwise
 		// ===> simply display error as text
 		// ===> (abort operation afterward)
