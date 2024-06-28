@@ -374,10 +374,10 @@ class Framework {
 		try {
 			self::initTimer();
 			self::initAPI();
+			self::loadHelper();
 			self::loadConfig();
 			self::fixConfig();
 			self::validateConfig();
-			self::loadHelper();
 			self::forceHttps();
 			self::setMyself();
 			self::autoLoad();
