@@ -260,7 +260,7 @@ class F {
 	</fusedoc>
 	*/
 	public static function error($msg='Error', $condition=true, $options=[]) {
-		global $fusebox;
+		global $fusebox, $fuseboxy, $arguments;
 		// check whether to proceed
 		if ( !$condition ) return null;
 		// default options
@@ -317,7 +317,7 @@ class F {
 	</fusedoc>
 	*/
 	public static function invoke($commandWithQueryString, $arguments=[]) {
-		global $fusebox;
+		global $fusebox, $fuseboxy;
 		// create stack container to keep track of command-in-run
 		// ===> first item of invoke queue should be original command
 		// ===> second item onward will be the command(s) called by F::invoke()
