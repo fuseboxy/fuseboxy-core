@@ -135,7 +135,7 @@ class F {
 		if ( empty($relPath) ) return self::config('appPath');
 		// look into app path
 		$appPathFile = self::config('appPath').$relPath;
-		if ( file_exists($appPathFile) ) return $appPathFile;
+		if ( is_file($appPathFile) ) return $appPathFile;
 		// if file not found in app path
 		// ===> look through each fuseboxy module under vendor path
 		if ( self::config('vendorPath') ) {
@@ -340,7 +340,7 @@ class F {
 		$_GET = array_merge($_GET, $queryString);
 		// when controller found
 		// ===> load controller to invoke command
-		if ( file_exists($controllerPath) ) include $controllerPath;
+		if ( is_file($controllerPath) ) include $controllerPath;
 		// trim queue afterward
 		// ===> regardless whether successfully run or not
 		// ===> restore to original command (previous command in queue)
@@ -351,7 +351,7 @@ class F {
 		// when controller not found
 		// ===> command not run indeed
 		// ===> throw error
-		self::pageNotFound(!file_exists($controllerPath));
+		self::pageNotFound(!is_file($controllerPath));
 	}
 
 
