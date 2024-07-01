@@ -87,7 +87,7 @@ return array(
 	 *  ===> controller (if any) and action (if any) will be the first two items after base path
 	 *  ===> remember to modify {.htaccess} if doing url-rewrite (set "RewriteEngine On")
 	 **/
-	'urlRewrite' => false,
+	'urlRewrite' => true,
 
 
 	/**
