@@ -300,7 +300,7 @@ class Framework {
 	public static function loadConfig() {
 		global $fusebox;
 		// validate config file
-		if ( file_exists(self::$configPath) ) {
+		if ( is_file(self::$configPath) ) {
 			$fusebox->config = include self::$configPath;
 		} else {
 			if ( !headers_sent() ) header('HTTP/1.0 500 Internal Server Error');
@@ -391,7 +391,7 @@ class Framework {
 				// when controller specified but file not exists
 				// ===> page not found...
 				$__controllerPath__ = F::appPath('controller/'.str_ireplace('-', '_', $fusebox->controller).'_controller.php');
-				F::pageNotFound( !file_exists($__controllerPath__) );
+				F::pageNotFound( !is_file($__controllerPath__) );
 				// when controller specified & available
 				// ===> load file to run~~
 				include $__controllerPath__;

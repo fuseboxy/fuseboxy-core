@@ -351,7 +351,7 @@ class F {
 		// when controller not found
 		// ===> command not run indeed
 		// ===> throw error
-		self::pageNotFound(!is_file($controllerPath));
+		self::pageNotFound( !is_file($controllerPath) );
 	}
 
 
