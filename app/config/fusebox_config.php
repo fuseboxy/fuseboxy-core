@@ -58,8 +58,9 @@ return array(
 	 *  ===> if element is anonymous function, it will be run once
 	 **/
 	'autoLoad' => array(
-		dirname(dirname(__DIR__)).'/vendor/autoload.php',
-		dirname(__DIR__).'/model/',
+		is_file(dirname(dirname(__DIR__)).'/vendor/autoload.php') ? (dirname(dirname(__DIR__)).'/vendor/autoload.php') : false,
+		dirname(dirname(__DIR__)).'/vendor/fuseboxy/fuseboxy-*/app/model/*.php',
+		dirname(__DIR__).'/model/*.php',
 	),
 
 
