@@ -72,11 +72,3 @@ endswitch;
 
 
 
-
-## formUrl2arguments
-
-To offer a single-point-of-access to all your variables in previous page, the framework automatically creates a variable called `$arguments` which contains both data of **$_POST** and **$_GET** scopes.
-
-Of course, you could still use **$_POST** and **$_GET** to access your variables, because the framework was meant to be unobtrusive.
-
-You could turn-off this option by `formUrl2arguments` at the framework config file.
