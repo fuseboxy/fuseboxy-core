@@ -353,7 +353,6 @@ class Framework {
 			self::setMyself();
 			self::autoLoad();
 			self::urlRewrite();
-			self::formUrl2arguments();
 			self::setControllerAction();
 			// when controller not specified
 			// ===> (e.g. config {defaultCommand} is empty)
