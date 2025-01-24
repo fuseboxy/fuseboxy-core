@@ -203,35 +203,6 @@ class Framework {
 	/**
 	<fusedoc>
 		<description>
-			formUrl2arguments
-			===> merge  GET & POST scopes
-			===> variable in GET scope will be overwritten by same variable in POST scope
-		</description>
-		<io>
-			<in>
-				<structure name="config" scope="$fusebox">
-					<boolean name="formUrl2arguments" />
-				</structure>
-			</in>
-			<out>
-				<structure name="$arguments">
-					<mixed name="*" />
-				</structure>
-			</out>
-		</io>
-	</fusedoc>
-	*/
-	public static function formUrl2arguments() {
-		global $arguments;
-		if ( F::config('formUrl2arguments') ) $arguments = array_merge($_GET, $_POST);
-	}
-
-
-
-
-	/**
-	<fusedoc>
-		<description>
 			initiate fusebox API object
 			===> use {global} instead of {$_GLOBALS}
 			===> make developer easier to access the object (without typing too much)
@@ -369,7 +340,7 @@ class Framework {
 	</fusedoc>
 	*/
 	public static function run() {
-		global $fusebox, $fuseboxy, $arguments;
+		global $fusebox, $fuseboxy;
 		// start!!
 		try {
 			self::initTimer();

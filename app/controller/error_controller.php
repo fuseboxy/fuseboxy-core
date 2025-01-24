@@ -8,7 +8,7 @@
 			</structure>
 		</in>
 		<out>
-			<structure name="flash" scope="$arguments" comments="for global layout">
+			<structure name="flash" scope="$layout" comments="for global layout">
 				<string name="type" />
 				<string name="icon" />
 				<string name="message" />
@@ -28,7 +28,7 @@ elseif ( F::ajaxRequest() ) :
 
 // show error with layout (when normal request)
 else :
-	$arguments['flash'] = array(
+	$layout['flash'] = array(
 		'type' => ( $fusebox->error == 'page not found' ) ? 'warning' : 'danger',
 		'icon' => 'fa fa-exclamation-circle mr-1',
 		'message' => $fusebox->error,

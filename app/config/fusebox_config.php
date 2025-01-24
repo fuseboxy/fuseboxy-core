@@ -65,13 +65,6 @@ return array(
 
 
 	/**
-	 *  Create an associative array which combines $_GET and $_POST (OPTIONAL)
-	 *  ===> allow evaluating $_GET and $_POST variables by a single token without including $_COOKIE in the mix
-	 **/
-	'formUrl2arguments' => true,
-
-
-	/**
 	 *  Controller to handle error (OPTIONAL)
 	 *  ===> use by F::error() and F::pageNotFound()
 	 *  ===> controller will receive {$fusebox->error} as argument
@@ -159,7 +152,7 @@ return array(
 	 **/
 	'smtp' => array(/*
 		'debug'    => 0,            // debugging (0 = no message; 1 = error & message; 2 = messages only)
-		'secure'   => SMTP_SECURE,  // secure transfer enabled (ssl, tsl, etc.)
+		'secure'   => SMTP_SECURE,  // secure transfer enabled (SSL, TLS, etc.)
 		'auth'     => SMTP_AUTH,    // authentication enabled (boolean)
 		'host'     => SMTP_HOST,
 		'port'     => SMTP_PORT,
