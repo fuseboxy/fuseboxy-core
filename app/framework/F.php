@@ -260,7 +260,7 @@ class F {
 	</fusedoc>
 	*/
 	public static function error($msg='Error', $condition=true, $options=[]) {
-		global $fusebox, $fuseboxy, $arguments;
+		global $fusebox, $fuseboxy;
 		// check whether to proceed
 		if ( !$condition ) return null;
 		// default options
@@ -302,7 +302,6 @@ class F {
 		<io>
 			<in>
 				<string name="$commandWithQueryString" example="product.view&id=999" />
-				<structure name="$arguments" optional="yes" default="~emptyArray~" />
 			</in>
 			<out>
 				<!-- manipulated api object -->
@@ -316,7 +315,7 @@ class F {
 		</io>
 	</fusedoc>
 	*/
-	public static function invoke($commandWithQueryString, $arguments=[]) {
+	public static function invoke($commandWithQueryString) {
 		global $fusebox, $fuseboxy;
 		// create stack container to keep track of command-in-run
 		// ===> first item of invoke queue should be original command
@@ -335,7 +334,6 @@ class F {
 		$controllerPath = self::config('appPath').'/controller/'.$fusebox->controller.'_controller.php';
 		// put query string variables into arguments & url scope
 		parse_str($queryString, $queryString);
-		$arguments = array_merge($queryString, $arguments);
 		$originalGetScope = $_GET;
 		$_GET = array_merge($_GET, $queryString);
 		// when controller found
@@ -365,7 +363,6 @@ class F {
 		<io>
 			<in>
 				<string name="$command" example="home.news" />
-				<structure name="$arguments" optional="yes" default="~emptyArray~" />
 			</in>
 			<out>
 				<string name="~return~" format="html" />
@@ -373,9 +370,9 @@ class F {
 		</io>
 	</fusedoc>
 	*/
-	public static function invokeOutput($command, $arguments=[]) {
+	public static function invokeOutput($command) {
 		ob_start();
-		self::invoke($command, $arguments);
+		self::invoke($command);
 		return ob_get_clean();
 	}
 
