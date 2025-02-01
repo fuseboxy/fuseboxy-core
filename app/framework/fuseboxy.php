@@ -27,10 +27,13 @@ class Framework {
 	const FUSEBOX_MISSING_CONFIG     = 905;
 	const FUSEBOX_INVALID_CONFIG     = 906;
 	// configurable properties
-	public static $unitTest = false;
 	public static $startTick;
 	public static $configPath = __DIR__.'/../config/fusebox_config.php';
 	public static $helperPath = __DIR__.'/F.php';
+	// for unit test
+	public static $abortOnRun = true;
+	public static $abortOnError = true;
+	public static $abortOnRedirect = true;
 
 
 
@@ -619,7 +622,7 @@ class Framework {
 				<structure name="config" scope="$fusebox">
 					<string name="commandVariable" optional="yes" />
 					<string name="appPath" optional="yes" />
-					<string name="errorController" optional="yes" />
+					<boolean_or_string name="errorController" optional="yes" />
 				</structure>
 			</in>
 			<out />
@@ -645,14 +648,9 @@ class Framework {
 			throw new Exception('Fusebox config [commandVariable] cannot be a reserved word (reserved='.implode(',', $reserved).')', self::FUSEBOX_INVALID_CONFIG);
 		}
 		// check error-controller
-		if ( !F::config('errorController') ) {
-			// (allow not defined)
-		} elseif ( !is_file(F::config('errorController')) ) {
+		if ( F::config('errorController') and !is_bool(F::config('errorController')) ) {
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception('Error controller not found ('.F::config('errorController').')', self::FUSEBOX_INVALID_CONFIG);
-		} elseif ( strtolower(pathinfo(F::config('errorController'), PATHINFO_EXTENSION)) != 'php' ) {
-			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception('Error controller must be PHP ('.F::config('errorController').')', self::FUSEBOX_INVALID_CONFIG);
+			throw new Exception('Fusebox config [errorController] must be boolean', self::FUSEBOX_INVALID_CONFIG);
 		}
 	}
 

@@ -216,11 +216,14 @@ class F {
 	*/
 	public static function config($key=null, $val='{{undefined}}') {
 		global $fusebox;
-		// getter (all)
+		// when {key} not specified
+		// ===> getter (all)
 		if ( empty($key) ) return $fusebox->config;
-		// getter (specific)
+		// when {key} specified but {val} not specified
+		// ===> getter (specific)
 		if ( $val == '{{undefined}}' ) return $fusebox->config[$key] ?? null;
-		// setter
+		// when both {key & val} specified
+		// ===> setter
 		$fusebox->config[$key] = $val;
 		return $val;
 	}
@@ -238,11 +241,11 @@ class F {
 		</description>
 		<io>
 			<in>
-				<!-- constant -->
-				<number name="$mode" scope="Framework" example="101" />
+				<!-- framework -->
+				<boolean name="$abortOnError" scope="Framework" />
 				<!-- config -->
 				<structure name="config" scope="$fusebox">
-					<path name="errorController" example="/path/to/my/site/app/controller/error_controller.php" />
+					<boolean name="errorController" />
 				</structure>
 				<!-- parameters -->
 				<string name="$msg" optional="yes" default="Error" />
@@ -271,18 +274,14 @@ class F {
 		// set error message to api object
 		// ===> make it available to error-controller
 		$fusebox->error = $msg;
-		// when unit test
-		// ===> throw exception
-		// ===> (do not abort operation)
-		if ( Framework::$unitTest ) throw new Exception('['.self::command().'] '.$fusebox->error, $options['errorCode']);
-		// when has error-controller
-		// ===> display/handle the error by error-controller
-		// ===> (abort operation afterward)
-		if ( self::config('errorController') and is_file(self::config('errorController')) ) exit( include self::config('errorController') );
-		// otherwise
+		// when error-controller not specified or not found
 		// ===> simply display error as text
+		// ===> otherwise, display by error-controller
 		// ===> (abort operation afterward)
-		exit($fusebox->error);
+		$defaultErrorController = self::appPath('controller/error_controller.php');
+		if ( !self::config('errorController') or !is_file($defaultErrorController) ) echo $fusebox->error;
+		else include $defaultErrorController;
+		if ( Framework::$abortOnError ) exit();
 	}
 
 
@@ -517,6 +516,9 @@ class F {
 		</description>
 		<io>
 			<in>
+				<!-- framework -->
+				<boolean name="$abortOnRedirect" scope="Framework" />
+				<!-- parameters -->
 				<string name="$command" example="product.index|product.view&id=999|.." />
 				<boolean name="$condition" default="true" />
 				<number name="$delay" default="0" comments="number of seconds to wait before redirection" />
@@ -536,18 +538,16 @@ class F {
 		// ===> very likely it is not invoked by ajax-request
 		// ===> simply use {Refresh} to perform the redirection
 		$headerString = empty($delay) ? "Location:{$url}" : "Refresh:{$delay};url={$url}";
-		// when unit test
-		// ===> throw header-string as exception
-		// ===> (do not abort operation)
-		if ( Framework::$unitTest ) throw new Exception($headerString, Framework::FUSEBOX_REDIRECT);
 		// when no header sent to client yet
 		// ===> trigger redirect at server-side
 		// ===> (abort operation afterward)
-		if ( !headers_sent() ) exit( header($headerString) );
+		if ( !headers_sent() ) header($headerString);
+		if ( Framework::$abortOnRedirect ) exit();
 		// otherwise
 		// ===> trigger redirect at client-side
 		// ===> (abort operation afterward)
-		exit("<script>window.setTimeout(function(){document.location.href='{$url}';},{$delay}*1000);</script>");
+		echo "<script>window.setTimeout(function(){document.location.href='{$url}';},{$delay}*1000);</script>";
+		if ( Framework::$abortOnRedirect ) exit();
 	}
 
 

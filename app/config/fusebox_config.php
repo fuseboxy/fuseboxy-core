@@ -70,7 +70,7 @@ return array(
 	 *  ===> controller will receive {$fusebox->error} as argument
 	 *  ===> when false, error will be thrown as exception
 	 *  ===> when true, default using {~appPath~/controller/error_controller.php}
-	 *  ===> to customize, make a copy of {vendor/fuseboxy/fuseboxy-core/app/controller/error_controller.php} to {~appPath~/controller/error_controller.php}
+	 *  ===> to customize, make a copy of {~vendorPath~/fuseboxy/fuseboxy-core/app/controller/error_controller.php} to {~appPath~/controller/error_controller.php}
 	 **/
 	'errorController' => true,
 
