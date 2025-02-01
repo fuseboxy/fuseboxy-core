@@ -493,10 +493,9 @@ class F {
 		// both are false when command is empty
 		if ( empty($command) ) return [ 'controller' => null, 'action' => null ];
 		// split command by delimiter (when not empty)
-		$arr = explode('.', $command, 2);
 		return [
-			'controller' => $arr[0],
-			'action' => !empty($arr[1]) ? $arr[1] : 'index'
+			'controller' => str_contains($command, '.') ? explode('.', $command, 2)[0] : $command,
+			'action' => str_contains($command, '.') ? explode('.', $command, 2)[1] : 'index',
 		];
 	}
 
