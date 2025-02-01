@@ -17,7 +17,6 @@ class Framework {
 
 
 	// constant : error codes
-	const FUSEBOX_REDIRECT           = 302;
 	const FUSEBOX_ERROR              = 403;
 	const FUSEBOX_PAGE_NOT_FOUND     = 404;
 	const FUSEBOX_CONFIG_NOT_FOUND   = 901;
