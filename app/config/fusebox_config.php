@@ -109,6 +109,21 @@ return array(
 
 	/**
 	 *  Database setting for ORM component (OPTIONAL)
+	 *  ===> can either be single database or multiple databases
+	 *  ===> database {default} is mandatory in multiple databases config
+	 *  [Examples]
+	 *	// single database
+	 *	'db' => array(
+	 *		'host' => '...',
+	 *		'name' => '...',
+	 *		...
+	 *	);
+	 *	// multiple databases
+	 *	'db' => array(
+	 *		'default' => [ 'host' => '...', 'name' => '...', ... ],
+	 *		'foo' => [ ... ],
+	 *		'bar' => [ ... ],
+	 *	);  
 	 **/
 	'db' => array(/*
 		'host'     => DB_HOST,
