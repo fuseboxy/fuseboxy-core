@@ -9,9 +9,9 @@ return array(
 
 	/**
 	 *  Default page (OPTIONAL)
-	 *  ===> command is in [controller].[action] format
-	 *  ===> if no [action] was specified, fusebox will automatically resolve it to 'index'
-	 *  ===> if set to [false], fusebox will load nothing by default
+	 *  ===> command is in {~controller~.~action~} format
+	 *  ===> when {~action~} not specified, it is {index} by default
+	 *  ===> when {false}, fusebox will load nothing by default
 	 **/
 	'defaultCommand' => 'home',
 
@@ -55,7 +55,7 @@ return array(
 	/**
 	 *  Files to auto-include (OPTIONAL)
 	 *  ===> using path pattern (please refer to glob function)
-	 *  ===> if element is anonymous function, it will be run once
+	 *  ===> when element is function, it will be run once
 	 **/
 	'autoLoad' => array(
 		is_file(dirname(dirname(__DIR__)).'/vendor/autoload.php') ? (dirname(dirname(__DIR__)).'/vendor/autoload.php') : false,
@@ -66,11 +66,13 @@ return array(
 
 	/**
 	 *  Controller to handle error (OPTIONAL)
-	 *  ===> use by F::error() and F::pageNotFound()
+	 *  ===> used by F::error() and F::pageNotFound()
 	 *  ===> controller will receive {$fusebox->error} as argument
-	 *  ===> error will be thrown as exception when this is not defined
+	 *  ===> when false, error will be thrown as exception
+	 *  ===> when true, default using {~appPath~/controller/error_controller.php}
+	 *  ===> to customize, make a copy of {vendor/fuseboxy/fuseboxy-core/app/controller/error_controller.php} to {~appPath~/controller/error_controller.php}
 	 **/
-	'errorController' => dirname(__DIR__).'/controller/error_controller.php',
+	'errorController' => true,
 
 
 	/**
