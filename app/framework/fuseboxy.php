@@ -57,42 +57,42 @@ class Framework {
 	</fusedoc>
 	*/
 	public static function autoLoad() {
-		foreach ( F::config('autoLoad') ?? [] as $pattern ) {
+		foreach ( F::config('autoLoad') ?? [] as $pattern ) :
 			$isFunction = is_callable($pattern);
 			$isPatternLikeDir = ( !$isFunction and ( is_dir($pattern) or in_array(substr($pattern, -1), ['/','\\']) ) );
 			$isPatternLikeFile = ( !$isFunction and !empty($pattern) and strpos($pattern, '*') === false and strtolower(substr($pattern, -4)) == '.php' );
 			// call as function
-			if ( $isFunction ) {
+			if ( $isFunction ) :
 				call_user_func($pattern);
 			// directory not found
-			} elseif ( $isPatternLikeDir and !is_dir($pattern) ) {
+			elseif ( $isPatternLikeDir and !is_dir($pattern) ) :
 				throw new Exception("Autoload directory not found ({$pattern})", self::FUSEBOX_INVALID_CONFIG);
 			// file not found
-			} elseif ( $isPatternLikeFile and empty(glob($pattern)) ) {
+			elseif ( $isPatternLikeFile and empty(glob($pattern)) ) :
 				throw new Exception("Autoload file not found ({$pattern})", self::FUSEBOX_INVALID_CONFIG);
 			// load files (when directory or file exists)
-			} elseif ( !empty($pattern) ) {
+			elseif ( !empty($pattern) ) :
 				// when only specified directory
 				// ===> load php files but not others
 				if ( $isPatternLikeDir ) $pattern = rtrim($pattern, '/\\').'/*.php';
 				// go through each item
-				foreach ( glob($pattern) as $path ) {
+				foreach ( glob($pattern) as $path ) :
 					// when not file
 					// ===> simply do nothing
-					if ( !is_file($path) ) {
+					if ( !is_file($path) ) :
 						// do nothing...
 					// when file is php
 					// ===> load & run as php
-					} elseif ( is_file($path) and pathinfo(strtolower($path), PATHINFO_EXTENSION) == 'php' ) {
+					elseif ( is_file($path) and pathinfo(strtolower($path), PATHINFO_EXTENSION) == 'php' ) :
 						require_once $path;
 					// when file is other type
 					// ===> display the content (for security purpose)
-					} elseif ( is_file($path) ) {
+					elseif ( is_file($path) ) :
 						echo file_get_contents($path);
-					}
-				} // foreach-glob-pattern
-			}
-		} // foreach-pattern
+					endif;
+				endforeach; // foreach-glob-pattern
+			endif;
+		endforeach; // foreach-pattern
 	}
 
 
@@ -120,10 +120,10 @@ class Framework {
 	public static function fixConfig() {
 		global $fusebox;
 		// validation
-		if ( !isset($fusebox->config) ) {
+		if ( !isset($fusebox->config) ) :
 			if ( !headers_sent() ) header('HTTP/1.0 500 Internal Server Error');
 			throw new Exception('Fusebox config not defined', self::FUSEBOX_CONFIG_NOT_DEFINED);
-		}
+		endif;
 		// fix path config
 		// ===> adjust slash of each path
 		// ===> only proceed when certain path is specified
@@ -134,30 +134,30 @@ class Framework {
 			'baseUrl',
 			'uploadDir',
 			'uploadUrl',
-		] as $configKey ) {
+		] as $configKey ) :
 			// check if config available
-			if ( F::config($configKey) ) {
+			if ( F::config($configKey) ) :
 				// unify slash
 				F::config($configKey, str_replace('\\', '/', F::config($configKey)));
 				// dedupe slash
 				F::config($configKey, preg_replace('/\/+/', '/', F::config($configKey)));
 				// append trailing slash
 				F::config($configKey, F::config($configKey).( ( substr(F::config($configKey), -1) != '/' ) ? '/' : '' ));
-			} // if-config
-		}
+			endif;
+		endforeach;
 		// fix route config
 		// ===> keep the sequence
 		// ===> adjust certain syntax in regex
-		if ( F::config('route') ) {
+		if ( F::config('route') ) :
 			$fixedRoute = array();
-			foreach ( F::config('route') as $urlPattern => $qsReplacement ) {
+			foreach ( F::config('route') as $urlPattern => $qsReplacement ) :
 				// clean unnecessary spaces
 				$urlPattern = trim($urlPattern);
 				$qsReplacement = trim($qsReplacement);
 				// prepend forward-slash (when necessary)
-				if ( substr($urlPattern, 0, 1) !== '/' and substr($urlPattern, 0, 2) != '\\/' ) {
+				if ( substr($urlPattern, 0, 1) !== '/' and substr($urlPattern, 0, 2) != '\\/' ) :
 					$urlPattern = '/'.$urlPattern;
-				}
+				endif;
 				// remove multi-(forward-)slash
 				do { $urlPattern = str_replace('//', '/', $urlPattern); } while ( strpos($urlPattern, '//') !== false );
 				// escape forward-slash
@@ -166,10 +166,10 @@ class Framework {
 				$urlPattern = str_replace('\\\\/', '\\/', $urlPattern);
 				// put into container
 				$fixedRoute[$urlPattern] = $qsReplacement;
-			}
+			endforeach;
 			// replace whole route config
 			F::config('route', $fixedRoute);
-		}
+		endif;
 	}
 
 
@@ -273,16 +273,16 @@ class Framework {
 	public static function loadConfig() {
 		global $fusebox;
 		// validate config file
-		if ( is_file(self::$configPath) ) {
+		if ( is_file(self::$configPath) ) :
 			$fusebox->config = include self::$configPath;
-		} else {
+		else :
 			if ( !headers_sent() ) header('HTTP/1.0 500 Internal Server Error');
 			throw new Exception('Config file not found ('.self::$configPath.')', self::FUSEBOX_CONFIG_NOT_FOUND);
-		}
-		if ( !is_array(F::config()) ) {
+		endif;
+		if ( !is_array(F::config()) ) :
 			if ( !headers_sent() ) header('HTTP/1.0 500 Internal Server Error');
 			throw new Exception('Config file must return an array', self::FUSEBOX_CONFIG_NOT_DEFINED);
-		}
+		endif;
 		// define config default value (when necessary)
 		F::config('commandVariable', F::config('commandVariable') ?? 'fuseaction');
 		F::config('appPath', F::config('appPath') ?? dirname(dirname(__FILE__)));
@@ -309,17 +309,17 @@ class Framework {
 	*/
 	public static function loadHelper() {
 		// check helper path
-		if ( !is_file(self::$helperPath) ) {
+		if ( !is_file(self::$helperPath) ) :
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
 			throw new Exception('Helper class file not found ('.self::$helperPath.')', self::FUSEBOX_HELPER_NOT_FOUND);
-		}
+		endif;
 		// load helper
 		require_once self::$helperPath;
 		// validate after load
-		if ( !class_exists('F') ) {
+		if ( !class_exists('F') ) :
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
 			throw new Exception('Helper class (F) not defined', self::FUSEBOX_HELPER_NOT_DEFINED);
-		}
+		endif;
 	}
 
 
@@ -359,7 +359,7 @@ class Framework {
 			// when controller not specified
 			// ===> (e.g. config {defaultCommand} is empty)
 			// ===> simply do nothing...
-			if ( !empty($fusebox->controller) ) {
+			if ( !empty($fusebox->controller) ) :
 				// when controller specified but file not exists
 				// ===> page not found...
 				$__controllerPath__ = F::appPath('controller/'.str_ireplace('-', '_', $fusebox->controller).'_controller.php');
@@ -367,7 +367,7 @@ class Framework {
 				// when controller specified & available
 				// ===> load file to run~~
 				include $__controllerPath__;
-			}
+			endif;
 		// any runtime error...
 		} catch (Exception $e) {
 			F::error($e);
@@ -441,21 +441,21 @@ class Framework {
 	public static function setMyself() {
 		global $fusebox;
 		// validation
-		if ( !F::config('commandVariable') ) {
+		if ( !F::config('commandVariable') ) :
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
 			throw new Exception('Fusebox config [commandVariable] is required', self::FUSEBOX_MISSING_CONFIG);
-		}
+		endif;
 		// beautify
-		if ( F::config('urlRewrite') ) {
+		if ( F::config('urlRewrite') ) :
 			$fusebox->self = dirname($_SERVER['SCRIPT_NAME']);
 			$fusebox->self = str_replace('\\', '/', $fusebox->self);
 			if ( substr($fusebox->self, -1) != '/' ) $fusebox->self .= '/';
 			$fusebox->myself = $fusebox->self;
 		// normal
-		} else {
+		else :
 			$fusebox->self = $_SERVER['SCRIPT_NAME'];
 			$fusebox->myself = $fusebox->self.'?'.F::config('commandVariable').'=';
-		}
+		endif;
 	}
 
 
@@ -496,12 +496,12 @@ class Framework {
 		// request <http://{HOST}/foo/bar?a=1&b=2> will have <REQUEST_URI=/foo/bar?a=1&b=2>
 		$isRoot = ( dirname($_SERVER['SCRIPT_NAME']) == rtrim($_SERVER['REQUEST_URI'], '/') );
 		// only process when necessary
-		if ( !$isRoot and F::config('urlRewrite') ) {
+		if ( !$isRoot and F::config('urlRewrite') ) :
 			// remove dummy url param (when necessary)
-			if ( isset($_SERVER['REDIRECT_QUERY_STRING']) ) {
+			if ( isset($_SERVER['REDIRECT_QUERY_STRING']) ) :
 				if ( isset($_GET[$_SERVER['REDIRECT_QUERY_STRING']]) ) unset($_GET[$_SERVER['REDIRECT_QUERY_STRING']]);
 				if ( isset($_REQUEST[$_SERVER['REDIRECT_QUERY_STRING']]) ) unset($_REQUEST[$_SERVER['REDIRECT_QUERY_STRING']]);
-			}
+			endif;
 			// start to parse the path
 			$qs = rtrim($_SERVER['REQUEST_URI'], '/');
 			// (1) unify slash
@@ -531,21 +531,21 @@ class Framework {
 			// e.g.  /foo/bar/([0-9]+)(.*)  ---------------------->  fuseaction=foo.bar&xyz=$1&$2
 			$hasRouteMatch = false;
 			$routes = F::config('route') ? F::config('route') : array();
-			foreach ( $routes as $urlPattern => $qsReplacement ) {
+			foreach ( $routes as $urlPattern => $qsReplacement ) :
 				// if path-like-query-string match the route pattern...
-				if ( !$hasRouteMatch and preg_match("/{$urlPattern}/", $qs) ) {
+				if ( !$hasRouteMatch and preg_match("/{$urlPattern}/", $qs) ) :
 					// turn it into true query-string
 					// e.g.  /foo/bar/999?a=1&b=2&c=3&  ---------->  fuseaction=foo.bar&xyz=999?a=1&b=2&c=3&
 					$qs = preg_replace("/{$urlPattern}/", $qsReplacement, $qs);
 					// mark flag
 					$hasRouteMatch = true;
-				}
-			}
+				endif;
+			endforeach;
 			// (6) unify query-string delim (replace first question-mark only)
 			// e.g.  /foo/bar/999?a=1&b=2&c=3&  ------------------>  /foo/bar/999&a=1&b=2&c=3&
 			$qs = preg_replace('/\?/', '&', $qs, 1);
 			// (7) if match none of the route, then turn path into query-string
-			if ( !$hasRouteMatch ) {
+			if ( !$hasRouteMatch ) :
 				$qs = str_replace('/', '&', trim($qs, '/'));
 				$arr = explode('&', $qs);
 				if ( count($arr) == 1 and $arr[0] == '' ) $arr = array();
@@ -554,15 +554,15 @@ class Framework {
 				// ===> extract (at most) first two elements for command-variable
 				// ===> treat as command-variable when element was unnamed (no equal-sign)
 				// ===> treat as url-param when element was named (has equal-sign)
-				if ( count($arr) and strpos($arr[0], '=') === false ) {  // 1st time
+				if ( count($arr) and strpos($arr[0], '=') === false ) :  // 1st time
 					$qs .= ( F::config('commandVariable') . '=' . array_shift($arr) );
-				}
-				if ( count($arr) and strpos($arr[0], '=') === false ) {  // 2nd time
+				endif;
+				if ( count($arr) and strpos($arr[0], '=') === false ) :  // 2nd time
 					$qs .= ( '.' . array_shift($arr) );
-				}
+				endif;
 				// join remaining elements into query-string
 				$qs .= ( '&' . implode('&', $arr) );
-			}
+			endif;
 			// (8) remove unnecessary query-string delimiter
 			// e.g.  fuseaction=foo.bar&xyz=999&a=1&b=2&c=3&  ---------->  fuseaction=foo.bar&xyz=999&a=1&b=2&c=3
 			$qs = trim($qs, '&');
@@ -570,33 +570,33 @@ class Framework {
 			$qs = preg_replace('/&+/' , '&', $qs);
 			// (10) put parameters of query-string into GET scope
 			$qsArray = explode('&', $qs);
-			foreach ( $qsArray as $param ) {
+			foreach ( $qsArray as $param ) :
 				$param = explode('=', $param, 2);
 				$paramKey = isset($param[0]) ? urldecode($param[0]) : '';
 				$paramVal = isset($param[1]) ? urldecode($param[1]) : '';
-				if ( !empty($paramKey) ) {
+				if ( !empty($paramKey) ) :
 					// simple parameter
-					if ( strpos($paramKey, '[') === false ) {
+					if ( strpos($paramKey, '[') === false ) :
 						$_GET[$paramKey] = $paramVal;
 					// array parameter
-					} else {
+					else :
 						$arrayDepth = substr_count($paramKey, '[');
 						$arrayKeys = explode('[', str_replace(']', '', $paramKey));
-						foreach ( $arrayKeys as $i => $singleArrayKey ) {
+						foreach ( $arrayKeys as $i => $singleArrayKey ) :
 							if ( $i == 0 ) $pointer = &$_GET;
-							if ( $singleArrayKey != '' ) {
+							if ( $singleArrayKey != '' ) :
 								$pointer[$singleArrayKey] = isset($pointer[$singleArrayKey]) ? $pointer[$singleArrayKey] : array();
 								$pointer = &$pointer[$singleArrayKey];
-							} else {
+							else :
 								$pointer[count($pointer)] = isset($pointer[count($pointer)]) ? $pointer[count($pointer)] : array();
 								$pointer = &$pointer[count($pointer)-1];
-							}
+							endif;
 							if ( $i+1 == count($arrayKeys) ) $pointer = $paramVal;
-						}
+						endforeach;
 						unset($pointer);
-					}
-				}
-			}
+					endif;
+				endif;
+			endforeach;
 			// (11) update REQUEST and SERVER scopes
 			// ===> only update query-string when request coming as beauty-url
 			// e.g.  /my/site/foo/bar/a=1/b=2/c=3  ------------------------------->  update query-string
@@ -604,7 +604,7 @@ class Framework {
 			$_REQUEST += $_GET;
 			$isBeautyURL = ( $_SERVER['SCRIPT_NAME'] != substr($_SERVER['REQUEST_URI'], 0, strlen($_SERVER['SCRIPT_NAME'])) );
 			if ( $isBeautyURL ) $_SERVER['QUERY_STRING'] = $qs;
-		} // if-url-rewrite
+		endif; // if-url-rewrite
 	}
 
 
@@ -630,27 +630,27 @@ class Framework {
 	*/
 	public static function validateConfig() {
 		// check app-path
-		if ( !F::config('appPath') ) {
+		if ( !F::config('appPath') ) :
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
 			throw new Exception('Fusebox config [appPath] is required', self::FUSEBOX_MISSING_CONFIG);
-		} elseif ( !is_dir(F::config('appPath')) ) {
+		elseif ( !is_dir(F::config('appPath')) ) :
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
 			throw new Exception('Directory of fusebox config [appPath] not found ('.F::config('appPath').')', self::FUSEBOX_INVALID_CONFIG);
-		}
+		endif;
 		// check command-variable
 		$reserved = array('controller', 'action');
-		if ( !F::config('commandVariable') ) {
+		if ( !F::config('commandVariable') ) :
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
 			throw new Exception('Fusebox config [commandVariable] is required', self::FUSEBOX_MISSING_CONFIG);
-		} elseif ( in_array(strtolower(F::config('commandVariable')), $reserved) ) {
+		elseif ( in_array(strtolower(F::config('commandVariable')), $reserved) ) :
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
 			throw new Exception('Fusebox config [commandVariable] cannot be a reserved word (reserved='.implode(',', $reserved).')', self::FUSEBOX_INVALID_CONFIG);
-		}
+		endif;
 		// check error-controller
-		if ( F::config('errorController') and !is_bool(F::config('errorController')) ) {
+		if ( F::config('errorController') and !is_bool(F::config('errorController')) ) :
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
 			throw new Exception('Fusebox config [errorController] must be boolean', self::FUSEBOX_INVALID_CONFIG);
-		}
+		endif;
 	}
 
 

@@ -424,17 +424,15 @@ class F {
 	public static function is($commandPatternList) {
 		global $fusebox;
 		// allow checking multiple command-patterns
-		if ( !is_array($commandPatternList) ) {
-			$commandPatternList = explode(',', $commandPatternList);
-		}
+		if ( !is_array($commandPatternList) ) $commandPatternList = explode(',', $commandPatternList);
 		// check each user-provided command-pattern
-		foreach ( $commandPatternList as $commandPattern ) {
+		foreach ( $commandPatternList as $commandPattern ) :
 			$commandPattern = self::parseCommand($commandPattern);
 			// consider match when either one is ok
 			$isControllerMatched = in_array($commandPattern['controller'], [ '*', $fusebox->controller ]);
 			$isActionMatched = in_array($commandPattern['action'], [ '*', $fusebox->action ]);
 			if ( $isControllerMatched and $isActionMatched ) return true;
-		}
+		endforeach;
 		// no match...
 		return false;
 	}
@@ -493,13 +491,13 @@ class F {
 	*/
 	public static function parseCommand($command) {
 		// both are false when command is empty
-		if ( empty($command) ) return array('controller' => null, 'action' => null);
+		if ( empty($command) ) return [ 'controller' => null, 'action' => null ];
 		// split command by delimiter (when not empty)
 		$arr = explode('.', $command, 2);
-		return array(
+		return [
 			'controller' => $arr[0],
 			'action' => !empty($arr[1]) ? $arr[1] : 'index'
-		);
+		];
 	}
 
 
@@ -702,10 +700,10 @@ class F {
 		// first element has command-delimiter and no equal-sign
 		// ===> first element is command
 		// ===> replace first occurrence of delimiter with slash (if any)
-		if ( strpos($qs[0], '=') === false ) {
+		if ( strpos($qs[0], '=') === false ) :
 			$qs[0] = explode('.', $qs[0], 2);
 			$qs[0] = implode('/', $qs[0]);
-		}
+		endif;
 		// turn query-string into path-like-query-string
 		// ===> e.g. convert <a=1&b=2&c=3> to </a=1/b=2/c=3>
 		$qsPath = implode('/', $qs);
@@ -752,21 +750,21 @@ class F {
 		global $fusebox;
 		// go through & compare against each pattern
 		// ===> return the first match only
-		foreach ( self::config('route') ?? [] as $routePattern => $routeReplacement ) {
+		foreach ( self::config('route') ?? [] as $routePattern => $routeReplacement ) :
 			// parse route-replacement
 			$arr = explode('&', $routeReplacement);
 			$routeReplacement = array();
-			foreach ( $arr as $keyEqVal ) {
+			foreach ( $arr as $keyEqVal ) :
 				list($key, $val) = explode('=', $keyEqVal, 2);
 				$routeReplacement[$key] = $val;
-			}
+			endforeach;
 			// parse input-url
 			$arr = explode('&', self::config('commandVariable').'='.$commandWithQueryString);
 			$inputUrl = array();
-			foreach ( $arr as $keyEqVal ) {
+			foreach ( $arr as $keyEqVal ) :
 				list($key, $val) = explode('=', $keyEqVal, 2);
 				$inputUrl[$key] = $val;
-			}
+			endforeach;
 			// check whether all variables matched
 			$routeReplacementKeys = array_keys($routeReplacement);
 			$inputUrlKeys = array_keys($inputUrl);
@@ -777,33 +775,33 @@ class F {
 			$commandVar = self::config('commandVariable');
 			$isCommandMatched = ( isset($routeReplacement[$commandVar]) and isset($inputUrl[$commandVar]) and preg_match('/'.preg_quote($routeReplacement[$commandVar]).'/', $inputUrl[$commandVar]) );
 			// only proceed when all variables matched and command matched
-			if ( $isAllVarsMatched and $isCommandMatched ) {
+			if ( $isAllVarsMatched and $isCommandMatched ) :
 				// get each back-reference value
 				$backRef = array();
-				foreach ( $routeReplacement as $key => $val ) {
+				foreach ( $routeReplacement as $key => $val ) :
 					// check back-reference format
-					if ( substr($val, 0, 1) == '$' and is_numeric(substr($val, 1)) and strpos($val, '.') === false ) {
+					if ( substr($val, 0, 1) == '$' and is_numeric(substr($val, 1)) and strpos($val, '.') === false ) :
 						$backRef[$val] = $inputUrl[$key];
-					}
-				}
+					endif;
+				endforeach;
 				// go through each pair of brackets in route-pattern
 				// ===> replace it with corresponding back-reference value
 				$result = str_replace("\/", '/', $routePattern);
 				preg_match_all("/\(.*?\)/", $routePattern, $matches);
-				if ( !empty($matches) ) {
-					foreach ( $matches[0] as $i => $backRefKey ) {
-						if ( isset($backRef['$'.($i+1)]) ) {
+				if ( !empty($matches) ) :
+					foreach ( $matches[0] as $i => $backRefKey ) :
+						if ( isset($backRef['$'.($i+1)]) ) :
 							$backRefVal = $backRef['$'.($i+1)];
 							$result = preg_replace('/'.preg_quote($backRefKey).'/', $backRefVal, $result, 1);
-						}
-					}
-				}
+						endif;
+					endforeach;
+				endif;
 				// append the base-url
 				$result = $fusebox->self.$result;
 				$result = str_replace('//', '/', $result);
 				return $result;
-			} // isAllVarsMatched-and-isCommandMatched
-		} // foreach-route
+			endif; // isAllVarsMatched-and-isCommandMatched
+		endforeach; // foreach-route
 		// no match...
 		return null;
 	}
