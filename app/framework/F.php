@@ -540,13 +540,10 @@ class F {
 		$headerString = empty($delay) ? "Location:{$url}" : "Refresh:{$delay};url={$url}";
 		// when no header sent to client yet
 		// ===> trigger redirect at server-side
+		// ===> otherwise, trigger redirect at client-side
 		// ===> (abort operation afterward)
 		if ( !headers_sent() ) header($headerString);
-		if ( Framework::$abortOnRedirect ) exit();
-		// otherwise
-		// ===> trigger redirect at client-side
-		// ===> (abort operation afterward)
-		echo "<script>window.setTimeout(function(){document.location.href='{$url}';},{$delay}*1000);</script>";
+		else echo "<script>window.setTimeout(function(){document.location.href='{$url}';},{$delay}*1000);</script>";
 		if ( Framework::$abortOnRedirect ) exit();
 	}
 
