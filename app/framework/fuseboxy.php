@@ -356,18 +356,13 @@ class Framework {
 			self::autoLoad();
 			self::urlRewrite();
 			self::setControllerAction();
-			// when controller not specified
-			// ===> (e.g. config {defaultCommand} is empty)
-			// ===> simply do nothing...
-			if ( !empty($fusebox->controller) ) :
-				// when controller specified but file not exists
-				// ===> page not found...
-				$__controllerPath__ = F::appPath('controller/'.str_ireplace('-', '_', $fusebox->controller).'_controller.php');
-				F::pageNotFound( !is_file($__controllerPath__) );
-				// when controller specified & available
-				// ===> load file to run~~
-				include $__controllerPath__;
-			endif;
+			// only run when controller specified
+			// ===> (NOTE: empty {defaultCommand} is allowed)
+			// ===> when controller specified & available, load controller to run
+			// ===> when controller file not found, page not found...
+			$__controllerPath__ = $fusebox->controller ? F::appPath('controller/'.str_ireplace('-', '_', $fusebox->controller).'_controller.php') : false;
+			if ( is_file($__controllerPath__) ) include $__controllerPath__;
+			F::pageNotFound($__controllerPath__ and !is_file($__controllerPath__));
 		// any runtime error...
 		} catch (Exception $e) {
 			F::error($e);
