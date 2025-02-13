@@ -1,5 +1,4 @@
 <?php
-// Helper component for Fuseboxy framework
 class F {
 
 
@@ -45,7 +44,32 @@ class F {
 	</fusedoc>
 	*/
 	public static function alert($flash='alert', $condition=true) {
-		echo self::alertOutput($flash, $condition);
+		// check whether to show message
+		if ( !$condition ) return null;
+		// fix param & set default
+		if ( !empty($flash) ) :
+			if ( !is_array($flash) ) $flash = array('message' => $flash);
+			if ( empty($flash['type']) ) $flash['type'] = 'primary';
+		endif;
+		// when no content
+		// ===> simply display nothing
+		if ( empty($flash['icon']) and empty($flash['heading']) and empty($flash['message']) and empty($flash['remark']) ) return;
+		// when has any content
+		// ===> capture output & return
+		?><div id="<?php echo $flash['id'] ?? ''; ?>" class="alert alert-<?php echo $flash['type']; ?>"><?php
+			if ( !empty($flash['icon']) ) :
+				?><i class="<?php echo $flash['icon']; ?>">&ensp;</i><?php
+			endif;
+			if ( !empty($flash['heading']) ) :
+				?><strong class="mr-1"><?php echo $flash['heading']; ?></strong><?php
+			endif;
+			if ( !empty($flash['message']) ) :
+				?><span><?php echo $flash['message']; ?></span><?php
+			endif;
+			if ( !empty($flash['remark']) ) :
+				?><small class="float-right text-muted pt-1"><?php echo $flash['remark']; ?></small><?php
+			endif;
+		?></div><?php
 	}
 
 
@@ -74,33 +98,8 @@ class F {
 	</fusedoc>
 	*/
 	public static function alertOutput($flash='alert', $condition=true) {
-		// check whether to show message
-		if ( !$condition ) return null;
-		// fix param & set default
-		if ( !empty($flash) ) :
-			if ( !is_array($flash) ) $flash = array('message' => $flash);
-			if ( empty($flash['type']) ) $flash['type'] = 'primary';
-		endif;
-		// when no content
-		// ===> simply return nothing
-		if ( empty($flash['icon']) and empty($flash['heading']) and empty($flash['message']) and empty($flash['remark']) ) return null;
-		// when has any content
-		// ===> capture output & return
 		ob_start();
-		?><div id="<?php echo $flash['id'] ?? ''; ?>" class="alert alert-<?php echo $flash['type']; ?>"><?php
-			if ( !empty($flash['icon']) ) :
-				?><i class="<?php echo $flash['icon']; ?>">&ensp;</i><?php
-			endif;
-			if ( !empty($flash['heading']) ) :
-				?><strong class="mr-1"><?php echo $flash['heading']; ?></strong><?php
-			endif;
-			if ( !empty($flash['message']) ) :
-				?><span><?php echo $flash['message']; ?></span><?php
-			endif;
-			if ( !empty($flash['remark']) ) :
-				?><small class="float-right text-muted pt-1"><?php echo $flash['remark']; ?></small><?php
-			endif;
-		?></div><?php
+		self::alert($flash, $condition);
 		return ob_get_clean();
 	}
 
@@ -138,10 +137,10 @@ class F {
 		if ( is_file($appPathFile) ) return $appPathFile;
 		// if file not found in app path
 		// ===> look through each fuseboxy module under vendor path
-		if ( self::config('vendorPath') ) {
+		if ( self::config('vendorPath') ) :
 			$glob = glob(self::config('vendorPath').'fuseboxy/*/app/'.$relPath);
 			if ( !empty($glob[0]) ) return $glob[0];
-		}
+		endif;
 		// file not found
 		// ===> return non-exist path
 		// ===> let php show the warning
@@ -708,6 +707,7 @@ class F {
 	/**
 	<fusedoc>
 		<description>
+			beautify normal url with query string
 		</description>
 		<io>
 			<in>
