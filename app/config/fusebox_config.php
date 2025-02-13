@@ -184,8 +184,8 @@ return array(
 	 *  ===> used by I18N & Enum (etc.)
 	 **/
 	'i18n' => array(/*
-		'locales' => I18N_LOCALE_ALL,  // (e.g.) en,zh-hk,zh-cn
-		'current' => I18N_LOCALE,      // (e.g.) en
+		'locales' => I18N_ALL_LOCALES,     // (e.g.) en,zh-hk,zh-cn
+		'current' => I18N_CURRENT_LOCALE,  // (e.g.) en
 	*/),
 
 
