@@ -25,7 +25,7 @@ class Framework {
 	const FUSEBOX_MISSING_CONFIG     = 905;
 	const FUSEBOX_INVALID_CONFIG     = 906;
 	// essential settings
-	public static $configPath = dirname(__DIR__).'/config/fusebox_config.php';
+	public static $configPath = __DIR__.'/../config/fusebox_config.php';
 	public static $helperPath = __DIR__.'/F.php';
 	// properties for helper
 	public static $startTick;
