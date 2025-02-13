@@ -5,9 +5,8 @@
 	</description>
 	<io>
 		<in>
-			<string name="$mode" scope="Framework" optional="yes" comments="for unit-test of helper" />
-			<string name="$configPath" scope="Framework" optional="yes" default="../../../config/fusebox_config.php" />
-			<string name="$helperPath" scope="Framework" optional="yes" default="./F.php" />
+			<string name="$configPath" scope="Framework" optional="yes" default="~parentDir~/config/fusebox_config.php" />
+			<string name="$helperPath" scope="Framework" optional="yes" default="~thisDir~/F.php" />
 		</in>
 		<out />
 	</io>
@@ -16,7 +15,7 @@
 class Framework {
 
 
-	// constant : error codes
+	// error codes
 	const FUSEBOX_ERROR              = 403;
 	const FUSEBOX_PAGE_NOT_FOUND     = 404;
 	const FUSEBOX_CONFIG_NOT_FOUND   = 901;
@@ -25,14 +24,16 @@ class Framework {
 	const FUSEBOX_HELPER_NOT_DEFINED = 904;
 	const FUSEBOX_MISSING_CONFIG     = 905;
 	const FUSEBOX_INVALID_CONFIG     = 906;
-	// configurable properties
-	public static $startTick;
-	public static $configPath = __DIR__.'/../config/fusebox_config.php';
+	// essential settings
+	public static $configPath = dirname(__DIR__).'/config/fusebox_config.php';
 	public static $helperPath = __DIR__.'/F.php';
-	// for unit test
-	public static $abortOnRun = true;
+	// properties for helper
+	public static $startTick;
+	// properties for unit test
 	public static $abortOnError = true;
 	public static $abortOnRedirect = true;
+	public static $throwExceptionOnError = true;
+	public static $throwExceptionOnRedirect = true;
 
 
 
