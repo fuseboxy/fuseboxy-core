@@ -154,6 +154,42 @@ class F {
 	/**
 	<fusedoc>
 		<description>
+			obtain the path of closest layout according to current controller
+			===> to be used by error-controller
+		</description>
+		<io>
+			<in>
+				<!-- framework variable -->
+				<string name="controller" scope="$fusebox" />
+			</in>
+			<out>
+				<string name="~return~" comments="path of layout file" example="~appPath~/view/user/layout.php" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
+	public static function closestLayout() {
+		global $fusebox, $fuseboxy;
+		// determine layouts to consider
+		$controllerLayout = F::appPath("view/{$fusebox->controller}/layout.php");
+		$globalLayout = F::appPath('view/global/layout.php');
+		// use current controller layout (when available)
+		if ( is_file($controllerLayout) ) return $controllerLayout;
+		// when no controller layout
+		// ===> use global layout (when available)
+		if ( is_file($globalLayout) ) return $globalLayout;
+		// otherwise
+		// ===> (e.g. application does not use {fuseboxy-layout} module)
+		// ===> simply no layout
+		return false;
+	}
+
+
+
+
+	/**
+	<fusedoc>
+		<description>
 			obtain current controller and/or action
 		</description>
 		<io>
