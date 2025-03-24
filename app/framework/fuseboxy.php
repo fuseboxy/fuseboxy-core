@@ -133,7 +133,6 @@ class Framework {
 			'vendorPath',
 			'baseDir',
 			'baseUrl',
-			'uploadDir',
 			'uploadUrl',
 		] as $configKey ) :
 			// check if config available
