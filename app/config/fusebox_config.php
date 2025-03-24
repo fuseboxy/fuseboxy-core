@@ -47,6 +47,8 @@ return array(
 	 *  Upload directory (OPTIONAL)
 	 *  ===> for file upload (e.g. scaffold, webform)
 	 *  ===> set it to 777 mode
+	 *  ===> (e.g.) [Local] /server/path/to/my/upload/directory/
+	 *  ===> (e.g.) [FTP] ftp://{username}:{password}@{host}:{port}/path/to/my/upload/folder/
 	 **/
 	'uploadDir' => dirname(dirname(__DIR__)).'/upload/',
 	'uploadUrl' => str_replace('//', '/', str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']).'/' ) ).'upload/',
