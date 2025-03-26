@@ -285,7 +285,7 @@ class Framework {
 		endif;
 		// define config default value (when necessary)
 		F::config('commandVariable', F::config('commandVariable') ?? 'fuseaction');
-		F::config('appPath', F::config('appPath') ?? dirname(dirname(__FILE__)));
+		F::config('appPath', F::config('appPath') ?? dirname(__DIR__));
 	}
 
 

@@ -33,13 +33,13 @@ return array(
 	/**
 	 *  Directory for Composer package (REQUIRED)
 	 **/
-	'vendorPath' => dirname(dirname(__DIR__)).'/vendor/',
+	'vendorPath' => dirname(__DIR__, 2).'/vendor/',
 
 
 	/**
 	 *  For path of image, js, css, etc. (OPTIONAL)
 	 **/
-	'baseDir' => dirname(dirname(__DIR__)).'/',
+	'baseDir' => dirname(__DIR__, 2).'/',
 	'baseUrl' => str_replace('//', '/', str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']).'/' ) ),
 
 
@@ -50,7 +50,7 @@ return array(
 	 *  ===> (e.g.) [Local] /server/path/to/my/upload/directory/
 	 *  ===> (e.g.) [FTP] ftp://{username}:{password}@{host}:{port}/path/to/my/upload/folder/
 	 **/
-	'uploadDir' => dirname(dirname(__DIR__)).'/upload/',
+	'uploadDir' => dirname(__DIR__, 2).'/upload/',
 	'uploadUrl' => str_replace('//', '/', str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']).'/' ) ).'upload/',
 
 
@@ -60,8 +60,8 @@ return array(
 	 *  ===> when element is function, it will be run once
 	 **/
 	'autoLoad' => array(
-		is_file(dirname(dirname(__DIR__)).'/vendor/autoload.php') ? (dirname(dirname(__DIR__)).'/vendor/autoload.php') : false,
-		dirname(dirname(__DIR__)).'/vendor/fuseboxy/fuseboxy-*/app/model/*.php',
+		is_file(dirname(__DIR__, 2).'/vendor/autoload.php') ? (dirname(__DIR__, 2).'/vendor/autoload.php') : false,
+		dirname(__DIR__, 2).'/vendor/fuseboxy/fuseboxy-*/app/model/*.php',
 		dirname(__DIR__).'/model/*.php',
 	),
 
@@ -177,6 +177,7 @@ return array(
 		'port'     => SMTP_PORT,
 		'username' => SMTP_UID,
 		'password' => SMTP_PWD,
+		'options'  => [],
 	*/),
 
 
