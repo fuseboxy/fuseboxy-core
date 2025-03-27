@@ -112,7 +112,7 @@ class Framework {
 			<out>
 				<!-- framework config -->
 				<structure name="config" scope="$fusebox">
-					<string name="appPath|vendorPath|baseDir|baseUrl|uploadDir|uploadUrl" />
+					<string name="appPath|vendorPath|baseDir|baseUrl|uploadUrl" />
 				</structure>
 			</out>
 		</io>
@@ -140,7 +140,8 @@ class Framework {
 				// unify slash
 				F::config($configKey, str_replace('\\', '/', F::config($configKey)));
 				// dedupe slash
-				F::config($configKey, preg_replace('/\/+/', '/', F::config($configKey)));
+				// ===> except [uploadUrl] to avoid messing up the protocol (e.g. https://)
+				if ( $configKey != 'uploadUrl' ) F::config($configKey, preg_replace('/\/+/', '/', F::config($configKey)));
 				// append trailing slash
 				F::config($configKey, F::config($configKey).( ( substr(F::config($configKey), -1) != '/' ) ? '/' : '' ));
 			endif;
