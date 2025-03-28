@@ -145,15 +145,6 @@ return array(
 
 
 	/**
-	 *  Proxy setting for Util::httpRequest (OPTIONAL)
-	 **/
-	'proxy' => array(/*
-		'http'  => HTTP_PROXY,
-		'https' => HTTPS_PROXY,
-	*/),
-
-
-	/**
 	 *  Encrypt setting for Util::crypt (OPTIONAL)
 	 *  ===> specify as [string] for [encrypt-key] only
 	 **/
