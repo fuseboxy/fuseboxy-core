@@ -52,6 +52,7 @@ return array(
 	 **/
 	'uploadDir' => dirname(__DIR__, 2).'/upload/',
 	'uploadUrl' => str_replace('//', '/', str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']).'/' ) ).'upload/',
+	'tmpDir' => rtrim(str_replace('\\', '/', sys_get_temp_dir()), '/').'/',
 
 
 	/**
