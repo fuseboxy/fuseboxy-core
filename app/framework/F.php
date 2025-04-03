@@ -336,6 +336,7 @@ class F {
 		<io>
 			<in>
 				<string name="$commandWithQueryString" example="product.view&id=999" />
+				<array name="$arguments" default="~emptyArray~" />
 			</in>
 			<out>
 				<!-- manipulated api object -->
@@ -349,7 +350,7 @@ class F {
 		</io>
 	</fusedoc>
 	*/
-	public static function invoke($commandWithQueryString) {
+	public static function invoke($commandWithQueryString, $arguments=[]) {
 		global $fusebox, $fuseboxy;
 		// create stack container to keep track of command-in-run
 		// ===> first item of invoke queue should be original command
@@ -396,7 +397,8 @@ class F {
 		</description>
 		<io>
 			<in>
-				<string name="$command" example="home.news" />
+				<string name="$commandWithQueryString" example="home.news&id=100" />
+				<array name="$arguments" default="~emptyArray~" />
 			</in>
 			<out>
 				<string name="~return~" format="html" />
@@ -404,9 +406,9 @@ class F {
 		</io>
 	</fusedoc>
 	*/
-	public static function invokeOutput($command) {
+	public static function invokeOutput($commandWithQueryString, $arguments=[]) {
 		ob_start();
-		self::invoke($command);
+		self::invoke($commandWithQueryString, $arguments);
 		return ob_get_clean();
 	}
 
