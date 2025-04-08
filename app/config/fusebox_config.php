@@ -61,8 +61,7 @@ return array(
 	 *  ===> when element is function, it will be run once
 	 **/
 	'autoLoad' => array(
-		is_file(dirname(__DIR__, 2).'/vendor/autoload.php') ? (dirname(__DIR__, 2).'/vendor/autoload.php') : false,
-		dirname(__DIR__, 2).'/vendor/fuseboxy/fuseboxy-*/app/model/*.php',
+		dirname(__DIR__, 2).'/vendor/autoload.php',
 		dirname(__DIR__).'/model/*.php',
 	),
 
