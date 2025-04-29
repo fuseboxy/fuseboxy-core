@@ -286,6 +286,7 @@ class F {
 				<string name="$msg" optional="yes" default="Error" />
 				<boolean name="$condition" optional="yes" default="true" />
 				<structure name="$options" optional="yes">
+					<boolean name="errorController" optional="yes" default="~fuseboxy.config.errorController~" />
 					<string name="headerString" optional="yes" default="HTTP/1.0 403 Forbidden" />
 					<number name="errorCode" optional="yes" default="~Framework::FUSEBOX_ERROR~" />
 					<mixed name="~customOption~" comments="more custom options available for error-controller" />
@@ -302,6 +303,7 @@ class F {
 		// check whether to proceed
 		if ( !$condition ) return null;
 		// default options
+		$options['errorController'] = $options['errorController'] ?? self::appPath('controller/error_controller.php');
 		$options['headerString'] = $options['headerString'] ?? 'HTTP/1.0 403 Forbidden';
 		$options['errorCode'] = $options['errorCode'] ?? Framework::FUSEBOX_ERROR;
 		// send http header to browser (when necessary)
@@ -313,9 +315,8 @@ class F {
 		// ===> simply display error as text
 		// ===> otherwise, display by error-controller
 		// ===> (abort operation afterward)
-		$defaultErrorController = self::appPath('controller/error_controller.php');
-		if ( !self::config('errorController') or !is_file($defaultErrorController) ) echo $fusebox->error;
-		else include $defaultErrorController;
+		if ( !$options['errorController'] or !is_file($options['errorController']) ) echo $fusebox->error;
+		else include $options['errorController'];
 		if ( Framework::$abortOnError ) exit();
 	}
 
