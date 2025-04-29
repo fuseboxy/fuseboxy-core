@@ -303,7 +303,7 @@ class F {
 		// check whether to proceed
 		if ( !$condition ) return null;
 		// default options
-		$options['errorController'] = $options['errorController'] ?? self::appPath('controller/error_controller.php');
+		$options['errorController'] = $options['errorController'] ?? self::config('errorController');
 		$options['headerString'] = $options['headerString'] ?? 'HTTP/1.0 403 Forbidden';
 		$options['errorCode'] = $options['errorCode'] ?? Framework::FUSEBOX_ERROR;
 		// send http header to browser (when necessary)
@@ -315,8 +315,9 @@ class F {
 		// ===> simply display error as text
 		// ===> otherwise, display by error-controller
 		// ===> (abort operation afterward)
-		if ( !$options['errorController'] or !is_file($options['errorController']) ) echo $fusebox->error;
-		else include $options['errorController'];
+        $errorControllerPath = self::appPath('controller/error_controller.php');
+		if ( !$options['errorController'] or !is_file($errorControllerPath) ) echo $fusebox->error;
+		else include $errorControllerPath;
 		if ( Framework::$abortOnError ) exit();
 	}
 
