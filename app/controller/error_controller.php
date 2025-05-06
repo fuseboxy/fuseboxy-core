@@ -23,7 +23,7 @@ if ( empty($fusebox->error) ) :
 
 // just show textual message (when ajax request)
 elseif ( F::ajaxRequest() ) :
-	exit($fusebox->error->getMessage() ?? $fusebox->error);
+	exit($fusebox->error);
 
 
 // show error with layout (when normal request)
@@ -31,7 +31,7 @@ else :
 	$layout['flash'] = array(
 		'type' => ( $fusebox->error == 'page not found' ) ? 'warning' : 'danger',
 		'icon' => 'bi bi-exclamation-triangle-fill',
-		'message' => $fusebox->error->getMessage() ?? $fusebox->error,
+		'message' => $fusebox->error,
 	);
 	// useful variables
 	$controllerLayout = F::appPath("view/{$fusebox->controller}/layout.php");
