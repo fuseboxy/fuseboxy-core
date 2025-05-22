@@ -37,6 +37,7 @@ class F {
 					<string name="heading" optional="yes" />
 					<string name="message" optional="yes" />
 					<string name="remark" optional="yes" />
+					<string name="remarkClass" optional="yes" />
 				</string_or_structure>
 			</in>
 			<out />
@@ -67,7 +68,7 @@ class F {
 				?><span><?php echo $flash['message']; ?></span><?php
 			endif;
 			if ( !empty($flash['remark']) ) :
-				?><small class="float-right text-muted pt-1"><?php echo $flash['remark']; ?></small><?php
+				?><small class="<?php echo $flash['remarkClass'] ?? 'float-right text-muted pt-1'; ?>"><?php echo $flash['remark']; ?></small><?php
 			endif;
 		?></div><?php
 	}
