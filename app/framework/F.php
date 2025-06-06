@@ -31,14 +31,14 @@ class F {
 		</description>
 		<io>
 			<in>
-				<string_or_structure name="$flash">
+				<string_or_array name="$flash">
 					<string name="type" optional="yes" default="primary" comments="primary|secondary|success|info|warning|danger|light|dark" />
 					<string name="icon" optional="yes" />
 					<string name="heading" optional="yes" />
 					<string name="message" optional="yes" />
 					<string name="remark" optional="yes" />
 					<string name="remarkClass" optional="yes" />
-				</string_or_structure>
+				</string_or_array>
 			</in>
 			<out />
 		</io>
@@ -68,7 +68,7 @@ class F {
 				?><span><?php echo $flash['message']; ?></span><?php
 			endif;
 			if ( !empty($flash['remark']) ) :
-				?><small class="<?php echo $flash['remarkClass'] ?? 'float-right text-muted pt-1'; ?>"><?php echo $flash['remark']; ?></small><?php
+				?><small class="<?php echo $flash['remarkClass'] ?? 'text-secondary'; ?>"><?php echo $flash['remark']; ?></small><?php
 			endif;
 		?></div><?php
 	}
@@ -83,14 +83,14 @@ class F {
 		</description>
 		<io>
 			<in>
-				<string_or_structure name="$flash">
+				<string_or_array name="$flash">
 					<string name="type" optional="yes" default="primary" comments="primary|secondary|success|info|warning|danger|light|dark" />
 					<string name="id" optional="yes" comments="div[id]" />
 					<string name="icon" optional="yes" />
 					<string name="heading" optional="yes" />
 					<string name="message" optional="yes" />
 					<string name="remark" optional="yes" />
-				</string_or_structure>
+				</string_or_array>
 			</in>
 			<out>
 				<string name="~return~" />
@@ -117,9 +117,9 @@ class F {
 		<io>
 			<in>
 				<!-- framework config -->
-				<structure name="config" scope="$fusebox">
+				<array name="config" scope="$fusebox">
 					<string name="appPath" example="/path/to/my/site/app/" />
-				</structure>
+				</array>
 				<!-- parameter -->
 				<string name="$relPath" optional="yes" comments="file path relative to app directory" example="view/global/layout.php" />
 			</in>
@@ -198,9 +198,9 @@ class F {
 				<string name="controller" example="home" scope="$fusebox" />
 				<string name="action" example="index" scope="$fusebox" />
 				<!-- framework config -->
-				<structure name="config" scope="$fusebox">
+				<array name="config" scope="$fusebox">
 					<string name="defaultCommand" example="home.index" />
-				</structure>
+				</array>
 				<!-- parameter -->
 				<string name="$key" optional="yes" comments="controller|action" />
 			</in>
@@ -237,9 +237,9 @@ class F {
 		<io>
 			<in>
 				<!-- framework config -->
-				<structure name="config" scope="$fusebox">
+				<array name="config" scope="$fusebox">
 					<mixed name="*" />
-				</structure>
+				</array>
 				<!-- parameter -->
 				<string name="$key" optional="yes" default="~null~" example="defaultCommand|db|smtp|.." />
 				<mixed name="$val" optional="yes" default="{{undefined}}" />
@@ -280,17 +280,17 @@ class F {
 				<!-- framework -->
 				<boolean name="$abortOnError" scope="Framework" />
 				<!-- config -->
-				<structure name="config" scope="$fusebox">
+				<array name="config" scope="$fusebox">
 					<boolean name="errorController" />
-				</structure>
+				</array>
 				<!-- parameters -->
 				<string name="$msg" optional="yes" default="Error" />
 				<boolean name="$condition" optional="yes" default="true" />
-				<structure name="$options" optional="yes">
+				<array name="$options" optional="yes">
 					<string name="headerString" optional="yes" default="HTTP/1.0 403 Forbidden" />
 					<number name="errorCode" optional="yes" default="~Framework::FUSEBOX_ERROR~" />
 					<mixed name="~customOption~" comments="more custom options available for error-controller" />
-				</structure>
+				</array>
 			</in>
 			<out>
 				<string name="$fusebox->error" comments="for error-controller" />
@@ -493,7 +493,7 @@ class F {
 		<io>
 			<in>
 				<boolean name="$condition" optional="yes" default="true" />
-				<structure name="$options" optional="yes" default="~emptyArray~" />
+				<array name="$options" optional="yes" default="~emptyArray~" />
 			</in>
 			<out />
 		</io>
@@ -519,10 +519,10 @@ class F {
 				<string name="$command" example="home|product.view|.." />
 			</in>
 			<out>
-				<structure name="~return~">
+				<array name="~return~">
 					<string name="controller" example="home" />
 					<string name="action" example="index" />
-				</structure>
+				</array>
 			</out>
 		</io>
 	</fusedoc>
@@ -592,16 +592,16 @@ class F {
 		</description>
 		<io>
 			<in>
-				<structure name="$_SERVER">
+				<array name="$_SERVER">
 					<string name="HTTP_X_FORWARDED_PROTO" optional="yes" />
 					<string name="HTTPS" optional="yes" />
 					<string name="REQUEST_SCHEME" optional="yes" />
 					<string name="HTTP_POST" optional="yes" />
 					<string name="SHELL" optional="yes" />
 					<string name="SESSIONNAME" optional="yes" />
-				</structure>
-				<structure name="$_GET" optional="yes" />
-				<structure name="$_POST" optional="yes" />
+				</array>
+				<array name="$_GET" optional="yes" />
+				<array name="$_POST" optional="yes" />
 			</in>
 			<out>
 				<string name="~return~" value="https|http|cli" />
@@ -670,11 +670,11 @@ class F {
 				<string name="self" scope="$fusebox" />
 				<string name="myself" scope="$fusebox" />
 				<!-- config -->
-				<structure name="config" scope="$fusebox">
+				<array name="config" scope="$fusebox">
 					<string name="commandVariable" example="fuseaction" />
 					<boolean name="urlRewrite" />
-					<structure name="route" comments="url-rewrite patterns" />
-				</structure>
+					<array name="route" comments="url-rewrite patterns" />
+				</array>
 				<!-- parameter -->
 				<string name="$commandWithQueryString" optional="yes" example="product.view&id=10" />
 			</in>
@@ -717,9 +717,9 @@ class F {
 				<!-- framework api -->
 				<string name="self" scope="$fusebox" />
 				<!-- config -->
-				<structure name="config" scope="$fusebox">
+				<array name="config" scope="$fusebox">
 					<boolean name="urlRewrite" />
-				</structure>
+				</array>
 				<!-- parameter -->
 				<string name="$commandWithQueryString" optional="yes" example="product.view&id=10" />
 			</in>
@@ -767,13 +767,13 @@ class F {
 				<!-- framework api -->
 				<string name="self" scope="$fusebox" />
 				<!-- config -->
-				<structure name="config" scope="$fusebox">
+				<array name="config" scope="$fusebox">
 					<boolean name="urlRewrite" />
 					<string name="commandVariable" />
-					<structure name="route">
+					<array name="route">
 						<string name="~pattern~" value="~regex~" />
-					</structure>
-				</structure>
+					</array>
+				</array>
 				<!-- parameter -->
 				<string name="$commandWithQueryString" optional="yes" example="product.view&id=10" />
 			</in>
