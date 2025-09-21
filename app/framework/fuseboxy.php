@@ -633,7 +633,7 @@ class Framework {
 			throw new Exception('Fusebox config [appPath] is required', self::FUSEBOX_MISSING_CONFIG);
 		elseif ( !is_dir(F::config('appPath')) ) :
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception('Directory of fusebox config [appPath] not found ('.F::config('appPath').')', self::FUSEBOX_INVALID_CONFIG);
+			throw new Exception('Fusebox config [appPath] directory not found ('.F::config('appPath').')', self::FUSEBOX_INVALID_CONFIG);
 		endif;
 		// check command-variable
 		$reserved = array('controller', 'action');
@@ -645,9 +645,9 @@ class Framework {
 			throw new Exception('Fusebox config [commandVariable] cannot be a reserved word (reserved='.implode(',', $reserved).')', self::FUSEBOX_INVALID_CONFIG);
 		endif;
 		// check error-controller
-		if ( F::config('errorController') and !is_bool(F::config('errorController')) ) :
+		if ( F::config('errorController') and is_string(F::config('errorController')) and !is_file(F::config('errorController')) ) :
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception('Fusebox config [errorController] must be boolean', self::FUSEBOX_INVALID_CONFIG);
+			throw new Exception('Fuseboxy config [errorController] file not found ('.F::config('errorController').')', self::FUSEBOX_INVALID_CONFIG);
 		endif;
 	}
 

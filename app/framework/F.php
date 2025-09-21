@@ -281,10 +281,10 @@ class F {
 				<boolean name="$abortOnError" scope="Framework" />
 				<!-- config -->
 				<array name="config" scope="$fusebox">
-					<boolean name="errorController" />
+					<string_or_boolean name="errorController" />
 				</array>
 				<!-- parameters -->
-				<string name="$msg" optional="yes" default="Error" />
+				<string name="$message" />
 				<boolean name="$condition" optional="yes" default="true" />
 				<array name="$options" optional="yes">
 					<string name="headerString" optional="yes" default="HTTP/1.0 403 Forbidden" />
@@ -298,7 +298,7 @@ class F {
 		</io>
 	</fusedoc>
 	*/
-	public static function error($msg='Error', $condition=true, $options=[]) {
+	public static function error($message, $condition=true, $options=[]) {
 		global $fusebox, $fuseboxy;
 		// check whether to proceed
 		if ( !$condition ) return null;
@@ -309,13 +309,25 @@ class F {
 		if ( !headers_sent() ) header($options['headerString']);
 		// set error message to api object
 		// ===> make it available to error-controller
-		$fusebox->error = $msg;
+		$fusebox->error = $message;
+		// determine error-controller path
+		if ( is_string(self::config('errorController')) ) :
+			$errorController = self::config('errorController');
+		elseif ( self::config('errorController') ) :
+			$errorController = self::appPath('controller/error_controller.php');
+		else :
+			$errorController = false;
+		endif;
 		// when error-controller specified
 		// ===> display by error-controller
 		// ===> otherwise, simply display error as text
-		$errorControllerPath = self::appPath('controller/error_controller.php');
-		if ( self::config('errorController') and is_file($errorControllerPath) ) include $errorControllerPath;
-		else echo $fusebox->error;
+		if ( $errorController and is_file($errorController) ) :
+			include $errorController;
+		elseif ( is_object($fusebox->error) and in_array(get_class($fusebox->error), ['Error','Exception'])) :
+			echo $fusebox->error->getMessage();
+		else :
+			echo $fusebox->error;
+		endif;
 		// abort operation afterward (by default)
 		if ( Framework::$abortOnError ) exit();
 	}
