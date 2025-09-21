@@ -175,7 +175,7 @@ class F {
 	</fusedoc>
 	*/
 	public static function command($key=null) {
-		global $fusebox;
+		global $fuseboxy;
 		// when command not found in config/url/form
 		if ( empty($fuseboxy->controller) and empty($fuseboxy->action) ) return null;
 		// get full command
@@ -215,7 +215,7 @@ class F {
 	</fusedoc>
 	*/
 	public static function config($key=null, $val='{{undefined}}') {
-		global $fusebox;
+		global $fuseboxy;
 		// when {key} not specified
 		// ===> getter (all)
 		if ( empty($key) ) return $fuseboxy->config;
@@ -410,7 +410,7 @@ class F {
 	</fusedoc>
 	*/
 	public static function invokeRequest() {
-		global $fusebox;
+		global $fuseboxy;
 		return !empty($fuseboxy->invokeQueue);
 	}
 
@@ -436,7 +436,7 @@ class F {
 	</fusedoc>
 	*/
 	public static function is($commandPatternList) {
-		global $fusebox;
+		global $fuseboxy;
 		// allow checking multiple command-patterns
 		if ( !is_array($commandPatternList) ) $commandPatternList = explode(',', $commandPatternList);
 		// check each user-provided command-pattern
@@ -620,7 +620,7 @@ class F {
 		// set default & fix format
 		$unit = strtolower($unit ?? 'ms');
 		// check unit
-		if ( !in_array($unit, ['ms','s']) ) throw new Exception('Invalid unit for runtime', Framework::FUSEBOXY_ERROR);
+		if ( !in_array($unit, ['ms','s']) ) throw new Error('Invalid unit for runtime', Framework::FUSEBOXY_ERROR);
 		// not started yet
 		if ( !isset(Framework::$startTick) ) return null;
 		// calculation
@@ -662,7 +662,7 @@ class F {
 	</fusedoc>
 	*/
 	public static function url($commandWithQueryString=null) {
-		global $fusebox;
+		global $fuseboxy;
 		// when no command defined
 		// ===> simply return self (no matter url-rewrite or not)
 		if ( empty($commandWithQueryString) ) return $fuseboxy->self;
@@ -706,7 +706,7 @@ class F {
 	</fusedoc>
 	*/
 	public static function url__beautifyBySimpleRules($commandWithQueryString) {
-		global $fusebox;
+		global $fuseboxy;
 		// rewrite (with or without query-string)
 		// ===> transform to beauty-url
 		// ===> check route as well
@@ -761,7 +761,7 @@ class F {
 	*/
 
 	public static function url__beautifyByRouteMatched($commandWithQueryString) {
-		global $fusebox;
+		global $fuseboxy;
 		// go through & compare against each pattern
 		// ===> return the first match only
 		foreach ( self::config('route') ?? [] as $routePattern => $routeReplacement ) :
