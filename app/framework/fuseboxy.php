@@ -5,7 +5,7 @@
 	</description>
 	<io>
 		<in>
-			<string name="$configPath" scope="Framework" optional="yes" default="~parentDir~/config/fusebox_config.php" />
+			<string name="$configPath" scope="Framework" optional="yes" default="~parentDir~/config/fuseboxy_config.php" />
 			<string name="$helperPath" scope="Framework" optional="yes" default="~thisDir~/F.php" />
 		</in>
 		<out />
@@ -16,16 +16,16 @@ class Framework {
 
 
 	// error codes
-	const FUSEBOX_ERROR              = 403;
-	const FUSEBOX_PAGE_NOT_FOUND     = 404;
-	const FUSEBOX_CONFIG_NOT_FOUND   = 901;
-	const FUSEBOX_CONFIG_NOT_DEFINED = 902;
-	const FUSEBOX_HELPER_NOT_FOUND   = 903;
-	const FUSEBOX_HELPER_NOT_DEFINED = 904;
-	const FUSEBOX_MISSING_CONFIG     = 905;
-	const FUSEBOX_INVALID_CONFIG     = 906;
+	const FUSEBOXY_ERROR              = 403;
+	const FUSEBOXY_PAGE_NOT_FOUND     = 404;
+	const FUSEBOXY_CONFIG_NOT_FOUND   = 901;
+	const FUSEBOXY_CONFIG_NOT_DEFINED = 902;
+	const FUSEBOXY_HELPER_NOT_FOUND   = 903;
+	const FUSEBOXY_HELPER_NOT_DEFINED = 904;
+	const FUSEBOXY_MISSING_CONFIG     = 905;
+	const FUSEBOXY_INVALID_CONFIG     = 906;
 	// essential settings
-	public static $configPath = __DIR__.'/../config/fusebox_config.php';
+	public static $configPath = __DIR__.'/../config/fuseboxy_config.php';
 	public static $helperPath = __DIR__.'/F.php';
 	// properties for helper
 	public static $startTick;
@@ -48,7 +48,7 @@ class Framework {
 				<!-- server variables -->
 				<string name="SCRIPT_NAME" scope="$_SERVER" />
 				<!-- framework config -->
-				<structure name="autoload" scope="$fusebox">
+				<structure name="autoload" scope="$fuseboxy">
 					<string name="+" optional="yes" comments="pattern" example="/path/to/my/site/app/model/*.php" />
 					<function name="+" optional="yes" comments="function to run" example="function(){ $foo = 'bar'; }" />
 				</structure>
@@ -67,10 +67,10 @@ class Framework {
 				call_user_func($pattern);
 			// directory not found
 			elseif ( $isPatternLikeDir and !is_dir($pattern) ) :
-				throw new Exception("Autoload directory not found ({$pattern})", self::FUSEBOX_INVALID_CONFIG);
+				throw new Exception("Autoload directory not found ({$pattern})", self::FUSEBOXY_INVALID_CONFIG);
 			// file not found
 			elseif ( $isPatternLikeFile and empty(glob($pattern)) ) :
-				throw new Exception("Autoload file not found ({$pattern})", self::FUSEBOX_INVALID_CONFIG);
+				throw new Exception("Autoload file not found ({$pattern})", self::FUSEBOXY_INVALID_CONFIG);
 			// load files (when directory or file exists)
 			elseif ( !empty($pattern) ) :
 				// when only specified directory
@@ -107,11 +107,11 @@ class Framework {
 		<io>
 			<in>
 				<!-- framework config -->
-				<structure name="config" scope="$fusebox" />
+				<structure name="config" scope="$fuseboxy" />
 			</in>
 			<out>
 				<!-- framework config -->
-				<structure name="config" scope="$fusebox">
+				<structure name="config" scope="$fuseboxy">
 					<string name="appPath|vendorPath|baseDir|baseUrl|uploadUrl" />
 				</structure>
 			</out>
@@ -121,9 +121,9 @@ class Framework {
 	public static function fixConfig() {
 		global $fusebox;
 		// validation
-		if ( !isset($fusebox->config) ) :
+		if ( !isset($fuseboxy->config) ) :
 			if ( !headers_sent() ) header('HTTP/1.0 500 Internal Server Error');
-			throw new Exception('Fusebox config not defined', self::FUSEBOX_CONFIG_NOT_DEFINED);
+			throw new Exception('Fuseboxy config not defined', self::FUSEBOXY_CONFIG_NOT_DEFINED);
 		endif;
 		// fix path config
 		// ===> adjust slash of each path
@@ -184,7 +184,7 @@ class Framework {
 		</description>
 		<io>
 			<in>
-				<structure name="config" scope="$fusebox">
+				<structure name="config" scope="$fuseboxy">
 					<boolean name="forceHttps" optional="yes" />
 				</structure>
 				<structure name="$_SERVER">
@@ -206,7 +206,7 @@ class Framework {
 	/**
 	<fusedoc>
 		<description>
-			initiate fusebox API object
+			initiate fuseboxy API object
 			===> use {global} instead of {$_GLOBALS}
 			===> make developer easier to access the object (without typing too much)
 		</description>
@@ -219,9 +219,8 @@ class Framework {
 	</fusedoc>
 	*/
 	public static function initAPI() {
-		global $fusebox, $fuseboxy;
-		$fusebox = $fuseboxy = new StdClass();
-		$fuseboxy = &$fusebox;
+		global $fuseboxy;
+		$fuseboxy = new StdClass();
 	}
 
 
@@ -263,7 +262,7 @@ class Framework {
 			</in>
 			<out>
 				<!-- framework config -->
-				<structure name="config" scope="$fusebox">
+				<structure name="config" scope="$fuseboxy">
 					<string name="commandVariable" />
 					<string name="appPath" />
 				</structure>
@@ -275,14 +274,14 @@ class Framework {
 		global $fusebox;
 		// validate config file
 		if ( is_file(self::$configPath) ) :
-			$fusebox->config = include self::$configPath;
+			$fuseboxy->config = include self::$configPath;
 		else :
 			if ( !headers_sent() ) header('HTTP/1.0 500 Internal Server Error');
-			throw new Exception('Config file not found ('.self::$configPath.')', self::FUSEBOX_CONFIG_NOT_FOUND);
+			throw new Exception('Config file not found ('.self::$configPath.')', self::FUSEBOXY_CONFIG_NOT_FOUND);
 		endif;
 		if ( !is_array(F::config()) ) :
 			if ( !headers_sent() ) header('HTTP/1.0 500 Internal Server Error');
-			throw new Exception('Config file must return an array', self::FUSEBOX_CONFIG_NOT_DEFINED);
+			throw new Exception('Config file must return an array', self::FUSEBOXY_CONFIG_NOT_DEFINED);
 		endif;
 		// define config default value (when necessary)
 		F::config('commandVariable', F::config('commandVariable') ?? 'fuseaction');
@@ -312,14 +311,14 @@ class Framework {
 		// check helper path
 		if ( !is_file(self::$helperPath) ) :
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception('Helper class file not found ('.self::$helperPath.')', self::FUSEBOX_HELPER_NOT_FOUND);
+			throw new Exception('Helper class file not found ('.self::$helperPath.')', self::FUSEBOXY_HELPER_NOT_FOUND);
 		endif;
 		// load helper
 		require_once self::$helperPath;
 		// validate after load
 		if ( !class_exists('F') ) :
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception('Helper class (F) not defined', self::FUSEBOX_HELPER_NOT_DEFINED);
+			throw new Exception('Helper class (F) not defined', self::FUSEBOXY_HELPER_NOT_DEFINED);
 		endif;
 	}
 
@@ -334,7 +333,7 @@ class Framework {
 		</description>
 		<io>
 			<in>
-				<string name="controller" scope="$fusebox" />
+				<string name="controller" scope="$fuseboxy" />
 			</in>
 			<out>
 				<number name="$startTick" scope="self" comments="millisecond" />
@@ -343,7 +342,7 @@ class Framework {
 	</fusedoc>
 	*/
 	public static function run() {
-		global $fusebox, $fuseboxy;
+		global $fuseboxy;
 		// start!!
 		try {
 			self::initTimer();
@@ -361,7 +360,7 @@ class Framework {
 			// ===> (NOTE: empty {defaultCommand} is allowed)
 			// ===> when controller specified & available, load controller to run
 			// ===> when controller file not found, page not found...
-			$__controllerPath__ = $fusebox->controller ? F::appPath('controller/'.str_ireplace('-', '_', $fusebox->controller).'_controller.php') : false;
+			$__controllerPath__ = $fuseboxy->controller ? F::appPath('controller/'.str_ireplace('-', '_', $fuseboxy->controller).'_controller.php') : false;
 			if ( is_file($__controllerPath__) ) include $__controllerPath__;
 			F::pageNotFound($__controllerPath__ and !is_file($__controllerPath__));
 		// any runtime error...
@@ -385,15 +384,15 @@ class Framework {
 				<!-- url variables -->
 				<string name="~commandVariable~" scope="$_GET|$_POST" />
 				<!-- framework config -->
-				<structure name="config" scope="$fusebox">
+				<structure name="config" scope="$fuseboxy">
 					<string name="commandVariable" example="fuseaction" />
 					<string name="defaultCommand" example="home.index" />
 				</structure>
 			</in>
 			<out>
 				<!-- framework api object -->
-				<string name="controller" scope="$fusebox" />
-				<string name="action" scope="$fusebox" />
+				<string name="controller" scope="$fuseboxy" />
+				<string name="action" scope="$fuseboxy" />
 			</out>
 		</io>
 	</fusedoc>
@@ -406,8 +405,8 @@ class Framework {
 		$command = $_GET[$commandVariable] ?? $_POST[$commandVariable] ?? F::config('defaultCommand');
 		// parse command & modify api variable
 		$parsed = F::parseCommand($command);
-		$fusebox->controller = $parsed['controller'];
-		$fusebox->action = $parsed['action'];
+		$fuseboxy->controller = $parsed['controller'];
+		$fuseboxy->action = $parsed['action'];
 	}
 
 
@@ -423,15 +422,15 @@ class Framework {
 				<!-- server variables -->
 				<string name="SCRIPT_NAME" scope="$_SERVER" />
 				<!-- framework config -->
-				<structure name="config" scope="$fusebox">
+				<structure name="config" scope="$fuseboxy">
 					<string name="commandVariable" />
 					<boolean name="urlRewrite" />
 				</structure>
 			</in>
 			<out>
 				<!-- framework api object -->
-				<string name="self" scope="$fusebox" example="/my/site/index.php" />
-				<string name="myself" scope="$fusebox" example="/my/site/index.php?fuseaction=" />
+				<string name="self" scope="$fuseboxy" example="/my/site/index.php" />
+				<string name="myself" scope="$fuseboxy" example="/my/site/index.php?fuseaction=" />
 			</out>
 		</io>
 	</fusedoc>
@@ -441,18 +440,18 @@ class Framework {
 		// validation
 		if ( !F::config('commandVariable') ) :
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception('Fusebox config [commandVariable] is required', self::FUSEBOX_MISSING_CONFIG);
+			throw new Exception('Fuseboxy config [commandVariable] is required', self::FUSEBOXY_MISSING_CONFIG);
 		endif;
 		// beautify
 		if ( F::config('urlRewrite') ) :
-			$fusebox->self = dirname($_SERVER['SCRIPT_NAME']);
-			$fusebox->self = str_replace('\\', '/', $fusebox->self);
-			if ( substr($fusebox->self, -1) != '/' ) $fusebox->self .= '/';
-			$fusebox->myself = $fusebox->self;
+			$fuseboxy->self = dirname($_SERVER['SCRIPT_NAME']);
+			$fuseboxy->self = str_replace('\\', '/', $fuseboxy->self);
+			if ( substr($fuseboxy->self, -1) != '/' ) $fuseboxy->self .= '/';
+			$fuseboxy->myself = $fuseboxy->self;
 		// normal
 		else :
-			$fusebox->self = $_SERVER['SCRIPT_NAME'];
-			$fusebox->myself = $fusebox->self.'?'.F::config('commandVariable').'=';
+			$fuseboxy->self = $_SERVER['SCRIPT_NAME'];
+			$fuseboxy->myself = $fuseboxy->self.'?'.F::config('commandVariable').'=';
 		endif;
 	}
 
@@ -473,7 +472,7 @@ class Framework {
 				<string name="REDIRECT_QUERY_STRING" scope="$_SERVER" optional="yes" />
 				<string name="~REDIRECT_QUERY_STRING~" scope="$_GET|$_REQUEST" optional="yes" />
 				<!-- framework config -->
-				<structure name="config" scope="$fusebox">
+				<structure name="config" scope="$fuseboxy">
 					<string name="commandVariable" />
 					<boolean name="urlRewrite" />
 					<structure name="route" optional="yes" comments="url-rewrite pattern" />
@@ -616,7 +615,7 @@ class Framework {
 		<io>
 			<in>
 				<!-- framework config -->
-				<structure name="config" scope="$fusebox">
+				<structure name="config" scope="$fuseboxy">
 					<string name="commandVariable" optional="yes" />
 					<string name="appPath" optional="yes" />
 					<boolean_or_string name="errorController" optional="yes" />
@@ -630,24 +629,24 @@ class Framework {
 		// check app-path
 		if ( !F::config('appPath') ) :
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception('Fusebox config [appPath] is required', self::FUSEBOX_MISSING_CONFIG);
+			throw new Exception('Fuseboxy config [appPath] is required', self::FUSEBOXY_MISSING_CONFIG);
 		elseif ( !is_dir(F::config('appPath')) ) :
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception('Fusebox config [appPath] directory not found ('.F::config('appPath').')', self::FUSEBOX_INVALID_CONFIG);
+			throw new Exception('Fuseboxy config [appPath] directory not found ('.F::config('appPath').')', self::FUSEBOXY_INVALID_CONFIG);
 		endif;
 		// check command-variable
 		$reserved = array('controller', 'action');
 		if ( !F::config('commandVariable') ) :
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception('Fusebox config [commandVariable] is required', self::FUSEBOX_MISSING_CONFIG);
+			throw new Exception('Fuseboxy config [commandVariable] is required', self::FUSEBOXY_MISSING_CONFIG);
 		elseif ( in_array(strtolower(F::config('commandVariable')), $reserved) ) :
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception('Fusebox config [commandVariable] cannot be a reserved word (reserved='.implode(',', $reserved).')', self::FUSEBOX_INVALID_CONFIG);
+			throw new Exception('Fuseboxy config [commandVariable] cannot be a reserved word (reserved='.implode(',', $reserved).')', self::FUSEBOXY_INVALID_CONFIG);
 		endif;
 		// check error-controller
 		if ( F::config('errorController') and is_string(F::config('errorController')) and !is_file(F::config('errorController')) ) :
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Exception('Fuseboxy config [errorController] file not found ('.F::config('errorController').')', self::FUSEBOX_INVALID_CONFIG);
+			throw new Exception('Fuseboxy config [errorController] file not found ('.F::config('errorController').')', self::FUSEBOXY_INVALID_CONFIG);
 		endif;
 	}
 

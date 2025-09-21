@@ -117,7 +117,7 @@ class F {
 		<io>
 			<in>
 				<!-- framework config -->
-				<array name="config" scope="$fusebox">
+				<array name="config" scope="$fuseboxy">
 					<string name="appPath" example="/path/to/my/site/app/" />
 				</array>
 				<!-- parameter -->
@@ -160,7 +160,7 @@ class F {
 		<io>
 			<in>
 				<!-- framework variable -->
-				<string name="controller" scope="$fusebox" />
+				<string name="controller" scope="$fuseboxy" />
 			</in>
 			<out>
 				<string name="~return~" comments="path of layout file" example="~appPath~/view/user/layout.php" />
@@ -169,9 +169,9 @@ class F {
 	</fusedoc>
 	*/
 	public static function closestLayout() {
-		global $fusebox, $fuseboxy;
+		global $fuseboxy;
 		// determine layouts to consider
-		$controllerLayout = F::appPath("view/{$fusebox->controller}/layout.php");
+		$controllerLayout = F::appPath("view/{$fuseboxy->controller}/layout.php");
 		$globalLayout = F::appPath('view/global/layout.php');
 		// use current controller layout (when available)
 		if ( is_file($controllerLayout) ) return $controllerLayout;
@@ -195,10 +195,10 @@ class F {
 		<io>
 			<in>
 				<!-- framework api -->
-				<string name="controller" example="home" scope="$fusebox" />
-				<string name="action" example="index" scope="$fusebox" />
+				<string name="controller" example="home" scope="$fuseboxy" />
+				<string name="action" example="index" scope="$fuseboxy" />
 				<!-- framework config -->
-				<array name="config" scope="$fusebox">
+				<array name="config" scope="$fuseboxy">
 					<string name="defaultCommand" example="home.index" />
 				</array>
 				<!-- parameter -->
@@ -213,13 +213,13 @@ class F {
 	public static function command($key=null) {
 		global $fusebox;
 		// when command not found in config/url/form
-		if ( empty($fusebox->controller) and empty($fusebox->action) ) return null;
+		if ( empty($fuseboxy->controller) and empty($fuseboxy->action) ) return null;
 		// get full command
-		if ( empty($key) ) return $fusebox->controller.'.'.$fusebox->action;
+		if ( empty($key) ) return $fuseboxy->controller.'.'.$fuseboxy->action;
 		// get controller only
-		if ( strtolower($key) == 'controller' ) return $fusebox->controller;
+		if ( strtolower($key) == 'controller' ) return $fuseboxy->controller;
 		// get action only
-		if ( strtolower($key) == 'action' ) return $fusebox->action;
+		if ( strtolower($key) == 'action' ) return $fuseboxy->action;
 		// otherwise...
 		return null;
 	}
@@ -237,7 +237,7 @@ class F {
 		<io>
 			<in>
 				<!-- framework config -->
-				<array name="config" scope="$fusebox">
+				<array name="config" scope="$fuseboxy">
 					<mixed name="*" />
 				</array>
 				<!-- parameter -->
@@ -254,13 +254,13 @@ class F {
 		global $fusebox;
 		// when {key} not specified
 		// ===> getter (all)
-		if ( empty($key) ) return $fusebox->config;
+		if ( empty($key) ) return $fuseboxy->config;
 		// when {key} specified but {val} not specified
 		// ===> getter (specific)
-		if ( $val == '{{undefined}}' ) return $fusebox->config[$key] ?? null;
+		if ( $val == '{{undefined}}' ) return $fuseboxy->config[$key] ?? null;
 		// when both {key & val} specified
 		// ===> setter
-		$fusebox->config[$key] = $val;
+		$fuseboxy->config[$key] = $val;
 		return $val;
 	}
 
@@ -280,7 +280,7 @@ class F {
 				<!-- framework -->
 				<boolean name="$abortOnError" scope="Framework" />
 				<!-- config -->
-				<array name="config" scope="$fusebox">
+				<array name="config" scope="$fuseboxy">
 					<string_or_boolean name="errorController" />
 				</array>
 				<!-- parameters -->
@@ -288,28 +288,28 @@ class F {
 				<boolean name="$condition" optional="yes" default="true" />
 				<array name="$options" optional="yes">
 					<string name="headerString" optional="yes" default="HTTP/1.0 403 Forbidden" />
-					<number name="errorCode" optional="yes" default="~Framework::FUSEBOX_ERROR~" />
+					<number name="errorCode" optional="yes" default="~Framework::FUSEBOXY_ERROR~" />
 					<mixed name="~customOption~" comments="more custom options available for error-controller" />
 				</array>
 			</in>
 			<out>
-				<string name="$fusebox->error" comments="for error-controller" />
+				<string name="$fuseboxy->error" comments="for error-controller" />
 			</out>
 		</io>
 	</fusedoc>
 	*/
 	public static function error($message, $condition=true, $options=[]) {
-		global $fusebox, $fuseboxy;
+		global $fuseboxy;
 		// check whether to proceed
 		if ( !$condition ) return null;
 		// default options
 		$options['headerString'] = $options['headerString'] ?? 'HTTP/1.0 403 Forbidden';
-		$options['errorCode'] = $options['errorCode'] ?? Framework::FUSEBOX_ERROR;
+		$options['errorCode'] = $options['errorCode'] ?? Framework::FUSEBOXY_ERROR;
 		// send http header to browser (when necessary)
 		if ( !headers_sent() ) header($options['headerString']);
 		// set error message to api object
 		// ===> make it available to error-controller
-		$fusebox->error = $message;
+		$fuseboxy->error = $message;
 		// determine error-controller path
 		if ( is_string(self::config('errorController')) ) :
 			$errorController = self::config('errorController');
@@ -323,10 +323,10 @@ class F {
 		// ===> otherwise, simply display error as text
 		if ( $errorController and is_file($errorController) ) :
 			include $errorController;
-		elseif ( is_object($fusebox->error) and in_array(get_class($fusebox->error), ['Error','Exception'])) :
-			echo $fusebox->error->getMessage();
+		elseif ( is_object($fuseboxy->error) and in_array(get_class($fuseboxy->error), ['Error','Exception'])) :
+			echo $fuseboxy->error->getMessage();
 		else :
-			echo $fusebox->error;
+			echo $fuseboxy->error;
 		endif;
 		// abort operation afterward (by default)
 		if ( Framework::$abortOnError ) exit();
@@ -353,10 +353,10 @@ class F {
 			</in>
 			<out>
 				<!-- manipulated api object -->
-				<string name="controller" scope="$fusebox" />
-				<string name="action" scope="$fusebox" />
+				<string name="controller" scope="$fuseboxy" />
+				<string name="action" scope="$fuseboxy" />
 				<!-- command stack -->
-				<array name="invokeQueue" scope="$fusebox">
+				<array name="invokeQueue" scope="$fuseboxy">
 					<string name="+" comments="command" example="product.view|product.recommend|.." />
 				</array>
 			</out>
@@ -364,12 +364,12 @@ class F {
 	</fusedoc>
 	*/
 	public static function invoke($commandWithQueryString, $arguments=[]) {
-		global $fusebox, $fuseboxy;
+		global $fuseboxy;
 		// create stack container to keep track of command-in-run
 		// ===> first item of invoke queue should be original command
 		// ===> second item onward will be the command(s) called by F::invoke()
-		if ( !isset($fusebox->invokeQueue) ) $fusebox->invokeQueue = array();
-		$fusebox->invokeQueue[] = "{$fusebox->controller}.{$fusebox->action}";
+		if ( !isset($fuseboxy->invokeQueue) ) $fuseboxy->invokeQueue = array();
+		$fuseboxy->invokeQueue[] = "{$fuseboxy->controller}.{$fuseboxy->action}";
 		// split new command & query-string (if any)
 		$commandWithQueryString = str_replace('?', '&', $commandWithQueryString);
 		$arr = explode('&', $commandWithQueryString, 2);
@@ -377,9 +377,9 @@ class F {
 		$queryString = $arr[1] ?? '';
 		// parse new command
 		$command = self::parseCommand($command);
-		$fusebox->controller = $command['controller'];
-		$fusebox->action = $command['action'];
-		$controllerPath = self::config('appPath').'/controller/'.$fusebox->controller.'_controller.php';
+		$fuseboxy->controller = $command['controller'];
+		$fuseboxy->action = $command['action'];
+		$controllerPath = self::config('appPath').'/controller/'.$fuseboxy->controller.'_controller.php';
 		// put query string variables into arguments & url scope
 		parse_str($queryString, $queryString);
 		$originalGetScope = $_GET;
@@ -390,9 +390,9 @@ class F {
 		// trim queue afterward
 		// ===> regardless whether successfully run or not
 		// ===> restore to original command (previous command in queue)
-		$originalCommand = self::parseCommand(array_pop($fusebox->invokeQueue));
-		$fusebox->controller = $originalCommand['controller'];
-		$fusebox->action = $originalCommand['action'];
+		$originalCommand = self::parseCommand(array_pop($fuseboxy->invokeQueue));
+		$fuseboxy->controller = $originalCommand['controller'];
+		$fuseboxy->action = $originalCommand['action'];
 		$_GET = $originalGetScope;
 		// when controller not found
 		// ===> command not run indeed
@@ -437,7 +437,7 @@ class F {
 		<io>
 			<in>
 				<!-- framework -->
-				<array name="invokeQueue" scope="$fusebox" optional="yes" />
+				<array name="invokeQueue" scope="$fuseboxy" optional="yes" />
 			</in>
 			<out>
 				<boolean name="~return~" />
@@ -447,7 +447,7 @@ class F {
 	*/
 	public static function invokeRequest() {
 		global $fusebox;
-		return !empty($fusebox->invokeQueue);
+		return !empty($fuseboxy->invokeQueue);
 	}
 
 
@@ -479,8 +479,8 @@ class F {
 		foreach ( $commandPatternList as $commandPattern ) :
 			$commandPattern = self::parseCommand($commandPattern);
 			// consider match when either one is ok
-			$isControllerMatched = in_array($commandPattern['controller'], [ '*', $fusebox->controller ]);
-			$isActionMatched = in_array($commandPattern['action'], [ '*', $fusebox->action ]);
+			$isControllerMatched = in_array($commandPattern['controller'], [ '*', $fuseboxy->controller ]);
+			$isActionMatched = in_array($commandPattern['action'], [ '*', $fuseboxy->action ]);
 			if ( $isControllerMatched and $isActionMatched ) return true;
 		endforeach;
 		// no match...
@@ -514,7 +514,7 @@ class F {
 	public static function pageNotFound($condition=true, $options=[]) {
 		self::error('Page not found', $condition, array_merge($options, [
 			'headerString' => 'HTTP/1.0 404 Not Found',
-			'errorCode' => Framework::FUSEBOX_PAGE_NOT_FOUND,
+			'errorCode' => Framework::FUSEBOXY_PAGE_NOT_FOUND,
 		]));
 	}
 
@@ -656,7 +656,7 @@ class F {
 		// set default & fix format
 		$unit = strtolower($unit ?? 'ms');
 		// check unit
-		if ( !in_array($unit, ['ms','s']) ) throw new Exception('Invalid unit for runtime', Framework::FUSEBOX_ERROR);
+		if ( !in_array($unit, ['ms','s']) ) throw new Exception('Invalid unit for runtime', Framework::FUSEBOXY_ERROR);
 		// not started yet
 		if ( !isset(Framework::$startTick) ) return null;
 		// calculation
@@ -679,10 +679,10 @@ class F {
 		<io>
 			<in>
 				<!-- framework api -->
-				<string name="self" scope="$fusebox" />
-				<string name="myself" scope="$fusebox" />
+				<string name="self" scope="$fuseboxy" />
+				<string name="myself" scope="$fuseboxy" />
 				<!-- config -->
-				<array name="config" scope="$fusebox">
+				<array name="config" scope="$fuseboxy">
 					<string name="commandVariable" example="fuseaction" />
 					<boolean name="urlRewrite" />
 					<array name="route" comments="url-rewrite patterns" />
@@ -701,7 +701,7 @@ class F {
 		global $fusebox;
 		// when no command defined
 		// ===> simply return self (no matter url-rewrite or not)
-		if ( empty($commandWithQueryString) ) return $fusebox->self;
+		if ( empty($commandWithQueryString) ) return $fuseboxy->self;
 		// when external url
 		// ===> simply return without any transformation
 		if ( false
@@ -711,7 +711,7 @@ class F {
 		) return $commandWithQueryString;
 		// when rewrite not enabled
 		// ===> simply return ugly url (self + commandVariable + command + queryString)
-		if ( !F::config('urlRewrite') ) return $fusebox->myself.$commandWithQueryString;
+		if ( !F::config('urlRewrite') ) return $fuseboxy->myself.$commandWithQueryString;
 		// done!
 		return self::url__beautifyByRouteMatched($commandWithQueryString) ?? self::url__beautifyBySimpleRules($commandWithQueryString);
 	}
@@ -727,9 +727,9 @@ class F {
 		<io>
 			<in>
 				<!-- framework api -->
-				<string name="self" scope="$fusebox" />
+				<string name="self" scope="$fuseboxy" />
 				<!-- config -->
-				<array name="config" scope="$fusebox">
+				<array name="config" scope="$fuseboxy">
 					<boolean name="urlRewrite" />
 				</array>
 				<!-- parameter -->
@@ -762,7 +762,7 @@ class F {
 		// trim leading and trailing slash
 		$qsPath = trim($qsPath, '/');
 		// done!
-		return $fusebox->self.$qsPath;
+		return $fuseboxy->self.$qsPath;
 	}
 
 
@@ -777,9 +777,9 @@ class F {
 		<io>
 			<in>
 				<!-- framework api -->
-				<string name="self" scope="$fusebox" />
+				<string name="self" scope="$fuseboxy" />
 				<!-- config -->
-				<array name="config" scope="$fusebox">
+				<array name="config" scope="$fuseboxy">
 					<boolean name="urlRewrite" />
 					<string name="commandVariable" />
 					<array name="route">
@@ -847,7 +847,7 @@ class F {
 					endforeach;
 				endif;
 				// append the base-url
-				$result = $fusebox->self.$result;
+				$result = $fuseboxy->self.$result;
 				$result = str_replace('//', '/', $result);
 				return $result;
 			endif; // isAllVarsMatched-and-isCommandMatched

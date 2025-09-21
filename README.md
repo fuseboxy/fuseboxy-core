@@ -4,7 +4,7 @@ FUSEBOXY (2.x)
 # Non-intrusive & Addictive MVC Framework for PHP
 
 
-## What is Fusebox?
+## What is Fusebox/Fuseboxy?
 
 Fusebox is an application framework (or methodology) invented by Steve Nelson in the 90's for ColdFusion scripting language (CFML).
 
@@ -18,7 +18,7 @@ The name "Fuseboxy" means doing it in a Fusebox way.
 
 
 ## Basic Concept
-The main concept of Fusebox is to:
+The main concept of Fuseboxy is to:
 > Centralize all request to *index.php*, and use *command* to determine which files to include
 
 
@@ -42,7 +42,7 @@ http://{HOST}/index.php?fuseaction=news
 http://{HOST}/index.php?fuseaction=news.index
 ```
 
-If both **controller** and **action** are not defined, the framework will use `defaultCommand` which defined in `app/config/fusebox_config.php`. So, the followings are the same:
+If both **controller** and **action** are not defined, the framework will use `defaultCommand` which defined in `app/config/fuseboxy_config.php`. So, the followings are the same:
 ```
 http://{HOST}/index.php
 http://{HOST}/index.php?fuseaction={defaultCommand}
@@ -61,7 +61,7 @@ To make a thank you page at `http://{HOST}/index.php?fuseaction=site.thank`
 5. Done!
 
 ```
-switch ( $fusebox->action ) :
+switch ( $fuseboxy->action ) :
 	...
 	case 'thank':
     	include F::appPath('app/view/site/thank.php');

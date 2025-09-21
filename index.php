@@ -16,5 +16,5 @@ $frameworkInAppPath = __DIR__.'/app/framework/fuseboxy.php';
 $frameworkInVendorPath = __DIR__.'/vendor/fuseboxy/fuseboxy-core/app/framework/fuseboxy.php';
 include is_file($frameworkInAppPath) ? $frameworkInAppPath : $frameworkInVendorPath;
 // run!!
-Framework::$configPath = __DIR__.'/app/config/fusebox_config.php';
+Framework::$configPath = __DIR__.'/app/config/fuseboxy_config.php';
 Framework::run();

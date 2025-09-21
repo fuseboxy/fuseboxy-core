@@ -1,7 +1,7 @@
 <?php
 /**
- *  Define fusebox configuration
- *  ===> all things defined here could be accessed by {$fusebox->config} or F::config() later
+ *  Define fuseboxy configuration
+ *  ===> all things defined here could be accessed by {$fuseboxy->config} or F::config() later
  **/
 
 return array(
@@ -11,7 +11,7 @@ return array(
 	 *  Default page (OPTIONAL)
 	 *  ===> command is in {~controller~.~action~} format
 	 *  ===> when {~action~} not specified, it is {index} by default
-	 *  ===> when {false}, fusebox will load nothing by default
+	 *  ===> when {false}, fuseboxy will load nothing by default
 	 **/
 	'defaultCommand' => 'home',
 
@@ -69,7 +69,7 @@ return array(
 	/**
 	 *  Controller to handle error (OPTIONAL)
 	 *  ===> used by F::error() and F::pageNotFound()
-	 *  ===> controller will receive {$fusebox->error} as argument
+	 *  ===> controller will receive {$fuseboxy->error} as argument
 	 *  ===> when false, error will be thrown as exception
 	 *  ===> when true, default using {~appPath~/controller/error_controller.php}
 	 *  ===> to customize, make a copy of {~vendorPath~/fuseboxy/fuseboxy-core/app/controller/error_controller.php} to {~appPath~/controller/error_controller.php}

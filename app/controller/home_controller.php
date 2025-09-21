@@ -1,5 +1,5 @@
 <?php
-switch ( $fusebox->action ) :
+switch ( $fuseboxy->action ) :
 
 
 	case 'index':
