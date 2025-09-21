@@ -365,6 +365,8 @@ class Framework {
 			if ( is_file($__controllerPath__) ) include $__controllerPath__;
 			F::pageNotFound($__controllerPath__ and !is_file($__controllerPath__));
 		// any runtime error...
+		} catch (Error $e) {
+			F::error($e);
 		} catch (Exception $e) {
 			F::error($e);
 		}
