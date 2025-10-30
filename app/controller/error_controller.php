@@ -20,7 +20,8 @@
 </fusedoc>
 */
 // determine closest layout
-$layoutPath = class_exists('F') ? F::appPath( isset($fuseboxy->controller) ? "view/{$fuseboxy->controller}/layout.php" : 'view/global/layout.php' ) : false;
+$layoutPath = ( class_exists('F') and isset($fuseboxy->controller) ) ? F::appPath("view/{$fuseboxy->controller}/layout.php") : false;
+$layoutPath = is_file($layoutPath) ? $layoutPath : ( class_exists('F') ? F::appPath('view/global/layout.php') : false );
 $layoutPath = is_file($layoutPath) ? $layoutPath : false;
 // determine error message
 $errMsg = !empty($fuseboxy->error) ? $fuseboxy->error : false;
