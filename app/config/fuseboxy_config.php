@@ -145,16 +145,9 @@ return array(
 
 
 	/**
-	 *  Encrypt setting for Util::crypt (OPTIONAL)
-	 *  ===> specify as [string] for [encrypt-key] only
+	 *  Encryption key for Util::crypt (OPTIONAL)
 	 **/
-	'encrypt' => array(/*
-		'key'    => ENCRYPT_KEY,
-		'vendor' => ENCRYPT_VENDOR,  // mcrypt or openssl
-		'algo'   => ENCRYPT_ALGO,    // (e.g.) ~MCRYPT_RIJNDAEL_256~, BF-ECB, ...
-		'mode'   => ENCRYPT_MODE,    // (e.g.) ~MCRYPT_MODE_ECB~, ... (used as options for openssl)
-		'iv'     => ENCRYPT_IV,      // initial vector
-	*/),
+//	'encrypt' => ENCRYPT_KEY,
 
 
 	/**
