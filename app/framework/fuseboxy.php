@@ -48,10 +48,10 @@ class Framework {
 				<!-- server variables -->
 				<string name="SCRIPT_NAME" scope="$_SERVER" />
 				<!-- framework config -->
-				<structure name="autoload" scope="$fuseboxy">
+				<array name="autoload" scope="$fuseboxy">
 					<string name="+" optional="yes" comments="pattern" example="/path/to/my/site/app/model/*.php" />
 					<function name="+" optional="yes" comments="function to run" example="function(){ $foo = 'bar'; }" />
-				</structure>
+				</array>
 			</in>
 			<out />
 		</io>
@@ -107,13 +107,13 @@ class Framework {
 		<io>
 			<in>
 				<!-- framework config -->
-				<structure name="config" scope="$fuseboxy" />
+				<array name="config" scope="$fuseboxy" />
 			</in>
 			<out>
 				<!-- framework config -->
-				<structure name="config" scope="$fuseboxy">
+				<array name="config" scope="$fuseboxy">
 					<string name="appPath|vendorPath|baseDir|baseUrl|uploadUrl" />
-				</structure>
+				</array>
 			</out>
 		</io>
 	</fusedoc>
@@ -184,13 +184,13 @@ class Framework {
 		</description>
 		<io>
 			<in>
-				<structure name="config" scope="$fuseboxy">
+				<array name="config" scope="$fuseboxy">
 					<boolean name="forceHttps" optional="yes" />
-				</structure>
-				<structure name="$_SERVER">
+				</array>
+				<array name="$_SERVER">
 					<string name="HTTP_HOST" />
 					<string name="REQUEST_URI" />
-				</structure>
+				</array>
 			</in>
 			<out />
 		</io>
@@ -262,10 +262,10 @@ class Framework {
 			</in>
 			<out>
 				<!-- framework config -->
-				<structure name="config" scope="$fuseboxy">
+				<array name="config" scope="$fuseboxy">
 					<string name="commandVariable" />
 					<string name="appPath" />
-				</structure>
+				</array>
 			</out>
 		</io>
 	</fusedoc>
@@ -384,10 +384,10 @@ class Framework {
 				<!-- url variables -->
 				<string name="~commandVariable~" scope="$_GET|$_POST" />
 				<!-- framework config -->
-				<structure name="config" scope="$fuseboxy">
+				<array name="config" scope="$fuseboxy">
 					<string name="commandVariable" example="fuseaction" />
 					<string name="defaultCommand" example="home.index" />
-				</structure>
+				</array>
 			</in>
 			<out>
 				<!-- framework api object -->
@@ -422,10 +422,10 @@ class Framework {
 				<!-- server variables -->
 				<string name="SCRIPT_NAME" scope="$_SERVER" />
 				<!-- framework config -->
-				<structure name="config" scope="$fuseboxy">
+				<array name="config" scope="$fuseboxy">
 					<string name="commandVariable" />
 					<boolean name="urlRewrite" />
-				</structure>
+				</array>
 			</in>
 			<out>
 				<!-- framework api object -->
@@ -472,11 +472,11 @@ class Framework {
 				<string name="REDIRECT_QUERY_STRING" scope="$_SERVER" optional="yes" />
 				<string name="~REDIRECT_QUERY_STRING~" scope="$_GET|$_REQUEST" optional="yes" />
 				<!-- framework config -->
-				<structure name="config" scope="$fuseboxy">
+				<array name="config" scope="$fuseboxy">
 					<string name="commandVariable" />
 					<boolean name="urlRewrite" />
-					<structure name="route" optional="yes" comments="url-rewrite pattern" />
-				</structure>
+					<array name="route" optional="yes" comments="url-rewrite pattern" />
+				</array>
 			</in>
 			<out>
 				<!-- manipulated php variables -->
@@ -615,11 +615,11 @@ class Framework {
 		<io>
 			<in>
 				<!-- framework config -->
-				<structure name="config" scope="$fuseboxy">
+				<array name="config" scope="$fuseboxy">
 					<string name="commandVariable" optional="yes" />
 					<string name="appPath" optional="yes" />
 					<boolean_or_string name="errorController" optional="yes" />
-				</structure>
+				</array>
 			</in>
 			<out />
 		</io>
