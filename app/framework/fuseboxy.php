@@ -18,6 +18,7 @@ class Framework {
 	// error codes
 	const FUSEBOXY_ERROR              = 403;
 	const FUSEBOXY_PAGE_NOT_FOUND     = 404;
+	const FUSEBOXY_MODULE_ERROR       = 500;
 	const FUSEBOXY_CONFIG_NOT_FOUND   = 901;
 	const FUSEBOXY_CONFIG_NOT_DEFINED = 902;
 	const FUSEBOXY_HELPER_NOT_FOUND   = 903;
