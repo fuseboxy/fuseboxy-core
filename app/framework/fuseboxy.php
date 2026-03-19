@@ -68,10 +68,10 @@ class Framework {
 				call_user_func($pattern);
 			// directory not found
 			elseif ( $isPatternLikeDir and !is_dir($pattern) ) :
-				throw new Error("Autoload directory not found ({$pattern})", self::FUSEBOXY_INVALID_CONFIG);
+				throw new Exception("Autoload directory not found ({$pattern})", self::FUSEBOXY_INVALID_CONFIG);
 			// file not found
 			elseif ( $isPatternLikeFile and empty(glob($pattern)) ) :
-				throw new Error("Autoload file not found ({$pattern})", self::FUSEBOXY_INVALID_CONFIG);
+				throw new Exception("Autoload file not found ({$pattern})", self::FUSEBOXY_INVALID_CONFIG);
 			// load files (when directory or file exists)
 			elseif ( !empty($pattern) ) :
 				// when only specified directory
@@ -124,7 +124,7 @@ class Framework {
 		// validation
 		if ( !isset($fuseboxy->config) ) :
 			if ( !headers_sent() ) header('HTTP/1.0 500 Internal Server Error');
-			throw new Error('Fuseboxy config not defined', self::FUSEBOXY_CONFIG_NOT_DEFINED);
+			throw new Exception('Fuseboxy config not defined', self::FUSEBOXY_CONFIG_NOT_DEFINED);
 		endif;
 		// fix path config
 		// ===> adjust slash of each path
@@ -278,11 +278,11 @@ class Framework {
 			$fuseboxy->config = include self::$configPath;
 		else :
 			if ( !headers_sent() ) header('HTTP/1.0 500 Internal Server Error');
-			throw new Error('Config file not found ('.self::$configPath.')', self::FUSEBOXY_CONFIG_NOT_FOUND);
+			throw new Exception('Config file not found ('.self::$configPath.')', self::FUSEBOXY_CONFIG_NOT_FOUND);
 		endif;
 		if ( !is_array(F::config()) ) :
 			if ( !headers_sent() ) header('HTTP/1.0 500 Internal Server Error');
-			throw new Error('Config file must return an array', self::FUSEBOXY_CONFIG_NOT_DEFINED);
+			throw new Exception('Config file must return an array', self::FUSEBOXY_CONFIG_NOT_DEFINED);
 		endif;
 		// define config default value (when necessary)
 		F::config('commandVariable', F::config('commandVariable') ?? 'fuseaction');
@@ -312,14 +312,14 @@ class Framework {
 		// check helper path
 		if ( !is_file(self::$helperPath) ) :
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Error('Helper class file not found ('.self::$helperPath.')', self::FUSEBOXY_HELPER_NOT_FOUND);
+			throw new Exception('Helper class file not found ('.self::$helperPath.')', self::FUSEBOXY_HELPER_NOT_FOUND);
 		endif;
 		// load helper
 		require_once self::$helperPath;
 		// validate after load
 		if ( !class_exists('F') ) :
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Error('Helper class (F) not defined', self::FUSEBOXY_HELPER_NOT_DEFINED);
+			throw new Exception('Helper class (F) not defined', self::FUSEBOXY_HELPER_NOT_DEFINED);
 		endif;
 	}
 
@@ -441,7 +441,7 @@ class Framework {
 		// validation
 		if ( !F::config('commandVariable') ) :
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Error('Fuseboxy config [commandVariable] is required', self::FUSEBOXY_MISSING_CONFIG);
+			throw new Exception('Fuseboxy config [commandVariable] is required', self::FUSEBOXY_MISSING_CONFIG);
 		endif;
 		// beautify
 		if ( F::config('urlRewrite') ) :
@@ -630,24 +630,24 @@ class Framework {
 		// check app-path
 		if ( !F::config('appPath') ) :
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Error('Fuseboxy config [appPath] is required', self::FUSEBOXY_MISSING_CONFIG);
+			throw new Exception('Fuseboxy config [appPath] is required', self::FUSEBOXY_MISSING_CONFIG);
 		elseif ( !is_dir(F::config('appPath')) ) :
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Error('Fuseboxy config [appPath] directory not found ('.F::config('appPath').')', self::FUSEBOXY_INVALID_CONFIG);
+			throw new Exception('Fuseboxy config [appPath] directory not found ('.F::config('appPath').')', self::FUSEBOXY_INVALID_CONFIG);
 		endif;
 		// check command-variable
 		$reserved = array('controller', 'action');
 		if ( !F::config('commandVariable') ) :
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Error('Fuseboxy config [commandVariable] is required', self::FUSEBOXY_MISSING_CONFIG);
+			throw new Exception('Fuseboxy config [commandVariable] is required', self::FUSEBOXY_MISSING_CONFIG);
 		elseif ( in_array(strtolower(F::config('commandVariable')), $reserved) ) :
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Error('Fuseboxy config [commandVariable] cannot be a reserved word (reserved='.implode(',', $reserved).')', self::FUSEBOXY_INVALID_CONFIG);
+			throw new Exception('Fuseboxy config [commandVariable] cannot be a reserved word (reserved='.implode(',', $reserved).')', self::FUSEBOXY_INVALID_CONFIG);
 		endif;
 		// check error-controller
 		if ( F::config('errorController') and is_string(F::config('errorController')) and !is_file(F::config('errorController')) ) :
 			if ( !headers_sent() ) header("HTTP/1.0 500 Internal Server Error");
-			throw new Error('Fuseboxy config [errorController] file not found ('.F::config('errorController').')', self::FUSEBOXY_INVALID_CONFIG);
+			throw new Exception('Fuseboxy config [errorController] file not found ('.F::config('errorController').')', self::FUSEBOXY_INVALID_CONFIG);
 		endif;
 	}
 

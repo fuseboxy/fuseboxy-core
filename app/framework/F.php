@@ -620,7 +620,7 @@ class F {
 		// set default & fix format
 		$unit = strtolower($unit ?? 'ms');
 		// check unit
-		if ( !in_array($unit, ['ms','s']) ) throw new Error('Invalid unit for runtime', Framework::FUSEBOXY_ERROR);
+		if ( !in_array($unit, ['ms','s']) ) throw new Exception('Invalid unit for runtime', Framework::FUSEBOXY_ERROR);
 		// not started yet
 		if ( !isset(Framework::$startTick) ) return null;
 		// calculation
