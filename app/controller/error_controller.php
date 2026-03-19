@@ -19,7 +19,8 @@
 	</io>
 </fusedoc>
 */
-// determine closest layout
+$layout['content'] ??= '';
+// determine nearest layout
 $layoutPath = ( class_exists('F') and isset($fuseboxy->controller) ) ? F::appPath("view/{$fuseboxy->controller}/layout.php") : false;
 $layoutPath = is_file($layoutPath) ? $layoutPath : ( class_exists('F') ? F::appPath('view/global/layout.php') : false );
 $layoutPath = is_file($layoutPath) ? $layoutPath : false;
