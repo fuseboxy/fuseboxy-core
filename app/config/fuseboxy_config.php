@@ -50,9 +50,9 @@ return [
 	 *  ===> (e.g.) [Local] /server/path/to/my/upload/directory/
 	 *  ===> (e.g.) [FTP] ftp://{username}:{password}@{host}:{port}/path/to/my/upload/folder/
 	 **/
-	'uploadDir' => dirname(__DIR__, 2).'/upload/',
-	'uploadUrl' => str_replace('//', '/', str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']).'/' ) ).'upload/',
-	'tmpDir' => rtrim(str_replace('\\', '/', sys_get_temp_dir()), '/').'/',
+	'uploadDir' => dirname(__DIR__, 2).'/upload/',                                                                    // UPLOAD_DIR,
+	'uploadUrl' => str_replace('//', '/', str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']).'/' ) ).'upload/',  // UPLOAD_URL,
+	'tmpDir'    => rtrim(str_replace('\\', '/', sys_get_temp_dir()), '/').'/',                                        // TMP_DIR,
 
 
 	/**
