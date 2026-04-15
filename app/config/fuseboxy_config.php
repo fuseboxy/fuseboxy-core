@@ -4,7 +4,7 @@
  *  ===> all things defined here could be accessed by {$fuseboxy->config} or F::config() later
  **/
 
-return array(
+return [
 
 
 	/**
@@ -60,10 +60,10 @@ return array(
 	 *  ===> using path pattern (please refer to glob function)
 	 *  ===> when element is function, it will be run once
 	 **/
-	'autoLoad' => array(
+	'autoLoad' => [
 		dirname(__DIR__, 2).'/vendor/autoload.php',
 		dirname(__DIR__).'/model/*.php',
-	),
+	],
 
 
 	/**
@@ -104,9 +104,9 @@ return array(
 	 *  ===> array-key is pattern which match {$_SERVER['REQUEST_URI']} (with or without leading slash)
 	 *  ===> array-value is transformed query-string (without leading question mark)
 	 **/
-	'route' => array(/*
+	'route' => [/*
 		'/article/(\d)' => 'fuseaction=article.view&id=$1',
-	*/),
+	*/],
 
 
 	/**
@@ -127,33 +127,33 @@ return array(
 	 *		'bar' => [ ... ],
 	 *	);  
 	 **/
-	'db' => array(/*
+	'db' => [/*
 		'host'     => DB_HOST,
 		'name'     => DB_NAME,
 		'username' => DB_UID,
 		'password' => DB_PWD,
-	*/),
+	*/],
 
 
 	/**
 	 *  reCAPTCHA setting for Captcha component (OPTIONAL)
 	 **/
-	'captcha' => array(/*
+	'captcha' => [/*
 		'siteKey'   => CAPTCHA_SITE,
 		'secretKey' => CAPTCHA_SECRET,
-	*/),
+	*/],
 
 
 	/**
 	 *  Encryption key for Util::crypt (OPTIONAL)
 	 **/
-//	'encrypt' => ENCRYPT_KEY,
+	'encrypt' => null, // ENCRYPT_KEY,
 
 
 	/**
 	 *  SMTP setting for Util::mail (OPTIONAL)
 	 **/
-	'smtp' => array(/*
+	'smtp' => [/*
 		'debug'    => 0,            // debugging (0 = no message; 1 = error & message; 2 = messages only)
 		'secure'   => SMTP_SECURE,  // secure transfer enabled (SSL, TLS, etc.)
 		'auth'     => SMTP_AUTH,    // authentication enabled (boolean)
@@ -161,8 +161,8 @@ return array(
 		'port'     => SMTP_PORT,
 		'username' => SMTP_UID,
 		'password' => SMTP_PWD,
-		'options'  => [],
-	*/),
+		'options'  => SMTP_OPTIONS,
+	*/],
 
 
 	/**
@@ -170,10 +170,10 @@ return array(
 	 *  ===> default [en] when not specified
 	 *  ===> used by I18N & Enum (etc.)
 	 **/
-	'i18n' => array(/*
+	'i18n' => [/*
 		'locales' => I18N_ALL_LOCALES,     // (e.g.) en,zh-hk,zh-cn
 		'current' => I18N_CURRENT_LOCALE,  // (e.g.) en
-	*/),
+	*/],
 
 
-);
+];
