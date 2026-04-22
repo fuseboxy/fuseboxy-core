@@ -343,7 +343,7 @@ class F {
 		$command = self::parseCommand($command);
 		$fuseboxy->controller = $command['controller'];
 		$fuseboxy->action = $command['action'];
-		$controllerPath = self::config('appPath').'/controller/'.$fuseboxy->controller.'_controller.php';
+		$controllerPath = self::appPath("controller/{$fuseboxy->controller}_controller.php");
 		// put query string variables into arguments & url scope
 		parse_str($queryString, $queryString);
 		$originalGetScope = $_GET;
@@ -361,7 +361,7 @@ class F {
 		// when controller not found
 		// ===> command not run indeed
 		// ===> throw error
-		self::pageNotFound( !is_file($controllerPath) );
+		self::error("Invoke controller not found ({$controllerPath})", !is_file($controllerPath));
 	}
 
 
