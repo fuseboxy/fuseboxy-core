@@ -33,11 +33,20 @@ class F {
 			<in>
 				<string_or_array name="$flash">
 					<string name="type" optional="yes" default="primary" comments="primary|secondary|success|info|warning|danger|light|dark" />
+					<string name="id" optional="yes" />
+					<string name="class" optional="yes" default="alert" />
+					<string name="style" optional="yes" />
 					<string name="icon" optional="yes" />
+					<string name="iconStyle" optional="yes" />
 					<string name="heading" optional="yes" />
+					<string name="headingClass" optional="yes" />
+					<string name="headingStyle" optional="yes" />
 					<string name="message" optional="yes" />
+					<string name="messageClass" optional="yes" />
+					<string name="messageStyle" optional="yes" />
 					<string name="remark" optional="yes" />
 					<string name="remarkClass" optional="yes" />
+					<string name="remarkStyle" optional="yes" />
 				</string_or_array>
 			</in>
 			<out />
@@ -45,30 +54,27 @@ class F {
 	</fusedoc>
 	*/
 	public static function alert($flash='alert', $condition=true) {
-		// check whether to show message
-		if ( !$condition ) return null;
-		// fix param & set default
-		if ( !empty($flash) ) :
-			if ( !is_array($flash) ) $flash = array('message' => $flash);
-			if ( empty($flash['type']) ) $flash['type'] = 'primary';
-		endif;
+		$flash = is_array($flash) ? $flash : [ 'message' => $flash ];
+		// when false condition
+		// ===> simply quit
+		if ( !$condition ) return;
 		// when no content
-		// ===> simply display nothing
+		// ===> simply quit
 		if ( empty($flash['icon']) and empty($flash['heading']) and empty($flash['message']) and empty($flash['remark']) ) return;
 		// when has any content
-		// ===> capture output & return
-		?><div id="<?php echo $flash['id'] ?? ''; ?>" class="alert alert-<?php echo $flash['type']; ?>"><?php
+		// ===> render alert
+		?><div id="<?php echo $flash['id'] ?? ''; ?>" class="alert-<?php echo $flash['type'] ?? 'primary'; ?> <?php echo $flash['class'] ?? 'alert'; ?>" style="<?php echo $flash['style'] ?? ''; ?>"><?php
 			if ( !empty($flash['icon']) ) :
-				?><i class="<?php echo $flash['icon']; ?>">&ensp;</i><?php
+				?><i class="<?php echo $flash['icon']; ?>" style="<?php echo $flash['iconStyle'] ?? ''; ?>">&ensp;</i><?php
 			endif;
 			if ( !empty($flash['heading']) ) :
-				?><strong class="mr-1"><?php echo $flash['heading']; ?></strong><?php
+				?><strong class="<?php echo $flash['headingClass'] ?? 'mr-1'; ?>" style="<?php echo $flash['headingStyle'] ?? ''; ?>"><?php echo $flash['heading']; ?></strong><?php
 			endif;
 			if ( !empty($flash['message']) ) :
-				?><span><?php echo $flash['message']; ?></span><?php
+				?><span class="<?php echo $flash['messageClass'] ?? ''; ?>" style="<?php echo $flash['messageStyle'] ?? ''; ?>"><?php echo $flash['message']; ?></span><?php
 			endif;
 			if ( !empty($flash['remark']) ) :
-				?><small class="<?php echo $flash['remarkClass'] ?? 'text-secondary'; ?>"><?php echo $flash['remark']; ?></small><?php
+				?><small class="<?php echo $flash['remarkClass'] ?? 'text-secondary'; ?>" style="<?php echo $flash['remarkStyle'] ?? ''; ?>"><?php echo $flash['remark']; ?></small><?php
 			endif;
 		?></div><?php
 	}
@@ -83,14 +89,7 @@ class F {
 		</description>
 		<io>
 			<in>
-				<string_or_array name="$flash">
-					<string name="type" optional="yes" default="primary" comments="primary|secondary|success|info|warning|danger|light|dark" />
-					<string name="id" optional="yes" comments="div[id]" />
-					<string name="icon" optional="yes" />
-					<string name="heading" optional="yes" />
-					<string name="message" optional="yes" />
-					<string name="remark" optional="yes" />
-				</string_or_array>
+				<!-- same as {alert} method -->
 			</in>
 			<out>
 				<string name="~return~" />
@@ -374,8 +373,7 @@ class F {
 		</description>
 		<io>
 			<in>
-				<string name="$commandWithQueryString" example="home.news&id=100" />
-				<array name="$arguments" default="~emptyArray~" />
+				<!-- same as {invoke} method -->
 			</in>
 			<out>
 				<string name="~return~" format="html" />
