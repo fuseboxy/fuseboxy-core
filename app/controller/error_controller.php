@@ -33,4 +33,5 @@ if ( !$errMsg ) exit();
 if ( F::ajaxRequest() ) exit($errMsg);
 // otherwise, display message with layout
 $layout['flash'] = [ 'type' => 'danger', 'icon' => 'bi bi-exclamation-triangle-fill', 'message' => $errMsg ];
+if ( str_contains($errMsg, 'Stack trace:') ) $layout['flash'] += [ 'messageClass' => 'font-monospace', 'messageStyle' => 'white-space: pre-wrap;' ];
 exit( $layoutPath ? ( include $layoutPath ) : print("<pre>{$errMsg}</pre>") );
