@@ -331,7 +331,7 @@ class F {
 		// create stack container to keep track of command-in-run
 		// ===> first item of invoke queue should be original command
 		// ===> second item onward will be the command(s) called by F::invoke()
-		if ( !isset($fuseboxy->invokeQueue) ) $fuseboxy->invokeQueue = array();
+		if ( !isset($fuseboxy->invokeQueue) ) $fuseboxy->invokeQueue = [];
 		$fuseboxy->invokeQueue[] = "{$fuseboxy->controller}.{$fuseboxy->action}";
 		// split new command & query-string (if any)
 		$commandWithQueryString = str_replace('?', '&', $commandWithQueryString);
@@ -361,6 +361,33 @@ class F {
 		// ===> command not run indeed
 		// ===> throw error
 		self::error("Invoke controller not found ({$controllerPath})", !is_file($controllerPath));
+	}
+
+
+
+
+	/**
+	<fusedoc>
+		<description>
+			check whether current command is invoked by another specific command
+		</description>
+		<io>
+			<in>
+				<!-- command stack -->
+				<array name="invokeQueue" scope="$fuseboxy">
+					<string name="+" comments="command" example="product.view|product.recommend|.." />
+				</array>
+				<!-- parameter -->
+				<string name="command"
+			</in>
+			<out>
+				<boolean name="~return~" />
+			</out>
+		</io>
+	</fusedoc>
+	*/
+	public static function invokedBy($command) {
+		return in_array($command, $fuseboxy->invokeQueue ?? []);
 	}
 
 
@@ -765,14 +792,14 @@ class F {
 		foreach ( self::config('route') ?? [] as $routePattern => $routeReplacement ) :
 			// parse route-replacement
 			$arr = explode('&', $routeReplacement);
-			$routeReplacement = array();
+			$routeReplacement = [];
 			foreach ( $arr as $keyEqVal ) :
 				list($key, $val) = explode('=', $keyEqVal, 2);
 				$routeReplacement[$key] = $val;
 			endforeach;
 			// parse input-url
 			$arr = explode('&', self::config('commandVariable').'='.$commandWithQueryString);
-			$inputUrl = array();
+			$inputUrl = [];
 			foreach ( $arr as $keyEqVal ) :
 				list($key, $val) = explode('=', $keyEqVal, 2);
 				$inputUrl[$key] = $val;
@@ -789,7 +816,7 @@ class F {
 			// only proceed when all variables matched and command matched
 			if ( $isAllVarsMatched and $isCommandMatched ) :
 				// get each back-reference value
-				$backRef = array();
+				$backRef = [];
 				foreach ( $routeReplacement as $key => $val ) :
 					// check back-reference format
 					if ( substr($val, 0, 1) == '$' and is_numeric(substr($val, 1)) and strpos($val, '.') === false ) :
