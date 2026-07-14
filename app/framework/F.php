@@ -387,6 +387,7 @@ class F {
 	</fusedoc>
 	*/
 	public static function invokedBy($command) {
+		global $fuseboxy;
 		return in_array($command, $fuseboxy->invokeQueue ?? []);
 	}
 
